@@ -1,0 +1,129 @@
+plugins {
+    id 'fabric-loom' version '1.0-SNAPSHOT'
+    id 'maven-publish'
+    id 'idea'
+    id "me.modmuss50.mod-publish-plugin" version "0.3.3"
+}
+
+archivesBaseName = "${mod_id}-fabric-${minecraft_version}"
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-1.20.1:2023.07.09@zip")
+    }
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
+    implementation project(":Common")
+    include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:0.2.0-rc.3")))
+}
+
+loom {
+
+    if (project.hasProperty('fabric_aws_enabled') && project.findProperty('fabric_aws_enabled').toBoolean()) {
+        accessWidenerPath = project(":Common").file("src/main/resources/${mod_id}.accesswidener")
+    }
+    runs {
+        client {
+            client()
+            vmArgs("-XX:+AllowEnhancedClassRedefinition")
+            setConfigName("Fabric Client")
+            ideConfigGenerated(true)
+            runDir("run")
+        }
+        server {
+            server()
+            vmArgs("-XX:+AllowEnhancedClassRedefinition")
+            setConfigName("Fabric Server")
+            ideConfigGenerated(true)
+            runDir("run")
+        }
+    }
+    mixin {
+        defaultRefmapName = "${mod_id}.refmap.json"
+    }
+}
+def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta', "${mod_id}.mixins.json".toString(), 'fabric.mod.json']
+def intoTargets = ["$rootDir/out/production/resources/", "$rootDir/out/production/${project.name}.main/", "$rootDir/bin/main/"]
+def replaceProperties =
+        [
+                mod_id                     : mod_id,
+                mod_name                   : mod_name,
+                mod_version                : version,
+                mod_authors                : mod_author,
+                mod_description            : mod_description,
+                minecraft_version_range    : minecraft_version_range,
+                forge_version_range        : forge_version_range,
+                loader_version_range       : loader_version_range,
+                fabric_loader_version_range: fabric_loader_version_range,
+                minecraft_version          : minecraft_version
+        ]
+
+processResources {
+    from project(":Common").sourceSets.main.resources
+    inputs.properties replaceProperties
+    replaceProperties.put 'project', project
+
+    filesMatching(resourceTargets) {
+        expand replaceProperties
+    }
+
+    intoTargets.each { target ->
+        if (file(target).exists()) {
+            copy {
+                from(sourceSets.main.resources) {
+                    include resourceTargets
+                    expand replaceProperties
+                }
+                into target
+            }
+        }
+    }
+
+}
+
+tasks.withType(JavaCompile) {
+    source(project(":Common").sourceSets.main.allSource)
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId project.group
+            artifactId project.archivesBaseName
+            version project.version
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            url "file://" + System.getenv("local_maven")
+        }
+    }
+}
+publishMods {
+    if(publishFabric) {
+        file = remapJar.archiveFile
+        changelog = project(":Common").file("changelog.md").text
+        type = STABLE
+        modLoaders.add("fabric")
+        displayName = "${mod_name}-${minecraft_version}-[Fabric]-${project.property('version')}"
+        if (curseforge_publishing_enabled.toBoolean()) {
+            curseforge {
+                projectId = curseforge_project_id
+                accessToken = curseforge_token
+                minecraftVersions.add(minecraft_version)
+            }
+        }
+        if (modrinth_publishing_enabled.toBoolean()) {
+            modrinth {
+                accessToken = modrinth_token
+                projectId = modrinth_project_id
+                minecraftVersions.add(minecraft_version)
+            }
+        }
+    }
+}

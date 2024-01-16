@@ -1,0 +1,169 @@
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '5.1.+'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'org.spongepowered.mixin' version '0.7.+'
+    id "me.modmuss50.mod-publish-plugin" version "0.3.3"
+}
+
+archivesBaseName = "${mod_id}-forge-${minecraft_version}"
+
+minecraft {
+    mappings channel: mappings_channel, version: mappings_version
+    jarJar.enable()
+    if (project.hasProperty('forge_ats_enabled') && project.findProperty('forge_ats_enabled').toBoolean()) {
+        // This location is hardcoded in Forge and can not be changed.
+        // https://github.com/MinecraftForge/MinecraftForge/blob/be1698bb1554f9c8fa2f58e32b9ab70bc4385e60/fmlloader/src/main/java/net/minecraftforge/fml/loading/moddiscovery/ModFile.java#L123
+        accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+        project.logger.debug('Forge Access Transformers are enabled for this project.')
+    }
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+            jvmArg("-XX:+AllowEnhancedClassRedefinition")
+            ideaModule "${rootProject.name}.${project.name}.main"
+            taskName 'Client'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            mods {
+                modClientRun {
+                    source sourceSets.main
+                    source project(":Common").sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+            ideaModule "${rootProject.name}.${project.name}.main"
+            taskName 'Server'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            mods {
+                modServerRun {
+                    source sourceSets.main
+                    source project(":Common").sourceSets.main
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run')
+            ideaModule "${rootProject.name}.${project.name}.main"
+            args '--mod', mod_id, '--all', '--output', file('../Common/src/generated/resources/'), '--existing', file('../Common/src/main/resources/')
+            taskName 'Data'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            mods {
+                modDataRun {
+                    source sourceSets.main
+                    source project(":Common").sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+sourceSets.main.resources.srcDir 'src/generated/resources'
+mixin {
+    add sourceSets.main, "${mod_id}.refmap.json"
+
+    // Sets up the mixin config; this gets added to run configurations and the manifest in the final jar
+    config "${mod_id}.mixins.json"
+
+    // Enables exporting mixin-changed classes to .mixin.out in the run folder
+    debug.export = true
+}
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    compileOnly project(":Common")
+    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:0.2.0-rc.3"))
+    implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.2.0-rc.3")) {
+        jarJar.ranged(it, "[0.2.0-rc.3,)")
+    }
+    annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
+}
+
+tasks.withType(JavaCompile) {
+    source(project(":Common").sourceSets.main.allSource)
+}
+def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta', "${mod_id}.mixins.json".toString(),'fabric.mod.json']
+def intoTargets = ["$rootDir/out/production/resources/", "$rootDir/out/production/${project.name}.main/", "$rootDir/bin/main/"]
+def replaceProperties =
+        [
+                mod_id: mod_id,
+                mod_name: mod_name,
+                mod_version: version,
+                mod_authors: mod_author,
+                mod_description: mod_description,
+                minecraft_version_range: minecraft_version_range,
+                forge_version_range: forge_version_range,
+                loader_version_range: loader_version_range]
+processResources {
+    from project(":Common").sourceSets.main.resources
+    inputs.properties replaceProperties
+    replaceProperties.put 'project', project
+
+    filesMatching(resourceTargets) {
+        expand replaceProperties
+    }
+
+    intoTargets.each { target ->
+        if (file(target).exists()) {
+            copy {
+                from(sourceSets.main.resources) {
+                    include resourceTargets
+                    expand replaceProperties
+                }
+                into target
+            }
+        }
+    }
+}
+
+
+jar.finalizedBy('reobfJar')
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId project.group
+            artifactId project.archivesBaseName
+            version project.version
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file://" + System.getenv("local_maven")
+        }
+    }
+}
+reg.configureJarTask(tasks.jarJar)
+publishMods {
+    if(publishForge) {
+        file = jar.archiveFile
+        changelog = project(":Common").file("changelog.md").text
+        type = STABLE
+        modLoaders.add("forge")
+        displayName = "${mod_name}-${minecraft_version}-[Forge]-${project.version}"
+        dryRun = dry_run.toBoolean()
+        if (curseforge_publishing_enabled.toBoolean()) {
+            curseforge {
+                projectId = curseforge_project_id
+                accessToken = curseforge_token
+                minecraftVersions.add(minecraft_version)
+            }
+        }
+        if (modrinth_publishing_enabled.toBoolean()) {
+            modrinth {
+                accessToken = modrinth_token
+                projectId = modrinth_project_id
+                minecraftVersions.add(minecraft_version)
+            }
+        }
+    }
+}
+
