@@ -18,6 +18,10 @@ dependencies {
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     implementation project(":Common")
     include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:0.2.0-rc.3")))
+    modImplementation "net.tslat.smartbrainlib:SmartBrainLib-fabric-${project.minecraft_version}:${project.sbl_version_fabric}"
+    modImplementation "software.bernie.geckolib:geckolib-fabric-${project.minecraft_version}:${project.geckolib_version_fabric}"
+    modRuntimeOnly "io.github.flemmli97:debugutils:${project.minecraft_version}-${project.debugutils_version_fabric}-fabric"
+    modImplementation "curse.maven:jade-324717:${project.jade_version_fabric}"
 }
 
 loom {

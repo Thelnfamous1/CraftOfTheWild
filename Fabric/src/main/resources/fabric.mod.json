@@ -12,10 +12,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.nyfaria.nyfsmultiloader.ExampleMod"
+      "com.Thelnfamous1.craft_of_the_wild.COTWFabric"
     ],
     "client": [
-      "com.nyfaria.nyfsmultiloader.ExampleModClient"
+      "com.Thelnfamous1.craft_of_the_wild.COTWFabricClient"
     ]
   },
   "mixins": [

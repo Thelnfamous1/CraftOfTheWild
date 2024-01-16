@@ -29,6 +29,9 @@ dependencies {
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     implementation("com.github.llamalad7.mixinextras:mixinextras-common:0.2.0-rc.3")
     annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-common:0.2.0-rc.3")
+    compileOnly "net.tslat.smartbrainlib:SmartBrainLib-common-${project.minecraft_version}:${project.sbl_version_common}"
+    compileOnly "software.bernie.geckolib:geckolib-forge-${project.minecraft_version}:${project.geckolib_version_forge}"
+    implementation "curse.maven:jade-324717:${project.jade_version_forge}"
 }
 sourceSets.main.resources.srcDir './src/generated/resources'
 processResources {

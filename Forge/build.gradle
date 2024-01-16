@@ -85,6 +85,10 @@ dependencies {
         jarJar.ranged(it, "[0.2.0-rc.3,)")
     }
     annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
+    implementation fg.deobf("net.tslat.smartbrainlib:SmartBrainLib-forge-${project.minecraft_version}:${project.sbl_version_forge}")
+    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${project.minecraft_version}:${project.geckolib_version_forge}")
+    runtimeOnly fg.deobf("io.github.flemmli97:debugutils:${project.minecraft_version}-${project.debugutils_version_forge}-forge")
+    implementation fg.deobf("curse.maven:jade-324717:${project.jade_version_forge}")
 }
 
 tasks.withType(JavaCompile) {

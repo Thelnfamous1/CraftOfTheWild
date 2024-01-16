@@ -56,6 +56,23 @@ subprojects {
             name = 'BlameJared Maven (CrT / Bookshelf)'
             url = 'https://maven.blamejared.com'
         }
+        maven {
+            name = "SmartBrainLib (SBL) Maven Repo"
+            url = "https://dl.cloudsmith.io/public/tslat/sbl/maven/"
+        }
+        maven {
+            name = 'GeckoLib'
+            url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        }
+        maven {
+            url "https://gitlab.com/api/v4/projects/21830712/packages/maven"
+        }
+        maven {
+            url "https://www.cursemaven.com"
+            content {
+                includeGroup "curse.maven"
+            }
+        }
     }
 
     tasks.withType(JavaCompile).configureEach {
