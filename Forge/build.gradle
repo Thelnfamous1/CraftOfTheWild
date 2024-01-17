@@ -73,6 +73,7 @@ mixin {
 
     // Sets up the mixin config; this gets added to run configurations and the manifest in the final jar
     config "${mod_id}.mixins.json"
+    config "${mod_id}.forge.mixins.json"
 
     // Enables exporting mixin-changed classes to .mixin.out in the run folder
     debug.export = true
@@ -94,7 +95,7 @@ dependencies {
 tasks.withType(JavaCompile) {
     source(project(":Common").sourceSets.main.allSource)
 }
-def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta', "${mod_id}.mixins.json".toString(),'fabric.mod.json']
+def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta', "${mod_id}.mixins.json".toString(), "${mod_id}.forge.mixins.json".toString(),'fabric.mod.json']
 def intoTargets = ["$rootDir/out/production/resources/", "$rootDir/out/production/${project.name}.main/", "$rootDir/bin/main/"]
 def replaceProperties =
         [

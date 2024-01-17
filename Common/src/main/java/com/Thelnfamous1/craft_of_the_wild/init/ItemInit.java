@@ -1,6 +1,7 @@
 package com.Thelnfamous1.craft_of_the_wild.init;
 
 import com.Thelnfamous1.craft_of_the_wild.Constants;
+import com.Thelnfamous1.craft_of_the_wild.item.COTWSpawnEggItem;
 import com.nyfaria.craft_of_the_wild.registration.RegistrationProvider;
 import com.nyfaria.craft_of_the_wild.registration.RegistryObject;
 import net.minecraft.core.registries.Registries;
@@ -20,6 +21,9 @@ public class ItemInit {
                         ITEMS.getEntries().forEach((registryObject) -> output.accept(new ItemStack(registryObject.get())));
                     }).title(Component.translatable("itemGroup." + Constants.MODID + ".tab"))
             .build());
+
+    public static final RegistryObject<Item> STONE_TALUS_SPAWN_EGG = ITEMS.register("stone_talus_spawn_egg", () ->
+            new COTWSpawnEggItem(EntityInit.STONE_TALUS, 14405058, 7643954, getItemProperties()));
 
     public static Item.Properties getItemProperties() {
         return new Item.Properties();

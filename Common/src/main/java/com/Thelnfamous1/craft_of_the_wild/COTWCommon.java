@@ -1,8 +1,8 @@
 package com.Thelnfamous1.craft_of_the_wild;
 
-import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
-import com.Thelnfamous1.craft_of_the_wild.init.ItemInit;
-import com.Thelnfamous1.craft_of_the_wild.init.BlockInit;
+import com.Thelnfamous1.craft_of_the_wild.init.*;
+import com.Thelnfamous1.craft_of_the_wild.item.COTWSpawnEggItem;
+import com.Thelnfamous1.craft_of_the_wild.mixin.SpawnEggItemAccessor;
 
 // This class is part of the common project meaning it is shared between all supported loaders. Code written here can only
 // import and access the vanilla codebase, libraries used by vanilla, and optionally third party libraries that provide
@@ -17,5 +17,12 @@ public class COTWCommon {
         ItemInit.loadClass();
         BlockInit.loadClass();
         EntityInit.loadClass();
+        SensorInit.loadClass();
+        MemoryModuleInit.loadClass();
+    }
+
+    public static void registerSpawnEggs() {
+        COTWSpawnEggItem.getEggs()
+                .forEach(egg -> SpawnEggItemAccessor.craft_of_the_wild$getBY_ID().put(egg.type(), egg));
     }
 }

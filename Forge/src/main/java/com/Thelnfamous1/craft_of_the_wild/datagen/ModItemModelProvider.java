@@ -1,6 +1,7 @@
 package com.Thelnfamous1.craft_of_the_wild.datagen;
 
 import com.Thelnfamous1.craft_of_the_wild.Constants;
+import com.Thelnfamous1.craft_of_the_wild.item.COTWSpawnEggItem;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -28,6 +29,11 @@ public class ModItemModelProvider extends ItemModelProvider {
         // Stream.of()
         //         .map(Supplier::get)
         //         .forEach(this::simpleBlockItemModel);
+        COTWSpawnEggItem.getEggs().forEach(this::spawnEgg);
+    }
+
+    protected ItemModelBuilder spawnEgg(Item item) {
+        return withExistingParent(getName(item), mcLoc("item/template_spawn_egg"));
     }
 
     protected ItemModelBuilder simpleBlockItemModel(Block block) {

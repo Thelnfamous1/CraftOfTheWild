@@ -1,5 +1,10 @@
 package com.Thelnfamous1.craft_of_the_wild.platform.services;
 
+import com.Thelnfamous1.craft_of_the_wild.entity.MultipartEntity;
+import com.Thelnfamous1.craft_of_the_wild.entity.PartEntityController;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+
 public interface IPlatformHelper {
 
     /**
@@ -33,4 +38,6 @@ public interface IPlatformHelper {
 
         return isDevelopmentEnvironment() ? "development" : "production";
     }
+
+    <P extends LivingEntity & MultipartEntity> PartEntityController<? extends Entity> makePartEntityController(P parent, PartEntityController.Info... infos);
 }

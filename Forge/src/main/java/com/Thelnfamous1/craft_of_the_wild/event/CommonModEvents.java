@@ -1,9 +1,8 @@
 package com.Thelnfamous1.craft_of_the_wild.event;
 
+import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
-import com.Thelnfamous1.craft_of_the_wild.item.COTWSpawnEggItem;
-import com.Thelnfamous1.craft_of_the_wild.mixin.SpawnEggItemAccessor;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -20,7 +19,6 @@ public class CommonModEvents {
 
     @SubscribeEvent
     public static void commonSetup(FMLCommonSetupEvent event){
-        event.enqueueWork(() -> COTWSpawnEggItem.getEggs()
-                .forEach(egg -> SpawnEggItemAccessor.craft_of_the_wild$getBY_ID().put(egg.type(), egg)));
+        event.enqueueWork(COTWCommon::registerSpawnEggs);
     }
 }
