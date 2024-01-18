@@ -76,7 +76,7 @@ import java.util.Optional;
 import java.util.OptionalInt;
 
 public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements SmartBrainOwner<StoneTalus>, MultipartEntity {
-    public static final float STONE_TALUS_SCALE = 7F / 3F;
+    public static final float SCALE = 7F / 3F;
     protected static final EntityDataAccessor<OptionalInt> DATA_ATTACK_TYPE_ID = SynchedEntityData.defineId(StoneTalus.class, EntityDataSerializers.OPTIONAL_UNSIGNED_INT);
     protected static final EntityDataAccessor<Integer> DATA_LAST_POSE_CHANGE_TICK = SynchedEntityData.defineId(StoneTalus.class, EntityDataSerializers.INT);
     protected static final EntityDataAccessor<Boolean> DATA_BATTLE = SynchedEntityData.defineId(StoneTalus.class, EntityDataSerializers.BOOLEAN);
@@ -94,13 +94,13 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
         this.setMaxUpStep(1.0F);
         this.xpReward = 60;
         this.partEntityController = Services.PLATFORM.makePartEntityController(this,
-                new PartEntityController.Info("weak_point", 0.6875F, 0.6875F, true, 0, 2.9375, 0),
-                new PartEntityController.Info("head", 3.125F, 1.125F, true, 0, 1.8125, 0),
-                new PartEntityController.Info("body", 2.625F, 1.0625F, true, 0, 0.75, 0),
-                new PartEntityController.Info("leftArm", 1.125F, 1.5625F, true, -1.125, 0, 0),
-                new PartEntityController.Info("rightArm", 1.125F, 1.5625F, true, 1.125, 0, 0),
-                new PartEntityController.Info("leftLeg", 0.5625F, 0.75F, true, -0.25, 0, 0),
-                new PartEntityController.Info("rightLeg", 0.5625F, 0.75F, true, 0.25, 0, 0));
+                new PartEntityController.Info("weak_point", 0.6875F, 0.6875F, true, 0, 2.9375, 0, StoneTalus.SCALE),
+                new PartEntityController.Info("head", 3.125F, 1.125F, true, 0, 1.8125, 0, StoneTalus.SCALE),
+                new PartEntityController.Info("body", 2.625F, 1.0625F, true, 0, 0.75, 0, StoneTalus.SCALE),
+                new PartEntityController.Info("leftArm", 1.125F, 1.5625F, true, -1.125, 0, 0, StoneTalus.SCALE),
+                new PartEntityController.Info("rightArm", 1.125F, 1.5625F, true, 1.125, 0, 0, StoneTalus.SCALE),
+                new PartEntityController.Info("leftLeg", 0.5625F, 0.75F, true, -0.25, 0, 0, StoneTalus.SCALE),
+                new PartEntityController.Info("rightLeg", 0.5625F, 0.75F, true, 0.25, 0, 0, StoneTalus.SCALE));
         this.partEntities = this.partEntityController.getParts().toArray(Entity[]::new);
         // Forge: Fix MC-158205: Make sure part ids are successors of parent mob id
         this.setId(EntityAccessor.craft_of_the_wild$getENTITY_COUNTER().getAndAdd(this.partEntities.length + 1) + 1);
@@ -330,6 +330,51 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
         return BrainUtils.getTargetOfEntity(this);
     }
 
+
+
+    @Override
+    public @Nullable StoneTalusAttackType getCurrentAttackType() {
+        if(!this.level().isClientSide){
+            return this.currentAttackType;
+        } else{
+            OptionalInt id = this.entityData.get(DATA_ATTACK_TYPE_ID);
+            return id.isPresent() ? StoneTalusAttackType.byId(id.getAsInt()) : null;
+        }
+    }
+
+    @Override
+    public void setCurrentAttackType(@Nullable StoneTalusAttackType attackType) {
+        //Constants.LOG.info("Set current attack type to {} for {}", attackType == null ? null : attackType.getSerializedName(), this.getName().getString());
+        this.currentAttackType = attackType;
+        this.entityData.set(DATA_ATTACK_TYPE_ID, attackType == null ? OptionalInt.empty() : OptionalInt.of(attackType.getId()));
+    }
+
+    @Override
+    protected void playAttackSound(StoneTalusAttackType currentAttackType) {
+        if(!this.level().isClientSide){
+            if(currentAttackType.getDamageMode() == DamageMode.AREA_OF_EFFECT){
+                this.playSound(SoundEvents.GENERIC_EXPLODE, 4.0F, (1.0F + (this.level().random.nextFloat() - this.level().random.nextFloat()) * 0.2F) * 0.7F);
+            } else{
+                this.playSound(SoundEvents.IRON_GOLEM_ATTACK);
+            }
+        }
+    }
+
+    @Override
+    protected double getAttackRadius(StoneTalusAttackType currentAttackType) {
+        switch (currentAttackType){
+            case HEADBUTT -> {
+                return 3.5;
+            }
+            case POUND, PUNCH -> {
+                return 1.5;
+            }
+            default -> {
+                return 0;
+            }
+        }
+    }
+
     @Override
     protected StoneTalusAttackType selectAttackType(Entity target) {
         int nextInt = this.level().random.nextInt(9);
@@ -505,7 +550,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
                 new FirstApplicableBehaviour<StoneTalus>(
                         new SetAttackTarget<>(false)
                                 .targetFinder(talus -> Optional.ofNullable(BrainUtils.getMemory(talus, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER))
-                                        .filter(player -> player.closerThan(talus, 5))
+                                        .filter(player -> player.closerThan(talus, COTWUtil.getHitboxAdjustedDistance(talus, player, 5)))
                                         .orElse(null)),
                         new SetRetaliateTarget<>()
                                 .alertAlliesWhen((talus, target) -> true)
@@ -561,38 +606,5 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
                             .requireAndWipeMemoriesOnUse(MemoryModuleInit.IS_SLEEPING.get())
             );
         });
-    }
-
-    @Override
-    public @Nullable StoneTalusAttackType getCurrentAttackType() {
-        if(!this.level().isClientSide){
-            return this.currentAttackType;
-        } else{
-            OptionalInt id = this.entityData.get(DATA_ATTACK_TYPE_ID);
-            return id.isPresent() ? StoneTalusAttackType.byId(id.getAsInt()) : null;
-        }
-    }
-
-    @Override
-    public void setCurrentAttackType(@Nullable StoneTalusAttackType attackType) {
-        //Constants.LOG.info("Set current attack type to {} for {}", attackType == null ? null : attackType.getSerializedName(), this.getName().getString());
-        this.currentAttackType = attackType;
-        this.entityData.set(DATA_ATTACK_TYPE_ID, attackType == null ? OptionalInt.empty() : OptionalInt.of(attackType.getId()));
-    }
-
-    @Override
-    protected void playAttackSound(StoneTalusAttackType currentAttackType) {
-        if(!this.level().isClientSide){
-            if(currentAttackType.getDamageMode() == DamageMode.AREA_OF_EFFECT){
-                this.playSound(SoundEvents.GENERIC_EXPLODE, 4.0F, (1.0F + (this.level().random.nextFloat() - this.level().random.nextFloat()) * 0.2F) * 0.7F);
-            } else{
-                this.playSound(SoundEvents.IRON_GOLEM_ATTACK);
-            }
-        }
-    }
-
-    @Override
-    protected double getAttackRadius() {
-        return 1.5;
     }
 }

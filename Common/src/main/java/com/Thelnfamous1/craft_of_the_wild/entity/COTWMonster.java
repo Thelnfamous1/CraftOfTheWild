@@ -45,7 +45,8 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
         this.playAttackSound(currentAttackType);
         switch (currentAttackType.getDamageMode()){
             case AREA_OF_EFFECT -> {
-                AABB attackBox = this.createAttackBox();
+                AABB attackBox = this.createAttackBox(currentAttackType);
+                COTWUtil.sendHitboxParticles(attackBox, this.level());
                 if(!this.level().isClientSide){
                     List<LivingEntity> targets = this.level().getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT, this, attackBox);
                     targets.forEach(target -> this.doHurtAreaOfEffectTarget(target, currentAttackType.getBaseDamageModifier()));
@@ -74,15 +75,15 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
         }
     }
 
-    protected AABB createAttackBox() {
-        double attackRadius = this.getAttackRadius();
-        Vec3 baseOffset = new Vec3(0.0D, 0.0D, this.getBbWidth() * 0.5F).yRot(-this.getYHeadRot() * Mth.DEG_TO_RAD);
-        Vec3 attackOffset = new Vec3(0.0D, 0.0D, attackRadius * this.getScale()).yRot(-this.getYHeadRot() * Mth.DEG_TO_RAD);
+    protected AABB createAttackBox(T currentAttackType) {
+        double attackRadius = this.getAttackRadius(currentAttackType);
+        Vec3 baseOffset = new Vec3(0.0D, 0.0D, this.getBbWidth() * 0.5F).yRot(-this.getYRot() * Mth.DEG_TO_RAD);
+        Vec3 attackOffset = new Vec3(0.0D, 0.0D, attackRadius * this.getScale()).yRot(-this.getYRot() * Mth.DEG_TO_RAD);
         double attackSize = attackRadius * 2;
-        return AABB.ofSize(this.getBoundingBox().getCenter().add(baseOffset).add(attackOffset), attackSize, attackSize, attackSize);
+        return AABB.ofSize(this.position().add(0, attackRadius, 0).add(baseOffset).add(attackOffset), attackSize, attackSize, attackSize);
     }
 
-    protected abstract double getAttackRadius();
+    protected abstract double getAttackRadius(T currentAttackType);
 
     // Largely the same as Mob#doHurtTarget, but with adjustments for area of effect attacks and damage scaling
     protected void doHurtAreaOfEffectTarget(Entity target, double baseDamageModifier){
@@ -115,7 +116,12 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
 
     @Override
     public double getMeleeAttackRangeSqr(LivingEntity target) {
-        return Mth.square(COTWUtil.getHitboxAdjustedDistance(this, target, this.getAttackRadius()));
+        T currentAttackType = this.getCurrentAttackType();
+        if(currentAttackType != null){
+            return Mth.square(COTWUtil.getHitboxAdjustedDistance(this, target, this.getAttackRadius(currentAttackType) * 2));
+        } else{
+            return super.getMeleeAttackRangeSqr(target);
+        }
     }
 
     @Override

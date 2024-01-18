@@ -26,7 +26,7 @@ public class EntityInit {
     public static final RegistryObject<EntityType<StoneTalus>> STONE_TALUS = registerEntity("stone_talus", () ->
             EntityType.Builder.of(StoneTalus::new, MobCategory.MONSTER)
                     .fireImmune()
-                    .sized(3.125F, 2.9375F)
+                    .sized(3.125F * StoneTalus.SCALE, 2.9375F * StoneTalus.SCALE)
                     .clientTrackingRange(10),
             StoneTalus::createAttributes);
 

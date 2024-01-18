@@ -91,6 +91,7 @@ public class PartEntityController<T extends Entity> {
         void tick(T part);
     }
 
-    public record Info(String name, float width, float height, boolean bodyPart, double xOffset, double yOffset, double zOffset) {
+    public record Info(String name, float width, float height, boolean bodyPart, double xOffset, double yOffset, double zOffset,
+                       float scale) {
     }
 }

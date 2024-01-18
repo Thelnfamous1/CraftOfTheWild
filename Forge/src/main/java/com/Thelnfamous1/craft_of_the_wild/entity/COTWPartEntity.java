@@ -19,7 +19,7 @@ public class COTWPartEntity<T extends LivingEntity & MultipartEntity> extends Pa
     public COTWPartEntity(T parent, PartEntityController.Info info) {
         super(parent);
         this.info = info;
-        this.size = EntityDimensions.scalable(info.width(), info.height());
+        this.size = EntityDimensions.scalable(info.width(), info.height()).scale(info.scale());
         this.refreshDimensions();
     }
 
@@ -29,9 +29,10 @@ public class COTWPartEntity<T extends LivingEntity & MultipartEntity> extends Pa
         float yRotRadians = -yRot * Mth.DEG_TO_RAD;
         float cos = Mth.cos(yRotRadians);
         float sin = Mth.sin(yRotRadians);
-        double xOffset = part.info.xOffset() * (double)cos + part.info.zOffset() * (double)sin;
-        double zOffset = part.info.zOffset() * (double)cos - part.info.xOffset() * (double)sin;
-        part.setPos(parent.getX() + xOffset, parent.getY() + part.info.yOffset(), parent.getZ() + zOffset);
+        double xOffset = (part.info.xOffset() * (double)cos + part.info.zOffset() * (double)sin) * parent.getScale() * part.info.scale();
+        double yOffset = part.info.yOffset() * parent.getScale() * part.info.scale();
+        double zOffset = (part.info.zOffset() * (double)cos - part.info.xOffset() * (double)sin) * parent.getScale() * part.info.scale();
+        part.setPos(parent.getX() + xOffset, parent.getY() + yOffset, parent.getZ() + zOffset);
     }
 
     public PartEntityController.Info getInfo(){
