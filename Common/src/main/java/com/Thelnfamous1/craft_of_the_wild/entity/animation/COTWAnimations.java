@@ -16,6 +16,8 @@ public class COTWAnimations {
     public static RawAnimation DESPAWN = RawAnimation.begin().thenPlay("despawn");
 
     public static RawAnimation SLEEP = RawAnimation.begin().thenLoop("sleep");
+
+    public static RawAnimation DEATH = RawAnimation.begin().thenPlay("death");
     public static RawAnimation STONE_TALUS_POUND = RawAnimation.begin().thenPlay("Move 1");
     public static RawAnimation STONE_TALUS_THROW = RawAnimation.begin().thenPlay("Move 2");
     public static RawAnimation STONE_TALUS_HEADBUTT = RawAnimation.begin().thenPlay("Move 3");
@@ -37,15 +39,17 @@ public class COTWAnimations {
     public static AnimationController<StoneTalus> poseController(StoneTalus talus) {
         return new AnimationController<>(talus, "Pose", 0, state -> {
             if (talus.isInsideGround()) {
-                if (talus.getPose() == Pose.DIGGING) {
+                if (talus.hasPose(Pose.DIGGING)) {
                     talus.clientDiggingParticles(state);
                     return state.setAndContinue(DESPAWN);
-                } else if (talus.getPose() == Pose.EMERGING) {
+                } else if (talus.hasPose(Pose.EMERGING)) {
                     talus.clientDiggingParticles(state);
                     return state.setAndContinue(SPAWN);
-                } else if (talus.getPose() == Pose.SLEEPING) {
+                } else if (talus.hasPose(Pose.SLEEPING)) {
                     return state.setAndContinue(SLEEP);
                 }
+            } else if(talus.hasPose(Pose.DYING)){
+                state.setAndContinue(DEATH);
             }
             return PlayState.STOP;
         });

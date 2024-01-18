@@ -90,6 +90,7 @@ public class StoneTalus extends Monster implements GeoEntity, SmartBrainOwner<St
     private final Entity[] subEntities;
     private StoneTalusAttackType currentAttackType = StoneTalusAttackType.NONE;
     private final PartEntityController<? extends Entity> partEntityController;
+    private int talusDeathTime;
 
     public StoneTalus(EntityType<? extends StoneTalus> type, Level level) {
         super(type, level);
@@ -414,8 +415,18 @@ public class StoneTalus extends Monster implements GeoEntity, SmartBrainOwner<St
         this.entityData.set(DATA_LAST_POSE_CHANGE_TICK, lastPoseChangeTick);
     }
 
+    @Override
+    protected void tickDeath() {
+        ++this.talusDeathTime;
+        // TODO: Implement death time
+        if (this.talusDeathTime >= 100 && !this.level().isClientSide() && !this.isRemoved()) {
+            this.level().broadcastEntityEvent(this, (byte)60);
+            this.remove(RemovalReason.KILLED);
+        }
+    }
+
     public boolean refuseToMove(){
-        return this.isInsideGround() || this.getCurrentAttackType() != StoneTalusAttackType.NONE;
+        return this.isInsideGround() || this.getCurrentAttackType() != StoneTalusAttackType.NONE || this.isDeadOrDying();
     }
 
     @Override
