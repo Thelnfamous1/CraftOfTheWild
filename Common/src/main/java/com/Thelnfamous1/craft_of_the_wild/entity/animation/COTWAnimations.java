@@ -26,7 +26,7 @@ public class COTWAnimations {
     public static AnimationController<StoneTalus> moveController(StoneTalus talus) {
         return new AnimationController<>(talus, "Move", 0, state -> {
             if(!talus.refuseToMove()){
-                if (state.isMoving()) {
+                if (talus.isWalking()) {
                     return state.setAndContinue(WALK);
                 } else{
                     return state.setAndContinue(IDLE);
@@ -38,18 +38,16 @@ public class COTWAnimations {
 
     public static AnimationController<StoneTalus> poseController(StoneTalus talus) {
         return new AnimationController<>(talus, "Pose", 0, state -> {
-            if (talus.isInsideGround()) {
-                if (talus.hasPose(Pose.DIGGING)) {
-                    talus.clientDiggingParticles(state);
-                    return state.setAndContinue(DESPAWN);
-                } else if (talus.hasPose(Pose.EMERGING)) {
-                    talus.clientDiggingParticles(state);
-                    return state.setAndContinue(SPAWN);
-                } else if (talus.hasPose(Pose.SLEEPING)) {
-                    return state.setAndContinue(SLEEP);
-                }
+            if (talus.hasPose(Pose.DIGGING)) {
+                talus.clientDiggingParticles(state);
+                return state.setAndContinue(DESPAWN);
+            } else if (talus.hasPose(Pose.EMERGING)) {
+                talus.clientDiggingParticles(state);
+                return state.setAndContinue(SPAWN);
+            } else if (talus.hasPose(Pose.SLEEPING)) {
+                return state.setAndContinue(SLEEP);
             } else if(talus.hasPose(Pose.DYING)){
-                state.setAndContinue(DEATH);
+                return state.setAndContinue(DEATH);
             }
             return PlayState.STOP;
         });
@@ -57,7 +55,7 @@ public class COTWAnimations {
 
     public static AnimationController<StoneTalus> attackController(StoneTalus talus) {
         return new AnimationController<>(talus, "Attack", 0, state -> {
-            if (talus.isAttackAnimationInProgress()){
+            if (!talus.hasPose(Pose.DYING) && talus.getCurrentAttackType() != null && talus.isAttackAnimationInProgress()){
                 switch (talus.getCurrentAttackType()){
                     case POUND -> {
                         return state.setAndContinue(STONE_TALUS_POUND);

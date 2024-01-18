@@ -39,7 +39,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
@@ -47,7 +46,6 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
@@ -68,29 +66,28 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
 import net.tslat.smartbrainlib.util.BrainUtils;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalInt;
 
-public class StoneTalus extends Monster implements GeoEntity, SmartBrainOwner<StoneTalus>, AnimatedAttacker<StoneTalusAttackType>, MultipartEntity {
-    private static final EntityDataAccessor<Byte> DATA_ATTACK_TYPE_ID = SynchedEntityData.defineId(StoneTalus.class, EntityDataSerializers.BYTE);
-    public static final EntityDataAccessor<Integer> DATA_LAST_ATTACK_TICK = SynchedEntityData.defineId(StoneTalus.class, EntityDataSerializers.INT);
-    public static final EntityDataAccessor<Integer> DATA_LAST_POSE_CHANGE_TICK = SynchedEntityData.defineId(StoneTalus.class, EntityDataSerializers.INT);
-    public static final EntityDataAccessor<Boolean> DATA_BATTLE = SynchedEntityData.defineId(StoneTalus.class, EntityDataSerializers.BOOLEAN);
+public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements SmartBrainOwner<StoneTalus>, MultipartEntity {
+    public static final float STONE_TALUS_SCALE = 7F / 3F;
+    protected static final EntityDataAccessor<OptionalInt> DATA_ATTACK_TYPE_ID = SynchedEntityData.defineId(StoneTalus.class, EntityDataSerializers.OPTIONAL_UNSIGNED_INT);
+    protected static final EntityDataAccessor<Integer> DATA_LAST_POSE_CHANGE_TICK = SynchedEntityData.defineId(StoneTalus.class, EntityDataSerializers.INT);
+    protected static final EntityDataAccessor<Boolean> DATA_BATTLE = SynchedEntityData.defineId(StoneTalus.class, EntityDataSerializers.BOOLEAN);
+    protected static final EntityDataAccessor<Boolean> DATA_WALKING = SynchedEntityData.defineId(StoneTalus.class, EntityDataSerializers.BOOLEAN);
     public static final int EMERGE_TICKS = COTWUtil.secondsToTicks(2.8333F);
     public static final int DIG_TICKS = COTWUtil.secondsToTicks(6.2083F);
-    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-    private final Entity[] subEntities;
-    private StoneTalusAttackType currentAttackType = StoneTalusAttackType.NONE;
+    public static final int DEATH_TICKS = COTWUtil.secondsToTicks(2.5F);
+    private final Entity[] partEntities;
     private final PartEntityController<? extends Entity> partEntityController;
-    private int talusDeathTime;
+    @Nullable
+    private StoneTalusAttackType currentAttackType;
 
     public StoneTalus(EntityType<? extends StoneTalus> type, Level level) {
         super(type, level);
@@ -104,22 +101,22 @@ public class StoneTalus extends Monster implements GeoEntity, SmartBrainOwner<St
                 new PartEntityController.Info("rightArm", 1.125F, 1.5625F, true, 1.125, 0, 0),
                 new PartEntityController.Info("leftLeg", 0.5625F, 0.75F, true, -0.25, 0, 0),
                 new PartEntityController.Info("rightLeg", 0.5625F, 0.75F, true, 0.25, 0, 0));
-        this.subEntities = this.partEntityController.getParts().toArray(Entity[]::new);
+        this.partEntities = this.partEntityController.getParts().toArray(Entity[]::new);
         // Forge: Fix MC-158205: Make sure part ids are successors of parent mob id
-        this.setId(EntityAccessor.craft_of_the_wild$getENTITY_COUNTER().getAndAdd(this.subEntities.length + 1) + 1);
+        this.setId(EntityAccessor.craft_of_the_wild$getENTITY_COUNTER().getAndAdd(this.partEntities.length + 1) + 1);
     }
 
     @Override
-    public Entity[] getSubEntities() {
-        return this.subEntities;
+    public Entity[] getPartEntities() {
+        return this.partEntities;
     }
 
     @Override
     public void setId(int pId) {
         super.setId(pId);
         // Forge: Fix MC-158205: Set part ids to successors of parent mob id
-        for (int i = 0; i < this.subEntities.length; i++)
-            this.subEntities[i].setId(pId + i + 1);
+        for (int idx = 0; idx < this.partEntities.length; idx++)
+            this.partEntities[idx].setId(pId + idx + 1);
     }
 
     public static AttributeSupplier.Builder createAttributes(){
@@ -155,6 +152,11 @@ public class StoneTalus extends Monster implements GeoEntity, SmartBrainOwner<St
     }
 
     @Override
+    public boolean isPushable() {
+        return !this.isInsideGround() && super.isPushable();
+    }
+
+    @Override
     public boolean checkSpawnObstruction(LevelReader pLevel) {
         return super.checkSpawnObstruction(pLevel) && pLevel.noCollision(this, this.getType().getDimensions().makeBoundingBox(this.position()));
     }
@@ -180,7 +182,7 @@ public class StoneTalus extends Monster implements GeoEntity, SmartBrainOwner<St
 
     @Override
     public boolean canDisableShield() {
-        return true;
+        return this.getCurrentAttackType() == StoneTalusAttackType.PUNCH;
     }
 
     @Override
@@ -207,17 +209,17 @@ public class StoneTalus extends Monster implements GeoEntity, SmartBrainOwner<St
     }
 
     @Override
-    public boolean isPushable() {
-        return !this.isInsideGround() && super.isPushable();
+    public float getWalkTargetValue(BlockPos pPos, LevelReader pLevel) {
+        return 0.0F;
     }
 
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(DATA_ATTACK_TYPE_ID, (byte)StoneTalusAttackType.NONE.getId());
-        this.entityData.define(DATA_LAST_ATTACK_TICK, 0);
+        this.entityData.define(DATA_ATTACK_TYPE_ID, OptionalInt.empty());
         this.entityData.define(DATA_LAST_POSE_CHANGE_TICK, 0);
         this.entityData.define(DATA_BATTLE, false);
+        this.entityData.define(DATA_WALKING, false);
     }
 
     @Override
@@ -231,6 +233,14 @@ public class StoneTalus extends Monster implements GeoEntity, SmartBrainOwner<St
 
     public void setBattle(boolean battle){
         this.entityData.set(DATA_BATTLE, battle);
+    }
+
+    public boolean isWalking(){
+        return this.entityData.get(DATA_WALKING);
+    }
+
+    protected void setIsWalking(boolean isWalking){
+        this.entityData.set(DATA_WALKING, isWalking);
     }
 
     @Override
@@ -276,15 +286,6 @@ public class StoneTalus extends Monster implements GeoEntity, SmartBrainOwner<St
         if (this.refuseToMove()) {
             this.clampHeadRotationToBody(this, this.getMaxHeadYRot());
         }
-        if(this.getCurrentAttackType() != StoneTalusAttackType.NONE){
-            if(this.isAttackAnimationInProgress()){
-                if(this.isTimeToAttack()){
-                    this.executeAttack(this.getCurrentAttackType());
-                }
-            } else if(!this.level().isClientSide){
-                this.setCurrentAttackType(StoneTalusAttackType.NONE);
-            }
-        }
     }
 
     public void clientDiggingParticles(AnimationState<StoneTalus> state) {
@@ -294,10 +295,11 @@ public class StoneTalus extends Monster implements GeoEntity, SmartBrainOwner<St
             RandomSource random = this.getRandom();
             BlockState blockStateOn = this.getBlockStateOn();
             if (blockStateOn.getRenderShape() != RenderShape.INVISIBLE) {
+                float radius = this.getBbWidth() * 0.5F;
                 for(int i = 0; i < 30; ++i) {
-                    double x = this.getX() + (double)Mth.randomBetween(random, -0.7F, 0.7F);
+                    double x = this.getX() + (double)Mth.randomBetween(random, -radius, radius);
                     double y = this.getY();
-                    double z = this.getZ() + (double)Mth.randomBetween(random, -0.7F, 0.7F);
+                    double z = this.getZ() + (double)Mth.randomBetween(random, -radius, radius);
                     this.level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, blockStateOn), x, y, z, 0.0D, 0.0D, 0.0D);
                 }
             }
@@ -323,80 +325,21 @@ public class StoneTalus extends Monster implements GeoEntity, SmartBrainOwner<St
         entityToUpdate.setYHeadRot(clampedHeadRotation);
     }
 
+    @Nullable
+    public LivingEntity getTarget() {
+        return BrainUtils.getTargetOfEntity(this);
+    }
+
     @Override
-    public boolean isAlliedTo(Entity other) {
-        if (super.isAlliedTo(other)) {
-            return true;
-        } else if (this.isAlliedToDefault(other)) {
-            return this.getTeam() == null && other.getTeam() == null;
-        } else {
-            return false;
+    protected StoneTalusAttackType selectAttackType(Entity target) {
+        int nextInt = this.level().random.nextInt(9);
+        if(nextInt == 0){ // 1 in 9 chance for headbutt
+            return StoneTalusAttackType.HEADBUTT;
+        } else if(nextInt < 5){ // 4 in 9 chance for pound
+            return StoneTalusAttackType.POUND;
+        } else{ // 4 in 9 chance for punch
+            return StoneTalusAttackType.PUNCH;
         }
-    }
-
-    protected boolean isAlliedToDefault(Entity other) {
-        return other.getType().equals(this.getType());
-    }
-
-    @Override
-    public boolean doHurtTarget(Entity target) {
-        if(!this.level().isClientSide && !this.isAttackAnimationInProgress()){
-            this.setLastAttackTick(this.tickCount);
-            if(this.getCurrentAttackType() != StoneTalusAttackType.NONE){
-                this.setCurrentAttackType(this.getRandomAttackType());
-            }
-        }
-        return false;
-    }
-
-    private StoneTalusAttackType getRandomAttackType() {
-        return StoneTalusAttackType.values()[Mth.randomBetweenInclusive(this.getRandom(), 1, StoneTalusAttackType.values().length - 1)];
-    }
-
-    protected void executeAttack(StoneTalusAttackType currentAttackType){
-        this.playAttackSound();
-        if(currentAttackType != StoneTalusAttackType.THROW){
-            AABB attackBox = this.createAttackBox();
-            Vec3 center = attackBox.getCenter();
-            Vec3 particlePos = center.subtract(0, attackBox.getYsize() * 0.5D + 0.5D, 0);
-            this.level().addParticle(ParticleTypes.EXPLOSION, particlePos.x, particlePos.y, particlePos.z, 1.0D, 0.0D, 0.0D);
-            List<LivingEntity> targets = this.level().getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT, this, attackBox);
-            targets.forEach(this::damageTarget);
-        }
-    }
-
-    protected AABB createAttackBox() {
-        double attackRadius = this.getAttackRadius();
-        Vec3 baseOffset = new Vec3(0.0D, 0.0D, this.getBbWidth() * 0.5F).yRot(-this.getYHeadRot() * Mth.DEG_TO_RAD);
-        Vec3 attackOffset = new Vec3(0.0D, 0.0D, attackRadius * this.getScale()).yRot(-this.getYHeadRot() * Mth.DEG_TO_RAD);
-        double attackSize = attackRadius * 2;
-        return AABB.ofSize(this.getBoundingBox().getCenter().add(baseOffset).add(attackOffset), attackSize, attackSize, attackSize);
-    }
-
-    protected double getAttackRadius() {
-        return 1.5;
-    }
-
-    protected boolean damageTarget(Entity target){
-        return super.doHurtTarget(target);
-    }
-
-    @Override
-    public double getMeleeAttackRangeSqr(LivingEntity target) {
-        return Mth.square(COTWUtil.getHitboxAdjustedDistance(this, target, this.getAttackRadius()));
-    }
-
-    @Override
-    public int getTicksSinceLastAttack() {
-        return this.tickCount - this.getLastAttackTick();
-    }
-
-    public int getLastAttackTick() {
-        return this.entityData.get(DATA_LAST_ATTACK_TICK);
-    }
-
-    public void setLastAttackTick(int lastAttackTick) {
-        this.entityData.set(DATA_LAST_ATTACK_TICK, lastAttackTick);
     }
 
     public int getLastPoseChangeTick() {
@@ -415,42 +358,8 @@ public class StoneTalus extends Monster implements GeoEntity, SmartBrainOwner<St
         this.entityData.set(DATA_LAST_POSE_CHANGE_TICK, lastPoseChangeTick);
     }
 
-    @Override
-    protected void tickDeath() {
-        ++this.talusDeathTime;
-        // TODO: Implement death time
-        if (this.talusDeathTime >= 100 && !this.level().isClientSide() && !this.isRemoved()) {
-            this.level().broadcastEntityEvent(this, (byte)60);
-            this.remove(RemovalReason.KILLED);
-        }
-    }
-
     public boolean refuseToMove(){
-        return this.isInsideGround() || this.getCurrentAttackType() != StoneTalusAttackType.NONE || this.isDeadOrDying();
-    }
-
-    @Override
-    public StoneTalusAttackType getCurrentAttackType() {
-        return !this.level().isClientSide ? this.currentAttackType : StoneTalusAttackType.byId(this.entityData.get(DATA_ATTACK_TYPE_ID));
-    }
-
-    @Override
-    public void setCurrentAttackType(StoneTalusAttackType attackType) {
-        Constants.LOG.info("Set current attack type to {} for {}", attackType.getSerializedName(), this.getName().getString());
-        this.currentAttackType = attackType;
-        this.entityData.set(DATA_ATTACK_TYPE_ID, (byte)attackType.getId());
-    }
-
-    @Override
-    public void handleEntityEvent(byte eventId) {
-        if(eventId == AnimatedAttacker.ATTACK_EVENT_ID){
-            this.playAttackSound();
-        }
-        super.handleEntityEvent(eventId);
-    }
-
-    private void playAttackSound() {
-        this.playSound(SoundEvents.IRON_GOLEM_ATTACK);
+        return this.isInsideGround() || this.isAttackAnimationInProgress() || this.isDeadOrDying();
     }
 
     @Nullable
@@ -475,8 +384,16 @@ public class StoneTalus extends Monster implements GeoEntity, SmartBrainOwner<St
     }
 
     @Override
+    protected int getMaxDeathTime() {
+        return DEATH_TICKS;
+    }
+
+    @Override
     public void aiStep() {
         super.aiStep();
+        if(!this.level().isClientSide){
+            this.setIsWalking(this.zza > 0);
+        }
         this.partEntityController.tick();
     }
 
@@ -487,7 +404,9 @@ public class StoneTalus extends Monster implements GeoEntity, SmartBrainOwner<St
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        return !this.level().isClientSide && this.hurt(this.partEntityController.getPart("head"), source, amount);
+        return !this.level().isClientSide && this.partEntityController.getOptionalPart("head")
+                .map(head -> this.hurt(head, source, amount))
+                .orElseGet(() -> this.reallyHurt(source, amount));
     }
 
     @Override
@@ -511,11 +430,6 @@ public class StoneTalus extends Monster implements GeoEntity, SmartBrainOwner<St
         controllers.add(COTWAnimations.moveController(this));
         controllers.add(COTWAnimations.poseController(this));
         controllers.add(COTWAnimations.attackController(this));
-    }
-
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.cache;
     }
 
     @Override
@@ -576,8 +490,8 @@ public class StoneTalus extends Monster implements GeoEntity, SmartBrainOwner<St
                 new InvalidateAttackTarget<>(),
                 new SetWalkTargetToAttackTarget<>().speedMod((talus, target) -> 1.0F),
                 new AnimatableMeleeAttack<StoneTalus>(0)
-                        .attackInterval(talus -> talus.getCurrentAttackType().getAttackAnimationLength())
-                        .whenStarting(talus -> talus.setCurrentAttackType(talus.getRandomAttackType()))
+                        .attackInterval(talus -> talus.getOptionalCurrentAttackType().map(AttackType::getAttackAnimationLength).orElse(0))
+                        .whenStarting(talus -> talus.setCurrentAttackType(talus.selectAttackType(talus.getTarget()))) // called before attackInterval
         );
     }
 
@@ -647,5 +561,38 @@ public class StoneTalus extends Monster implements GeoEntity, SmartBrainOwner<St
                             .requireAndWipeMemoriesOnUse(MemoryModuleInit.IS_SLEEPING.get())
             );
         });
+    }
+
+    @Override
+    public @Nullable StoneTalusAttackType getCurrentAttackType() {
+        if(!this.level().isClientSide){
+            return this.currentAttackType;
+        } else{
+            OptionalInt id = this.entityData.get(DATA_ATTACK_TYPE_ID);
+            return id.isPresent() ? StoneTalusAttackType.byId(id.getAsInt()) : null;
+        }
+    }
+
+    @Override
+    public void setCurrentAttackType(@Nullable StoneTalusAttackType attackType) {
+        //Constants.LOG.info("Set current attack type to {} for {}", attackType == null ? null : attackType.getSerializedName(), this.getName().getString());
+        this.currentAttackType = attackType;
+        this.entityData.set(DATA_ATTACK_TYPE_ID, attackType == null ? OptionalInt.empty() : OptionalInt.of(attackType.getId()));
+    }
+
+    @Override
+    protected void playAttackSound(StoneTalusAttackType currentAttackType) {
+        if(!this.level().isClientSide){
+            if(currentAttackType.getDamageMode() == DamageMode.AREA_OF_EFFECT){
+                this.playSound(SoundEvents.GENERIC_EXPLODE, 4.0F, (1.0F + (this.level().random.nextFloat() - this.level().random.nextFloat()) * 0.2F) * 0.7F);
+            } else{
+                this.playSound(SoundEvents.IRON_GOLEM_ATTACK);
+            }
+        }
+    }
+
+    @Override
+    protected double getAttackRadius() {
+        return 1.5;
     }
 }

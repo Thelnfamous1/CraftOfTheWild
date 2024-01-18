@@ -1,6 +1,5 @@
 package com.Thelnfamous1.craft_of_the_wild.mixin;
 
-import com.Thelnfamous1.craft_of_the_wild.entity.COTWPartEntity;
 import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalus;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -11,14 +10,11 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = StoneTalus.class, remap = false)
 public abstract class StoneTalusMixin extends Monster {
     @Shadow(remap = false)
-    public abstract Entity[] shadow$getSubEntities();
+    public abstract Entity[] shadow$getPartEntities();
 
     @Unique
     private PartEntity<?>[] craft_of_the_wild$forgeParts;
@@ -27,6 +23,7 @@ public abstract class StoneTalusMixin extends Monster {
         super(pEntityType, pLevel);
     }
 
+    /*
     @Inject(method = "setId", at = @At("RETURN"))
     private void onSetId(int pId, CallbackInfo ci){
         for(int i = 0; i < this.getParts().length; i++){
@@ -34,6 +31,7 @@ public abstract class StoneTalusMixin extends Monster {
             //Constants.LOG.info("Set id for part {} of {} to {}", part.getPartName(), this.getName().getString(), part.getId());
         }
     }
+     */
 
     @Override
     public boolean isMultipartEntity() {
@@ -43,9 +41,9 @@ public abstract class StoneTalusMixin extends Monster {
     @Override
     public @Nullable PartEntity<?>[] getParts() {
         if(this.craft_of_the_wild$forgeParts == null){
-            this.craft_of_the_wild$forgeParts = new PartEntity[this.shadow$getSubEntities().length];
+            this.craft_of_the_wild$forgeParts = new PartEntity[this.shadow$getPartEntities().length];
             for(int i = 0; i < this.craft_of_the_wild$forgeParts.length; i++){
-                PartEntity<?> subEntity = (PartEntity<?>) this.shadow$getSubEntities()[i];
+                PartEntity<?> subEntity = (PartEntity<?>) this.shadow$getPartEntities()[i];
                 this.craft_of_the_wild$forgeParts[i] = subEntity;
             }
         }

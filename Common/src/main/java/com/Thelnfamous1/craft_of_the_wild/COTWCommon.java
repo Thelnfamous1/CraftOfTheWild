@@ -3,6 +3,7 @@ package com.Thelnfamous1.craft_of_the_wild;
 import com.Thelnfamous1.craft_of_the_wild.init.*;
 import com.Thelnfamous1.craft_of_the_wild.item.COTWSpawnEggItem;
 import com.Thelnfamous1.craft_of_the_wild.mixin.SpawnEggItemAccessor;
+import net.minecraft.resources.ResourceLocation;
 
 // This class is part of the common project meaning it is shared between all supported loaders. Code written here can only
 // import and access the vanilla codebase, libraries used by vanilla, and optionally third party libraries that provide
@@ -19,10 +20,15 @@ public class COTWCommon {
         EntityInit.loadClass();
         SensorInit.loadClass();
         MemoryModuleInit.loadClass();
+        DamageTypeInit.loadClass();
     }
 
     public static void registerSpawnEggs() {
         COTWSpawnEggItem.getEggs()
                 .forEach(egg -> SpawnEggItemAccessor.craft_of_the_wild$getBY_ID().put(egg.type(), egg));
+    }
+
+    public static ResourceLocation getResourceLocation(String path) {
+        return new ResourceLocation(Constants.MODID, path);
     }
 }

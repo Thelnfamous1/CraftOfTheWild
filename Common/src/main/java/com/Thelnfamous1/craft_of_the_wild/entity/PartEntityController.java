@@ -3,10 +3,7 @@ package com.Thelnfamous1.craft_of_the_wild.entity;
 import net.minecraft.world.entity.Entity;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 public class PartEntityController<T extends Entity> {
@@ -16,6 +13,10 @@ public class PartEntityController<T extends Entity> {
     public PartEntityController(Map<String, T> partsByName, Map<String, PartTicker<T>> tickersByName){
         this.partsByName = partsByName;
         this.tickersByName = tickersByName;
+    }
+
+    public Optional<T> getOptionalPart(String name){
+        return Optional.ofNullable(this.getPart(name));
     }
 
     @Nullable
