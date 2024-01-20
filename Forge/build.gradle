@@ -105,6 +105,9 @@ def replaceProperties =
                 mod_authors: mod_author,
                 mod_description: mod_description,
                 minecraft_version_range: minecraft_version_range,
+                geckolib_version_range_forge: geckolib_version_range_forge,
+                sbl_version_range_forge: sbl_version_range_forge,
+                jade_version_range_forge: jade_version_range_forge,
                 forge_version_range: forge_version_range,
                 loader_version_range: loader_version_range]
 processResources {
