@@ -31,4 +31,8 @@ public class COTWCommon {
     public static ResourceLocation getResourceLocation(String path) {
         return new ResourceLocation(Constants.MODID, path);
     }
+
+    public static void debug(boolean debugFlag, String format, Object... args){
+        if(debugFlag) Constants.LOG.info(format, args);
+    }
 }

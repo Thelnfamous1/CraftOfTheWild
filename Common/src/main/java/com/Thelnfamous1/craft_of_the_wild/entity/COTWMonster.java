@@ -1,5 +1,7 @@
 package com.Thelnfamous1.craft_of_the_wild.entity;
 
+import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
+import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.init.DamageTypeInit;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import net.minecraft.core.particles.ParticleTypes;
@@ -27,9 +29,11 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.List;
 
 public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends Monster implements GeoEntity, AnimatedAttacker<T> {
-    public static final EntityDataAccessor<Integer> DATA_LAST_ATTACK_TICK = SynchedEntityData.defineId(COTWMonster.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Boolean> DATA_ATTACKING = SynchedEntityData.defineId(COTWMonster.class, EntityDataSerializers.BOOLEAN);
+    protected static final EntityDataAccessor<Boolean> DATA_WALKING = SynchedEntityData.defineId(COTWMonster.class, EntityDataSerializers.BOOLEAN);
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     protected int customDeathTime;
+    protected int attackTicker;
 
     public COTWMonster(EntityType<? extends Monster> $$0, Level $$1) {
         super($$0, $$1);
@@ -38,18 +42,28 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(DATA_LAST_ATTACK_TICK, 0);
+        this.entityData.define(DATA_ATTACKING, false);
+        this.entityData.define(DATA_WALKING, false);
     }
 
-    protected void executeAttack(T currentAttackType){
-        this.playAttackSound(currentAttackType);
-        switch (currentAttackType.getDamageMode()){
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> dataAccessor) {
+        super.onSyncedDataUpdated(dataAccessor);
+        if(dataAccessor.equals(DATA_ATTACKING)){
+            this.attackTicker = 0;
+        }
+    }
+
+    protected void executeAttack(T currentAttackType, AttackPoint currentAttackPoint){
+        this.playAttackSound(currentAttackType, currentAttackPoint);
+        switch (currentAttackPoint.damageMode()){
             case AREA_OF_EFFECT -> {
                 AABB attackBox = this.createAttackBox(currentAttackType);
-                COTWUtil.sendHitboxParticles(attackBox, this.level());
+                COTWCommon.debug(Constants.DEBUG_MONSTER, "Created attack box of size {} for {}", attackBox.getSize(), this);
+                if(Constants.DEBUG_MONSTER) COTWUtil.sendHitboxParticles(attackBox, this.level());
                 if(!this.level().isClientSide){
                     List<LivingEntity> targets = this.level().getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT, this, attackBox);
-                    targets.forEach(target -> this.doHurtAreaOfEffectTarget(target, currentAttackType.getBaseDamageModifier()));
+                    targets.forEach(target -> this.doHurtAreaOfEffectTarget(target, currentAttackPoint.baseDamageModifier()));
                 }
                 this.finalizeAreaOfEffectAttack(attackBox);
             }
@@ -77,8 +91,8 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
 
     protected AABB createAttackBox(T currentAttackType) {
         double attackRadius = this.getAttackRadius(currentAttackType);
-        Vec3 baseOffset = new Vec3(0.0D, 0.0D, this.getBbWidth() * 0.5F).yRot(-this.getYRot() * Mth.DEG_TO_RAD);
-        Vec3 attackOffset = new Vec3(0.0D, 0.0D, attackRadius * this.getScale()).yRot(-this.getYRot() * Mth.DEG_TO_RAD);
+        Vec3 baseOffset = COTWUtil.yRotForwardVector(this.getBbWidth() * 0.5F, this.getYHeadRot());
+        Vec3 attackOffset = COTWUtil.yRotForwardVector(attackRadius, this.getYHeadRot());
         double attackSize = attackRadius * 2;
         return AABB.ofSize(this.position().add(0, attackRadius, 0).add(baseOffset).add(attackOffset), attackSize, attackSize, attackSize);
     }
@@ -90,8 +104,8 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
         float attackDamage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
         attackDamage *= baseDamageModifier;
         float attackKnockback = (float) this.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
-        if (target instanceof LivingEntity) {
-            attackDamage += EnchantmentHelper.getDamageBonus(this.getMainHandItem(), ((LivingEntity) target).getMobType());
+        if (target instanceof LivingEntity livingTarget) {
+            attackDamage += EnchantmentHelper.getDamageBonus(this.getMainHandItem(), livingTarget.getMobType());
             attackKnockback += (float)EnchantmentHelper.getKnockbackBonus(this);
         }
 
@@ -103,8 +117,8 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
         boolean hurt = target.hurt(DamageTypeInit.mobAreaOfEffectAttack(this),
                 attackDamage);
         if (hurt) {
-            if (attackKnockback > 0.0F && target instanceof LivingEntity) {
-                ((LivingEntity) target).knockback(attackKnockback * 0.5F, Mth.sin(this.getYRot() * Mth.DEG_TO_RAD), -Mth.cos(this.getYRot() * Mth.DEG_TO_RAD));
+            if (attackKnockback > 0.0F && target instanceof LivingEntity livingTarget) {
+                livingTarget.knockback(attackKnockback * 0.5F, Mth.sin(this.getYRot() * Mth.DEG_TO_RAD), -Mth.cos(this.getYRot() * Mth.DEG_TO_RAD));
                 this.setDeltaMovement(this.getDeltaMovement().multiply(0.6, 1.0, 0.6));
             }
 
@@ -115,10 +129,33 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
     }
 
     @Override
+    public boolean isWithinMeleeAttackRange(LivingEntity target) {
+        return this.isWithinMeleeAttackRange(target, false);
+    }
+
+    protected boolean isWithinMeleeAttackRange(LivingEntity target, boolean midway) {
+        double distanceSqr = this.getPerceivedTargetDistanceSquareForMeleeAttack(target);
+        boolean isWithin = distanceSqr <= this.getMeleeAttackRangeSqr(target, midway);
+        if(isWithin && !midway){
+            COTWCommon.debug(Constants.DEBUG_MONSTER, "{} is within melee attack range of {}, distance squared is {}", target, this, distanceSqr);
+        }
+        return isWithin;
+    }
+
+    @Override
+    public double getPerceivedTargetDistanceSquareForMeleeAttack(LivingEntity target) {
+        return COTWUtil.getDistSqrBetweenHitboxes(this.getBoundingBox(), target.getBoundingBox());
+    }
+
+    @Override
     public double getMeleeAttackRangeSqr(LivingEntity target) {
+        return this.getMeleeAttackRangeSqr(target, false);
+    }
+
+    protected double getMeleeAttackRangeSqr(LivingEntity target, boolean midway){
         T currentAttackType = this.getCurrentAttackType();
         if(currentAttackType != null){
-            return Mth.square(COTWUtil.getHitboxAdjustedDistance(this, target, this.getAttackRadius(currentAttackType) * 2));
+            return Mth.square(this.getAttackRadius(currentAttackType) * (midway ? 1 : 2));
         } else{
             return super.getMeleeAttackRangeSqr(target);
         }
@@ -126,18 +163,19 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
 
     @Override
     public int getTicksSinceLastAttack() {
-        return this.tickCount - this.getLastAttackTick();
+        return this.attackTicker;
     }
 
-    public int getLastAttackTick() {
-        return this.entityData.get(DATA_LAST_ATTACK_TICK);
+    @Override
+    public boolean isAttacking() {
+        return this.entityData.get(DATA_ATTACKING);
     }
 
-    public void setLastAttackTick(int lastAttackTick) {
-        this.entityData.set(DATA_LAST_ATTACK_TICK, lastAttackTick);
+    public void setAttacking(boolean attacking) {
+        this.entityData.set(DATA_ATTACKING, attacking);
     }
 
-    protected abstract void playAttackSound(T currentAttackType);
+    protected abstract void playAttackSound(T currentAttackType, AttackPoint currentAttackPoint);
 
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
@@ -153,10 +191,20 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
         }
     }
 
+    public boolean isWalking(){
+        return this.entityData.get(DATA_WALKING);
+    }
+
+    protected void setIsWalking(boolean isWalking){
+        this.entityData.set(DATA_WALKING, isWalking);
+    }
+
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
-        tag.putShort("COTWDeathTime", (short)this.customDeathTime);
+    public void aiStep() {
+        super.aiStep();
+        if(!this.level().isClientSide){
+            this.setIsWalking(this.zza > 0);
+        }
     }
 
     @Override
@@ -165,6 +213,12 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
         if(tag.contains("COTWDeathTime", Tag.TAG_ANY_NUMERIC)){
             this.customDeathTime = tag.getShort("COTWDeathTime");
         }
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putShort("COTWDeathTime", (short)this.customDeathTime);
     }
 
     @Override
@@ -185,7 +239,7 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
     @Override
     public boolean doHurtTarget(Entity target) {
         if(!this.level().isClientSide && !this.isAttackAnimationInProgress()){
-            this.setLastAttackTick(this.tickCount);
+            this.setAttacking(true);
             if(this.getCurrentAttackType() == null){
                 this.setCurrentAttackType(this.selectAttackType(target));
             }
@@ -196,14 +250,25 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
     @Override
     public void tick() {
         super.tick();
-        if(this.getCurrentAttackType() != null){
+        T currentAttackType = this.getCurrentAttackType();
+        if(currentAttackType != null && this.isAttacking()){
             if(this.isAttackAnimationInProgress()){
-                if(this.isTimeToAttack()){
-                    this.executeAttack(this.getCurrentAttackType());
+                AttackPoint currentAttackPoint = this.getCurrentAttackPoint();
+                if(currentAttackPoint != null){
+                    this.executeAttack(currentAttackType, currentAttackPoint);
                 }
+                this.attackTicker++;
             } else if(!this.level().isClientSide){
                 this.setCurrentAttackType(null);
+                this.setAttacking(false);
             }
+        }
+    }
+
+    protected void updateCurrentAttackTypeForTarget() {
+        LivingEntity target = this.getTarget();
+        if(target != null && this.getCurrentAttackType() == null){
+            this.setCurrentAttackType(this.selectAttackType(target));
         }
     }
 

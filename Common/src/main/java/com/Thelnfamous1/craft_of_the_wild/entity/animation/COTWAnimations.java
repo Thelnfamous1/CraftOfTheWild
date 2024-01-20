@@ -25,7 +25,7 @@ public class COTWAnimations {
 
     public static AnimationController<StoneTalus> moveController(StoneTalus talus) {
         return new AnimationController<>(talus, "Move", 0, state -> {
-            if(!talus.refuseToMove()){
+            if(!talus.refuseToMove(true)){
                 if (talus.isWalking()) {
                     return state.setAndContinue(WALK);
                 } else{
@@ -55,7 +55,8 @@ public class COTWAnimations {
 
     public static AnimationController<StoneTalus> attackController(StoneTalus talus) {
         return new AnimationController<>(talus, "Attack", 0, state -> {
-            if (!talus.hasPose(Pose.DYING) && talus.getCurrentAttackType() != null && talus.isAttackAnimationInProgress()){
+            if (!talus.refuseToMove(false) && talus.isAttackAnimationInProgress()){
+                //noinspection ConstantConditions
                 switch (talus.getCurrentAttackType()){
                     case POUND -> {
                         return state.setAndContinue(STONE_TALUS_POUND);

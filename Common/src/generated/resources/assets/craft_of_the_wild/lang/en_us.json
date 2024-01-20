@@ -1,5 +1,11 @@
 {
+  "config.jade.plugin_craft_of_the_wild.attack_type": "Attack Type",
   "entity.craft_of_the_wild.stone_talus": "Stone Talus",
+  "entity.craft_of_the_wild.stone_talus.attack_type.headbutt": "Headbutt",
+  "entity.craft_of_the_wild.stone_talus.attack_type.pound": "Pound",
+  "entity.craft_of_the_wild.stone_talus.attack_type.punch": "Punch",
+  "entity.craft_of_the_wild.stone_talus.attack_type.throw": "Throw",
   "item.craft_of_the_wild.stone_talus_spawn_egg": "Stone Talus Spawn Egg",
-  "itemGroup.craft_of_the_wild.tab": "Craft Of The Wild"
+  "itemGroup.craft_of_the_wild.tab": "Craft Of The Wild",
+  "options.craft_of_the_wild.attack_type": "Attack Type"
 }

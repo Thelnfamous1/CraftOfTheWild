@@ -1,5 +1,6 @@
 package com.Thelnfamous1.craft_of_the_wild.mixin;
 
+import com.Thelnfamous1.craft_of_the_wild.entity.AnimatedAttacker;
 import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalus;
 import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalusAttackType;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,7 +18,7 @@ public abstract class PlayerMixin {
 
     @Inject(method = "blockUsingShield", at = @At("HEAD"), cancellable = true)
     private void handleBlockUsingShield(LivingEntity pEntity, CallbackInfo ci){
-        if(pEntity instanceof StoneTalus talus && talus.getCurrentAttackType() == StoneTalusAttackType.PUNCH){
+        if(pEntity instanceof StoneTalus talus && AnimatedAttacker.hasCurrentAttackType(talus, StoneTalusAttackType.PUNCH)){
             this.disableShield(true);
             ci.cancel();
         }

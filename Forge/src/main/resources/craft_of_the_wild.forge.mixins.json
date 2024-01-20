@@ -6,9 +6,11 @@
   "refmap": "${mod_id}.refmap.json",
   "mixins": [
     "PlayerMixin",
+    "RayTracingMixin",
     "StoneTalusMixin"
   ],
   "client": [
+    "DebugRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

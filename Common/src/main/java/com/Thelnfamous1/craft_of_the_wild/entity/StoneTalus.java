@@ -1,8 +1,8 @@
 package com.Thelnfamous1.craft_of_the_wild.entity;
 
+import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
-import com.Thelnfamous1.craft_of_the_wild.entity.ai.Digging;
-import com.Thelnfamous1.craft_of_the_wild.entity.ai.Emerging;
+import com.Thelnfamous1.craft_of_the_wild.entity.ai.*;
 import com.Thelnfamous1.craft_of_the_wild.entity.animation.COTWAnimations;
 import com.Thelnfamous1.craft_of_the_wild.init.MemoryModuleInit;
 import com.Thelnfamous1.craft_of_the_wild.mixin.EntityAccessor;
@@ -59,7 +59,6 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.CustomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.*;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
@@ -76,11 +75,10 @@ import java.util.Optional;
 import java.util.OptionalInt;
 
 public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements SmartBrainOwner<StoneTalus>, MultipartEntity {
-    public static final float SCALE = 7F / 3F;
+    public static final float SCALE = 1F; // desired target is 7/3
     protected static final EntityDataAccessor<OptionalInt> DATA_ATTACK_TYPE_ID = SynchedEntityData.defineId(StoneTalus.class, EntityDataSerializers.OPTIONAL_UNSIGNED_INT);
     protected static final EntityDataAccessor<Integer> DATA_LAST_POSE_CHANGE_TICK = SynchedEntityData.defineId(StoneTalus.class, EntityDataSerializers.INT);
     protected static final EntityDataAccessor<Boolean> DATA_BATTLE = SynchedEntityData.defineId(StoneTalus.class, EntityDataSerializers.BOOLEAN);
-    protected static final EntityDataAccessor<Boolean> DATA_WALKING = SynchedEntityData.defineId(StoneTalus.class, EntityDataSerializers.BOOLEAN);
     public static final int EMERGE_TICKS = COTWUtil.secondsToTicks(2.8333F);
     public static final int DIG_TICKS = COTWUtil.secondsToTicks(6.2083F);
     public static final int DEATH_TICKS = COTWUtil.secondsToTicks(2.5F);
@@ -182,7 +180,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
 
     @Override
     public boolean canDisableShield() {
-        return this.getCurrentAttackType() == StoneTalusAttackType.PUNCH;
+        return AnimatedAttacker.hasCurrentAttackType(this, StoneTalusAttackType.PUNCH);
     }
 
     @Override
@@ -196,7 +194,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
         resetDigCooldown(this);
         if (pReason == MobSpawnType.NATURAL) {
             this.setPose(Pose.SLEEPING);
-            BrainUtils.setMemory(this, MemoryModuleInit.IS_SLEEPING.get(), Unit.INSTANCE);
+            BrainUtils.setMemory(this, MemoryModuleInit.IS_SLEEPING.get(), true);
         }
 
         return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
@@ -219,7 +217,6 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
         this.entityData.define(DATA_ATTACK_TYPE_ID, OptionalInt.empty());
         this.entityData.define(DATA_LAST_POSE_CHANGE_TICK, 0);
         this.entityData.define(DATA_BATTLE, false);
-        this.entityData.define(DATA_WALKING, false);
     }
 
     @Override
@@ -235,30 +232,26 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
         this.entityData.set(DATA_BATTLE, battle);
     }
 
-    public boolean isWalking(){
-        return this.entityData.get(DATA_WALKING);
-    }
-
-    protected void setIsWalking(boolean isWalking){
-        this.entityData.set(DATA_WALKING, isWalking);
-    }
-
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        tag.putBoolean("Sleeping", this.hasPose(Pose.SLEEPING));
-        tag.putBoolean("Battle", this.isBattle());
-    }
-
-    @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
         if(tag.contains("Sleeping", Tag.TAG_ANY_NUMERIC) && tag.getBoolean("Sleeping")){
             this.setPose(Pose.SLEEPING);
         }
         if(tag.contains("Battle", Tag.TAG_ANY_NUMERIC)){
             this.setBattle(tag.getBoolean("Battle"));
         }
+        // Doing this here since SBL does not deserialize Brain NBT
+        COTWUtil.readBrainFromTag(tag, this);
+        COTWUtil.debugMemoryStatus(Constants.DEBUG_STONE_TALUS, this, MemoryModuleInit.IS_SLEEPING.get());
+        COTWUtil.debugMemoryStatus(Constants.DEBUG_STONE_TALUS, this, MemoryModuleInit.DIG_COOLDOWN.get());
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putBoolean("Sleeping", this.hasPose(Pose.SLEEPING));
+        tag.putBoolean("Battle", this.isBattle());
     }
 
     @Override
@@ -273,7 +266,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
 
     @Override
     public void travel(Vec3 pTravelVector) {
-        if (this.refuseToMove() && this.onGround()) {
+        if (this.refuseToMove(true) && this.onGround()) {
             this.setDeltaMovement(this.getDeltaMovement().multiply(0.0D, 1.0D, 0.0D));
             pTravelVector = pTravelVector.multiply(0.0D, 1.0D, 0.0D);
         }
@@ -283,7 +276,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
     @Override
     public void tick() {
         super.tick();
-        if (this.refuseToMove()) {
+        if (this.refuseToMove(true)) {
             this.clampHeadRotationToBody(this, this.getMaxHeadYRot());
         }
     }
@@ -330,7 +323,10 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
         return BrainUtils.getTargetOfEntity(this);
     }
 
-
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        BrainUtils.setTargetOfEntity(this, target);
+    }
 
     @Override
     public @Nullable StoneTalusAttackType getCurrentAttackType() {
@@ -350,9 +346,9 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
     }
 
     @Override
-    protected void playAttackSound(StoneTalusAttackType currentAttackType) {
+    protected void playAttackSound(StoneTalusAttackType currentAttackType, AttackPoint currentAttackPoint) {
         if(!this.level().isClientSide){
-            if(currentAttackType.getDamageMode() == DamageMode.AREA_OF_EFFECT){
+            if(currentAttackPoint.damageMode() == AttackPoint.DamageMode.AREA_OF_EFFECT){
                 this.playSound(SoundEvents.GENERIC_EXPLODE, 4.0F, (1.0F + (this.level().random.nextFloat() - this.level().random.nextFloat()) * 0.2F) * 0.7F);
             } else{
                 this.playSound(SoundEvents.IRON_GOLEM_ATTACK);
@@ -364,10 +360,11 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
     protected double getAttackRadius(StoneTalusAttackType currentAttackType) {
         switch (currentAttackType){
             case HEADBUTT -> {
-                return 3.5;
+                return 1.5 * SCALE * this.getScale(); // diameter = 3, scaled up by 7/3 to be 7
             }
             case POUND, PUNCH -> {
-                return 1.5;
+                return 1 * SCALE * this.getScale(); // diameter = 2, scaled up by 7/3 to be 14/3 (4 + 2/3)
+                //return 9D/14D * SCALE * this.getScale(); // diameter = 9/7, scaled up by 7/3 to be 3
             }
             default -> {
                 return 0;
@@ -403,8 +400,8 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
         this.entityData.set(DATA_LAST_POSE_CHANGE_TICK, lastPoseChangeTick);
     }
 
-    public boolean refuseToMove(){
-        return this.isInsideGround() || this.isAttackAnimationInProgress() || this.isDeadOrDying();
+    public boolean refuseToMove(boolean checkAttacking){
+        return this.isInsideGround() || this.isDeadOrDying() || checkAttacking && this.isAttackAnimationInProgress();
     }
 
     @Nullable
@@ -436,9 +433,6 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
     @Override
     public void aiStep() {
         super.aiStep();
-        if(!this.level().isClientSide){
-            this.setIsWalking(this.zza > 0);
-        }
         this.partEntityController.tick();
     }
 
@@ -451,16 +445,19 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
     public boolean hurt(DamageSource source, float amount) {
         return !this.level().isClientSide && this.partEntityController.getOptionalPart("head")
                 .map(head -> this.hurt(head, source, amount))
-                .orElseGet(() -> this.reallyHurt(source, amount));
+                .orElseGet(() -> {
+                    COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "Damaging {} with non-weakpoint damage", this);
+                    return this.reallyHurt(source, amount);
+                });
     }
 
     @Override
     public boolean hurt(Entity partEntity, DamageSource pSource, float pDamage) {
         if(partEntity == this.partEntityController.getPart("weak_point")){
-            Constants.LOG.info("Hit weakpoint for {}", this.getName().getString());
+            COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "Hit weakpoint for {}", this);
             return this.reallyHurt(pSource, pDamage);
         } else if(pSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY)){
-            Constants.LOG.info("Damaging {} with non-weakpoint damage", this.getName().getString());
+            COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "Damaging {} with non-weakpoint damage", this);
             return this.reallyHurt(pSource, pDamage);
         }
         return false;
@@ -498,14 +495,12 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
     }
 
     @Override
-    public List<Activity> getActivityPriorities() {
-        return ObjectArrayList.of(Activity.EMERGE, Activity.REST, Activity.DIG, Activity.FIGHT, Activity.IDLE);
+    public void handleAdditionalBrainSetup(SmartBrain<? extends StoneTalus> brain) {
     }
 
     @Override
-    public void handleAdditionalBrainSetup(SmartBrain<? extends StoneTalus> brain) {
-        brain.getMemories().put(MemoryModuleType.DIG_COOLDOWN, Optional.empty());
-        brain.getMemories().put(MemoryModuleInit.IS_SLEEPING.get(), Optional.empty());
+    public List<Activity> getActivityPriorities() {
+        return ObjectArrayList.of(Activity.EMERGE, Activity.REST, Activity.DIG, Activity.FIGHT, Activity.IDLE);
     }
 
     @Override
@@ -513,13 +508,15 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
         return ObjectArrayList.of(
                 new NearbyPlayersSensor<>(),
                 new NearbyLivingEntitySensor<>(),
-                new HurtBySensor<>()
+                new HurtBySensor<>(),
+                new SleepSensor<>()
         );
     }
 
     @Override
     public BrainActivityGroup<? extends StoneTalus> getCoreTasks() {
         return BrainActivityGroup.coreTasks(
+                new AdditionalMemories<>(MemoryModuleInit.DIG_COOLDOWN.get(), MemoryModuleInit.IS_SLEEPING.get()),
                 new LookAtTarget<>()
                         .stopIf(talus -> talus.getBrain().getMemory(MemoryModuleType.LOOK_TARGET).filter(pt -> pt.isVisibleBy(talus)).isEmpty())
                         .whenStopping(talus -> BrainUtils.clearMemory(talus, MemoryModuleType.LOOK_TARGET))
@@ -532,16 +529,29 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
     public BrainActivityGroup<? extends StoneTalus> getFightTasks() {
         return BrainActivityGroup.fightTasks(
                 new CustomBehaviour<>(StoneTalus::resetDigCooldown),
+                new CustomBehaviour<>(StoneTalus::updateCurrentAttackTypeForTarget),
                 new InvalidateAttackTarget<>(),
-                new SetWalkTargetToAttackTarget<>().speedMod((talus, target) -> 1.0F),
+                new COTWSetWalkTargetToAttackTarget<StoneTalus>()
+                        .isWithinAttackRange((talus, target) ->
+                                talus.isWithinMeleeAttackRange(target, true))
+                        .speedMod((talus, target) -> 1.0F),
                 new AnimatableMeleeAttack<StoneTalus>(0)
-                        .attackInterval(talus -> talus.getOptionalCurrentAttackType().map(AttackType::getAttackAnimationLength).orElse(0))
-                        .whenStarting(talus -> talus.setCurrentAttackType(talus.selectAttackType(talus.getTarget()))) // called before attackInterval
+                        .attackInterval(talus -> AnimatedAttacker.optionalCurrentAttackType(talus).map(AttackType::getAttackDuration).orElse(0) + 20)
+                        .startCondition(talus -> {
+                            LivingEntity target = talus.getTarget();
+                            if(target != null){
+                                return COTWUtil.isLookingAt(talus, target, false);
+                            } else{
+                                return false;
+                            }
+                        })
         );
     }
 
+
+
     private static void resetDigCooldown(LivingEntity entity) {
-        BrainUtils.setForgettableMemory(entity, MemoryModuleType.DIG_COOLDOWN, Unit.INSTANCE, 1200);
+        BrainUtils.setForgettableMemory(entity, MemoryModuleInit.DIG_COOLDOWN.get(), true, 1200);
     }
 
     @Override
@@ -573,9 +583,9 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
                                                 if (talus.hasPose(Pose.EMERGING)) {
                                                     talus.setPose(Pose.STANDING);
                                                     resetDigCooldown(talus);
-                                                    Constants.LOG.info("Reset dig cooldown!");
+                                                    COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "Reset dig cooldown for {}!", this);
                                                 } else{
-                                                    Constants.LOG.info("Was not in emerging pose! Actually in {} pose!", talus.getPose().name());
+                                                    COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "{} was not in emerging pose! Actually in {} pose!", this, talus.getPose().name());
                                                 }
                                             })
                             )
@@ -588,11 +598,15 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
                                             .finishDigging(talus -> {
                                                 if(talus.hasPose(Pose.DIGGING)){
                                                     talus.setPose(Pose.SLEEPING);
-                                                    BrainUtils.setMemory(talus, MemoryModuleInit.IS_SLEEPING.get(), Unit.INSTANCE);
+                                                    BrainUtils.setMemory(talus, MemoryModuleInit.IS_SLEEPING.get(), true);
+                                                    COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "Set {} to sleeping after digging!", talus);
+                                                } else{
+                                                    COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "{} was not in digging pose! Actually in {} pose!", this, talus.getPose().name());
                                                 }
                                             })
+                                            .whenStarting(talus -> COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "{} started digging!", talus))
                             )
-                            .onlyStartWithMemoryStatus(MemoryModuleType.DIG_COOLDOWN, MemoryStatus.VALUE_ABSENT)
+                            .onlyStartWithMemoryStatus(MemoryModuleInit.DIG_COOLDOWN.get(), MemoryStatus.VALUE_ABSENT)
             );
             map.put(Activity.REST,
                     new BrainActivityGroup<StoneTalus>(Activity.REST)

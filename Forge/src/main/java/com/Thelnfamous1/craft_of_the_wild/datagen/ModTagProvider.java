@@ -23,8 +23,8 @@ public class ModTagProvider {
 
     public static class Items extends TagsProvider<Item>{
 
-        public Items(PackOutput p_256596_, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
-            super(p_256596_, Registries.ITEM, lookupProvider, Constants.MODID, existingFileHelper);
+        public Items(PackOutput pGenerator, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
+            super(pGenerator, Registries.ITEM, lookupProvider, Constants.MODID, existingFileHelper);
         }
 
         @Override
