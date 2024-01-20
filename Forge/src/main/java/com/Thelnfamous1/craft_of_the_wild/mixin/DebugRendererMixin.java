@@ -10,10 +10,10 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import java.util.function.Predicate;
 
-@Mixin(value = DebugRenderer.class, remap = false)
+@Mixin(value = DebugRenderer.class)
 public class DebugRendererMixin {
 
-    @ModifyVariable(method = "getTargetedEntity", at = @At(value = "STORE", ordinal = 0), ordinal = 0, remap = false)
+    @ModifyVariable(method = "getTargetedEntity", at = @At(value = "STORE", ordinal = 0), ordinal = 0)
     private static Predicate<Entity> modifyHitResultPredicate(Predicate<Entity> value){
         if(Constants.FIX_DEBUG_UTILS_MULTIPART_ENTITIES){
             return (entity) -> !entity.isSpectator() && (entity.isPickable() && !(entity instanceof PartEntity<?>) || entity.isMultipartEntity());
