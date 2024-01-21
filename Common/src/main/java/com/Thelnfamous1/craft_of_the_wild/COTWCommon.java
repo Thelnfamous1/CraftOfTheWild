@@ -21,6 +21,7 @@ public class COTWCommon {
         SensorInit.loadClass();
         MemoryModuleInit.loadClass();
         DamageTypeInit.loadClass();
+        AttributeInit.loadClass();
     }
 
     public static void registerSpawnEggs() {

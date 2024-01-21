@@ -54,13 +54,17 @@ public class COTWUtil {
         for(int i = 0; i < 3; i++){
             if(secondMaxs[i] < firstMins[i]) {
                 double dist = secondMaxs[i] - firstMins[i];
-                distSqr += dist * dist;
+                distSqr += Mth.square(dist);
             } else if(secondMins[i] > firstMaxs[i]) {
                 double dist = secondMins[i] - firstMaxs[i];
-                distSqr += dist * dist;
+                distSqr += Mth.square(dist);
             }
         }
         return distSqr;
+    }
+
+    public static double getDistSqrBetweenHitboxes(Entity first, Entity second){
+        return getDistSqrBetweenHitboxes(first.getBoundingBox(), second.getBoundingBox());
     }
 
     public static int secondsToTicks(float seconds){
@@ -93,12 +97,12 @@ public class COTWUtil {
                         .orElse("UNREGISTERED"));
     }
 
-    public static void readBrainFromTag(CompoundTag tag, LivingEntity entity) {
-        if(tag.contains("Brain", Tag.TAG_COMPOUND)){
-            CompoundTag brainTag = tag.getCompound("Brain");
+    public static void readBrainFromTag(CompoundTag saveTag, LivingEntity entity) {
+        if(saveTag.contains("Brain", Tag.TAG_COMPOUND)){
+            CompoundTag brainTag = saveTag.getCompound("Brain");
             if(brainTag.contains("memories", Tag.TAG_COMPOUND)){
                 COTWCommon.debug(Constants.DEBUG_BRAIN_DESERIALIZATION, "Reading in NBT brain memories for {}", entity);
-                CompoundTag memoriesTag = tag.getCompound("memories");
+                CompoundTag memoriesTag = brainTag.getCompound("memories");
                 COTWCommon.debug(Constants.DEBUG_BRAIN_DESERIALIZATION, "NBT brain memories found for {}: {}", entity, memoriesTag);
                 for(MemoryModuleType<?> memoryType : entity.getBrain().getMemories().keySet()){
                     if(memoryType.getCodec().isPresent()){
@@ -108,19 +112,6 @@ public class COTWUtil {
                 }
             }
         }
-    }
-
-    public static <U> void saveBrainMemory(CompoundTag memoriesTag, LivingEntity entity, MemoryModuleType<U> memoryType){
-        memoryType.getCodec()
-                .flatMap(codec -> entity.getBrain().getMemories().get(memoryType)
-                        .flatMap(memoryValue ->
-                                codec.encodeStart(NbtOps.INSTANCE, (ExpirableValue<U>) memoryValue)
-                                        .resultOrPartial(Constants.LOG::error)))
-                .ifPresent(memoryValueTag ->{
-                    ResourceLocation key = BuiltInRegistries.MEMORY_MODULE_TYPE.getKey(memoryType);
-                    COTWCommon.debug(Constants.DEBUG_BRAIN_DESERIALIZATION, "Saved memory value {} of {} to NBT for {}", memoryValueTag, key, entity);
-                    memoriesTag.put(key.toString(), memoryValueTag);
-                });
     }
 
     public static <U> void readBrainMemory(CompoundTag memoriesTag, LivingEntity entity, MemoryModuleType<U> memoryType){
@@ -142,18 +133,40 @@ public class COTWUtil {
         }
     }
 
-    public static void saveBrainToTag(CompoundTag tag, LivingEntity entity) {
+    public static void saveBrainToTag(CompoundTag saveTag, LivingEntity entity) {
         CompoundTag brainTag = new CompoundTag();
-        tag.put("Brain", brainTag);
+        saveTag.put("Brain", brainTag);
         CompoundTag memoriesTag = new CompoundTag();
         brainTag.put("memories", memoriesTag);
         for(MemoryModuleType<?> memoryType : entity.getBrain().getMemories().keySet()){
             saveBrainMemory(memoriesTag, entity, memoryType);
         }
+        COTWCommon.debug(Constants.DEBUG_BRAIN_DESERIALIZATION, "Saved brain for {}: {}", entity, brainTag);
     }
 
-    public static Vec3 yRotForwardVector(double forward, float yRot) {
-        return new Vec3(0.0D, 0.0D, forward).yRot(-yRot * Mth.DEG_TO_RAD);
+    public static <U> void saveBrainMemory(CompoundTag memoriesTag, LivingEntity entity, MemoryModuleType<U> memoryType){
+        memoryType.getCodec()
+                .flatMap(codec -> entity.getBrain().getMemories().get(memoryType)
+                        .flatMap(memoryValue ->
+                                codec.encodeStart(NbtOps.INSTANCE, (ExpirableValue<U>) memoryValue)
+                                        .resultOrPartial(Constants.LOG::error)))
+                .ifPresent(memoryValueTag ->{
+                    ResourceLocation key = BuiltInRegistries.MEMORY_MODULE_TYPE.getKey(memoryType);
+                    COTWCommon.debug(Constants.DEBUG_BRAIN_DESERIALIZATION, "Saved memory value {} of {} to NBT for {}", memoryValueTag, key, entity);
+                    memoriesTag.put(key.toString(), memoryValueTag);
+                });
+    }
+
+    public static Vec3 yRotatedXZVector(double x, double z, float yRot) {
+        return new Vec3(x, 0.0D, z).yRot(-yRot * Mth.DEG_TO_RAD);
+    }
+
+    public static Vec3 yRotatedZVector(double z, float yRot) {
+        return yRotatedXZVector(0, z, yRot);
+    }
+
+    public static Vec3 yRotatedXVector(double x, float yRot) {
+        return yRotatedXZVector(x, 0, yRot);
     }
 
     public static boolean isLookingAt(LivingEntity looker, Entity target, boolean requireLineOfSight){

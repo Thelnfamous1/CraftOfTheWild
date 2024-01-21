@@ -1,0 +1,39 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.stonetalus",
+				"texture_width": 500,
+				"texture_height": 500,
+				"visible_bounds_width": 7,
+				"visible_bounds_height": 5.5,
+				"visible_bounds_offset": [0, 2.25, 0]
+			},
+			"bones": [
+				{
+					"name": "arm_left",
+					"pivot": [-1, 7, -2],
+					"rotation": [0, 90, 0]
+				},
+				{
+					"name": "handl",
+					"parent": "arm_left",
+					"pivot": [-7.25, 24.25, -2.25],
+					"rotation": [0, 0, 90],
+					"cubes": [
+						{"origin": [-1.25, 26.25, -11.25], "size": [18, 14, 18], "pivot": [9, 33, -2], "rotation": [-180, 0, 0], "uv": [0, 148]}
+					]
+				},
+				{
+					"name": "arm_mini2",
+					"parent": "arm_left",
+					"pivot": [-6.75, 11.75, -1.75],
+					"cubes": [
+						{"origin": [-17.22474, 2.70711, -8], "size": [11, 11, 11], "pivot": [-11, 8, -2], "rotation": [-180, 0, 75], "uv": [29, 20]}
+					]
+				}
+			]
+		}
+	]
+}

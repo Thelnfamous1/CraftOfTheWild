@@ -61,7 +61,7 @@ public class PartEntityController<T extends Entity> {
         }
 
         public Builder<T> addPart(T part){
-            if(this.nameProvider == null) throw new UnsupportedOperationException("Cannot add part without a name!");
+            if(this.nameProvider == null) throw new IllegalStateException("Cannot add part without a name!");
             return this.addPart(this.nameProvider.apply(part), part);
         }
 
@@ -77,6 +77,7 @@ public class PartEntityController<T extends Entity> {
         }
 
         public Builder<T> universalTicker(PartTicker<T> ticker){
+            if(this.partsByName.keySet().isEmpty()) throw new IllegalStateException("Cannot add a universal ticker without any added parts!");
             this.partsByName.keySet().forEach(name -> this.tickersByName.put(name, ticker));
             return this;
         }

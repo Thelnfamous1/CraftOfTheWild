@@ -1,10 +1,14 @@
 {
+  "attribute.name.craft_of_the_wild.generic.projectile_resistance": "Projectile Resistance",
   "config.jade.plugin_craft_of_the_wild.attack_type": "Attack Type",
+  "death.attack.craft_of_the_wild.stone_talus_arm": "%1$s was shot by a stony arm from %2$s",
+  "death.attack.craft_of_the_wild.stone_talus_arm.item": "%1$s was shot by a stony arm from %2$s using %3$s",
   "entity.craft_of_the_wild.stone_talus": "Stone Talus",
   "entity.craft_of_the_wild.stone_talus.attack_type.headbutt": "Headbutt",
   "entity.craft_of_the_wild.stone_talus.attack_type.pound": "Pound",
   "entity.craft_of_the_wild.stone_talus.attack_type.punch": "Punch",
   "entity.craft_of_the_wild.stone_talus.attack_type.throw": "Throw",
+  "entity.craft_of_the_wild.stone_talus_arm": "Stone Talus Arm",
   "item.craft_of_the_wild.stone_talus_spawn_egg": "Stone Talus Spawn Egg",
   "itemGroup.craft_of_the_wild.tab": "Craft Of The Wild",
   "options.craft_of_the_wild.attack_type": "Attack Type"

@@ -24,7 +24,7 @@ public class COTWAnimations {
     public static RawAnimation STONE_TALUS_PUNCH = RawAnimation.begin().thenPlay("Move 4");
 
     public static AnimationController<StoneTalus> moveController(StoneTalus talus) {
-        return new AnimationController<>(talus, "Move", 0, state -> {
+        return new AnimationController<>(talus, "Move", 10, state -> {
             if(!talus.refuseToMove(true)){
                 if (talus.isWalking()) {
                     return state.setAndContinue(WALK);

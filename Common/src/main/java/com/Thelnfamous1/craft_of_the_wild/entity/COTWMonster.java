@@ -63,17 +63,42 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
                 if(Constants.DEBUG_MONSTER) COTWUtil.sendHitboxParticles(attackBox, this.level());
                 if(!this.level().isClientSide){
                     List<LivingEntity> targets = this.level().getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT, this, attackBox);
-                    targets.forEach(target -> this.doHurtAreaOfEffectTarget(target, currentAttackPoint.baseDamageModifier()));
+                    targets.forEach(target -> this.modifiedDoHurtTarget(target, currentAttackPoint.baseDamageModifier(), true));
                 }
                 this.finalizeAreaOfEffectAttack(attackBox);
             }
             case MELEE -> {
                 LivingEntity target = this.getTarget();
                 if (target != null && this.isWithinMeleeAttackRange(target)) {
-                    super.doHurtTarget(target);
+                    this.modifiedDoHurtTarget(target, currentAttackPoint.baseDamageModifier(), false);
+                }
+            }
+            case RANGED -> {
+                LivingEntity target = this.getTarget();
+                if (target != null) {
+                    this.doRangedAttack(currentAttackType, currentAttackPoint, target);
+                } else{
+                    // shoot at a target position at a predetermined distance away from this mob's eye position
+                    Vec3 baseOffset = COTWUtil.yRotatedZVector(this.getBbWidth() * 0.5F, this.getYHeadRot());
+                    Vec3 shootVec = this.getViewVector(1.0F).normalize().scale(this.getProjectileMinimumShootRange());
+                    Vec3 targetVec = this.getEyePosition().add(baseOffset).add(shootVec);
+                    double targetX = targetVec.x;
+                    double targetY = targetVec.y;
+                    double targetZ = targetVec.z;
+                    this.doRangedAttack(currentAttackType, currentAttackPoint, targetX, targetY, targetZ);
                 }
             }
         }
+    }
+
+    public void doRangedAttack(T currentAttackType, AttackPoint currentAttackPoint, LivingEntity target){
+        this.doRangedAttack(currentAttackType, currentAttackPoint, target.getX(), target.getY() + (double)target.getEyeHeight() * 0.5D, target.getZ());
+    }
+
+    public abstract void doRangedAttack(T currentAttackType, AttackPoint currentAttackPoint, double targetX, double targetY, double targetZ);
+
+    protected double getProjectileMinimumShootRange() {
+        return 15;
     }
 
     protected void finalizeAreaOfEffectAttack(AABB attackBox) {
@@ -91,8 +116,8 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
 
     protected AABB createAttackBox(T currentAttackType) {
         double attackRadius = this.getAttackRadius(currentAttackType);
-        Vec3 baseOffset = COTWUtil.yRotForwardVector(this.getBbWidth() * 0.5F, this.getYHeadRot());
-        Vec3 attackOffset = COTWUtil.yRotForwardVector(attackRadius, this.getYHeadRot());
+        Vec3 baseOffset = COTWUtil.yRotatedZVector(this.getBbWidth() * 0.5F, this.getYHeadRot());
+        Vec3 attackOffset = COTWUtil.yRotatedZVector(attackRadius, this.getYHeadRot());
         double attackSize = attackRadius * 2;
         return AABB.ofSize(this.position().add(0, attackRadius, 0).add(baseOffset).add(attackOffset), attackSize, attackSize, attackSize);
     }
@@ -100,7 +125,7 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
     protected abstract double getAttackRadius(T currentAttackType);
 
     // Largely the same as Mob#doHurtTarget, but with adjustments for area of effect attacks and damage scaling
-    protected void doHurtAreaOfEffectTarget(Entity target, double baseDamageModifier){
+    protected void modifiedDoHurtTarget(Entity target, double baseDamageModifier, boolean isAreaOfEffect){
         float attackDamage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
         attackDamage *= baseDamageModifier;
         float attackKnockback = (float) this.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
@@ -114,7 +139,7 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
             target.setSecondsOnFire(fireAspect * 4);
         }
 
-        boolean hurt = target.hurt(DamageTypeInit.mobAreaOfEffectAttack(this),
+        boolean hurt = target.hurt(isAreaOfEffect ? DamageTypeInit.mobAreaOfEffectAttack(this) : this.level().damageSources().mobAttack(this),
                 attackDamage);
         if (hurt) {
             if (attackKnockback > 0.0F && target instanceof LivingEntity livingTarget) {
@@ -125,7 +150,10 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
             this.doEnchantDamageEffects(this, target);
             this.setLastHurtMob(target);
         }
+    }
 
+    protected boolean vanillaDoHurtTarget(Entity target){
+        return super.doHurtTarget(target);
     }
 
     @Override
@@ -144,7 +172,7 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
 
     @Override
     public double getPerceivedTargetDistanceSquareForMeleeAttack(LivingEntity target) {
-        return COTWUtil.getDistSqrBetweenHitboxes(this.getBoundingBox(), target.getBoundingBox());
+        return COTWUtil.getDistSqrBetweenHitboxes(this, target);
     }
 
     @Override
@@ -238,11 +266,16 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
 
     @Override
     public boolean doHurtTarget(Entity target) {
+        return this.startAttacking(target);
+    }
+
+    protected boolean startAttacking(Entity target) {
         if(!this.level().isClientSide && !this.isAttackAnimationInProgress()){
             this.setAttacking(true);
             if(this.getCurrentAttackType() == null){
-                this.setCurrentAttackType(this.selectAttackType(target));
+                this.setCurrentAttackType(this.selectAttackTypeForTarget(target));
             }
+            return true;
         }
         return false;
     }
@@ -267,12 +300,20 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
 
     protected void updateCurrentAttackTypeForTarget() {
         LivingEntity target = this.getTarget();
-        if(target != null && this.getCurrentAttackType() == null){
-            this.setCurrentAttackType(this.selectAttackType(target));
+        if(target != null && !this.level().isClientSide){
+            T currentAttackType = this.getCurrentAttackType();
+            if(currentAttackType == null){
+                this.setCurrentAttackType(this.selectAttackTypeForTarget(target));
+            } else if(!this.isAttackAnimationInProgress()){
+                this.adjustCurrentAttackTypeForTarget(currentAttackType, target);
+            }
         }
     }
 
-    protected abstract T selectAttackType(Entity target);
+    protected void adjustCurrentAttackTypeForTarget(T currentAttackType, LivingEntity target) {
+    }
+
+    protected abstract T selectAttackTypeForTarget(Entity target);
 
     protected abstract int getMaxDeathTime();
 }

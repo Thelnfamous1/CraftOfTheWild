@@ -36,7 +36,7 @@ public class ForgePlatformHelper implements IPlatformHelper {
         for(PartEntityController.Info info : infos){
             builder.addPart(new COTWPartEntity<>(parent, info));
         }
-        builder.universalTicker(COTWPartEntity::ticker);
+        builder.universalTicker(COTWPartEntity::basicTicker);
         return builder.build();
     }
 }

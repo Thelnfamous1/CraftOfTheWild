@@ -2,6 +2,7 @@ package com.Thelnfamous1.craft_of_the_wild.init;
 
 import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalus;
+import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalusArm;
 import com.nyfaria.craft_of_the_wild.registration.RegistrationProvider;
 import com.nyfaria.craft_of_the_wild.registration.RegistryObject;
 import net.minecraft.core.registries.Registries;
@@ -29,6 +30,13 @@ public class EntityInit {
                     .sized(3.125F * StoneTalus.SCALE, 2.9375F * StoneTalus.SCALE)
                     .clientTrackingRange(10),
             StoneTalus::createAttributes);
+
+    public static final RegistryObject<EntityType<StoneTalusArm>> STONE_TALUS_ARM = registerEntity("stone_talus_arm", () ->
+                    EntityType.Builder.<StoneTalusArm>of(StoneTalusArm::new, MobCategory.MISC)
+                            .fireImmune()
+                            .sized(1.5625F * StoneTalus.SCALE, 1.125F * StoneTalus.SCALE) // the arm will be horizontal when thrown, so flip the width/height from the part entity
+                            .clientTrackingRange(4)
+                            .updateInterval(10));
 
     private static <T extends LivingEntity> RegistryObject<EntityType<T>> registerEntity(String name, Supplier<EntityType.Builder<T>> supplier,
                                                                                          Supplier<AttributeSupplier.Builder> attributeSupplier) {

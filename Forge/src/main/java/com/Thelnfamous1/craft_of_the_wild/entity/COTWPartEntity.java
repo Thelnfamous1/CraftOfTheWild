@@ -8,6 +8,7 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,16 +24,15 @@ public class COTWPartEntity<T extends LivingEntity & MultipartEntity> extends Pa
         this.refreshDimensions();
     }
 
-    public static <T extends LivingEntity & MultipartEntity> void ticker(COTWPartEntity<T> part){
+    public static <T extends LivingEntity & MultipartEntity> void basicTicker(COTWPartEntity<T> part){
         T parent = part.getParent();
         float yRot = part.info.bodyPart() ? parent.yBodyRot : parent.getYRot();
-        float yRotRadians = -yRot * Mth.DEG_TO_RAD;
-        float cos = Mth.cos(yRotRadians);
-        float sin = Mth.sin(yRotRadians);
-        double xOffset = (part.info.xOffset() * (double)cos + part.info.zOffset() * (double)sin) * parent.getScale() * part.info.scale();
-        double yOffset = part.info.yOffset() * parent.getScale() * part.info.scale();
-        double zOffset = (part.info.zOffset() * (double)cos - part.info.xOffset() * (double)sin) * parent.getScale() * part.info.scale();
-        part.setPos(parent.getX() + xOffset, parent.getY() + yOffset, parent.getZ() + zOffset);
+        float xRot = parent.getXRot();
+        Vec3 offsetVec = new Vec3(part.info.xOffset(), part.info.yOffset(), part.info.zOffset())
+                .yRot(-yRot * Mth.DEG_TO_RAD)
+                .xRot(-xRot * Mth.DEG_TO_RAD)
+                .scale(parent.getScale() * part.info.scale());
+        part.setPos(parent.getX() + offsetVec.x, parent.getY() + offsetVec.y, parent.getZ() + offsetVec.z);
     }
 
     public PartEntityController.Info getInfo(){

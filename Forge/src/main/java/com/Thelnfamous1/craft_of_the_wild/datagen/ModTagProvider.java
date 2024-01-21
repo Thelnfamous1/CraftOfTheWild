@@ -65,6 +65,7 @@ public class ModTagProvider {
         @Override
         protected void addTags(HolderLookup.Provider pProvider) {
             this.tag(DamageTypeTags.BYPASSES_SHIELD).add(DamageTypeInit.MOB_AREA_OF_EFFECT_ATTACK);
+            this.tag(DamageTypeTags.IS_PROJECTILE).add(DamageTypeInit.STONE_TALUS_ARM);
         }
         public void populateTag(TagKey<DamageType> tag, ResourceKey<DamageType>... damageTypes){
             for (ResourceKey<DamageType> damageType : damageTypes) {
