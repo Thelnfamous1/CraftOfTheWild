@@ -2,30 +2,42 @@ package com.Thelnfamous1.craft_of_the_wild.util;
 
 import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
+import com.google.common.collect.Sets;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.Brain;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.ExpirableValue;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Predicate;
 
 public class COTWUtil {
 
@@ -176,5 +188,82 @@ public class COTWUtil {
         distanceVec = distanceVec.normalize();
         double dot = viewVec.dot(distanceVec);
         return dot > 1.0 - (Mth.square(0.025) / distanceSqr) && (!requireLineOfSight || looker.hasLineOfSight(target));
+    }
+
+    public static double getFollowRange(Mob mob) {
+        return mob.getAttributeValue(Attributes.FOLLOW_RANGE);
+    }
+
+    public static void playVanillaExplosionSound(Entity entity) {
+        entity.playSound(SoundEvents.GENERIC_EXPLODE, 4.0F, (1.0F + (entity.level().random.nextFloat() - entity.level().random.nextFloat()) * 0.2F) * 0.7F);
+    }
+
+    public static void spawnVanillaExplosionParticles(ServerLevel level, double radius, Vec3 posVec) {
+        if(radius > 2){
+            level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, posVec.x, posVec.y, posVec.z, 0, 1.0D, 0.0D, 0.0D, 1);
+        } else{
+            level.sendParticles(ParticleTypes.EXPLOSION, posVec.x, posVec.y, posVec.z, 0, 1.0D, 0.0D, 0.0D, 1);
+        }
+    }
+
+    public static ObjectArrayList<BlockPos> collectBlocksToDestroy(Level level, double x, double y, double z, float radius){
+        ObjectArrayList<BlockPos> toDestroy = new ObjectArrayList<>();
+        Set<BlockPos> set = Sets.newHashSet();
+        int size = 16;
+
+        for(int xOffset = 0; xOffset < size; ++xOffset) {
+            for(int yOffset = 0; yOffset < size; ++yOffset) {
+                for(int zOffset = 0; zOffset < size; ++zOffset) {
+                    if (xOffset == 0 || xOffset == size-1 || yOffset == 0 || yOffset == size-1 || zOffset == 0 || zOffset == size-1) {
+                        double xDist = (float)xOffset / (size-1) * 2.0F - 1.0F;
+                        double yDist = (float)yOffset / (size-1) * 2.0F - 1.0F;
+                        double zDist = (float)zOffset / (size-1) * 2.0F - 1.0F;
+                        double distance = Math.sqrt(xDist * xDist + yDist * yDist + zDist * zDist);
+                        xDist /= distance;
+                        yDist /= distance;
+                        zDist /= distance;
+                        float breakStrength = radius * (0.7F + level.random.nextFloat() * 0.6F);
+                        double targetX = x;
+                        double targetY = y;
+                        double targetZ = z;
+
+                        for(float step = 0.3F; breakStrength > 0.0F; breakStrength -= 0.22500001F) {
+                            BlockPos targetBlockPos = BlockPos.containing(targetX, targetY, targetZ);
+                            if (!level.isInWorldBounds(targetBlockPos)) {
+                                break;
+                            }
+
+                            set.add(targetBlockPos);
+
+                            targetX += xDist * (double)step;
+                            targetY += yDist * (double)step;
+                            targetZ += zDist * (double)step;
+                        }
+                    }
+                }
+            }
+        }
+
+        toDestroy.addAll(set);
+        return toDestroy;
+    }
+
+    public static void destroyBlocks(Level level, @Nullable Entity destroyer, ObjectArrayList<BlockPos> toDestroy, Predicate<BlockState> canBeDestroyed){
+        Util.shuffle(toDestroy, level.random);
+        for(BlockPos blockPos : toDestroy) {
+            BlockState blockState = level.getBlockState(blockPos);
+            if (!blockState.isAir() && canBeDestroyed.test(blockState)) {
+                level.destroyBlock(blockPos, true, destroyer);
+            }
+        }
+    }
+
+    public static void destroyBlocksInBoundingBox(AABB searchBox, Level level, @Nullable Entity destroyer, Predicate<BlockState> canDestroy) {
+        for(BlockPos blockPos : BlockPos.betweenClosed(Mth.floor(searchBox.minX), Mth.floor(searchBox.minY), Mth.floor(searchBox.minZ), Mth.floor(searchBox.maxX), Mth.floor(searchBox.maxY), Mth.floor(searchBox.maxZ))) {
+            BlockState blockState = level.getBlockState(blockPos);
+            if (!blockState.isAir() && canDestroy.test(blockState)) {
+                level.destroyBlock(blockPos, true, destroyer);
+            }
+        }
     }
 }

@@ -8,8 +8,8 @@ import com.Thelnfamous1.craft_of_the_wild.init.AttributeInit;
 import com.Thelnfamous1.craft_of_the_wild.init.MemoryModuleInit;
 import com.Thelnfamous1.craft_of_the_wild.mixin.EntityAccessor;
 import com.Thelnfamous1.craft_of_the_wild.platform.Services;
+import com.Thelnfamous1.craft_of_the_wild.util.COTWTags;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
-import com.mojang.serialization.DataResult;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.Util;
@@ -17,8 +17,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
@@ -26,12 +26,15 @@ import net.minecraft.network.protocol.game.DebugPackets;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.Unit;
+import net.minecraft.world.BossEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -50,6 +53,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
@@ -59,7 +63,6 @@ import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtAttackTarget;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.CustomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
@@ -70,7 +73,6 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
 import net.tslat.smartbrainlib.util.BrainUtils;
-import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationState;
 
@@ -91,6 +93,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
     public static final int WITHER_SHOOT_EVENT_ID = 1024;
     private final Entity[] partEntities;
     private final PartEntityController<? extends Entity> partEntityController;
+    private final ServerBossEvent bossEvent = (ServerBossEvent)(new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS)).setDarkenScreen(true);
     @Nullable
     private StoneTalusAttackType currentAttackType;
 
@@ -102,13 +105,27 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
                 new PartEntityController.Info("weakPoint", 0.6875F, 0.6875F, true, 0, 2.9375, 0, StoneTalus.SCALE),
                 new PartEntityController.Info("head", 3.125F, 1.125F, true, 0, 1.8125, 0, StoneTalus.SCALE),
                 new PartEntityController.Info("body", 2.625F, 1.0625F, true, 0, 0.75, 0, StoneTalus.SCALE),
-                new PartEntityController.Info("leftArm", 1.125F, 1.5625F, true, -2.25, 0, 0, StoneTalus.SCALE),
-                new PartEntityController.Info("rightArm", 1.125F, 1.5625F, true, 2.25, 0, 0, StoneTalus.SCALE),
+                new PartEntityController.Info("leftArm", 1.125F, 1.5625F, true, -1.6875, 0, 0, StoneTalus.SCALE),
+                new PartEntityController.Info("rightArm", 1.125F, 1.5625F, true, 1.6875, 0, 0, StoneTalus.SCALE),
                 new PartEntityController.Info("leftLeg", 0.5625F, 0.75F, true, -0.5, 0, 0, StoneTalus.SCALE),
                 new PartEntityController.Info("rightLeg", 0.5625F, 0.75F, true, 0.5, 0, 0, StoneTalus.SCALE));
         this.partEntities = this.partEntityController.getParts().toArray(Entity[]::new);
         // Forge: Fix MC-158205: Make sure part ids are successors of parent mob id
         this.setId(EntityAccessor.craft_of_the_wild$getENTITY_COUNTER().getAndAdd(this.partEntities.length + 1) + 1);
+    }
+
+    public static boolean canDestroy(BlockState blockState) {
+        return blockState.is(COTWTags.STONE_TALUS_CAN_DESTROY);
+    }
+
+    public static AttributeSupplier.Builder createAttributes(){
+        return Monster.createMonsterAttributes()
+                .add(Attributes.MAX_HEALTH, 200.0D)
+                .add(Attributes.ARMOR, 6.0D)
+                .add(Attributes.ATTACK_DAMAGE, 24.0D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
+                .add(AttributeInit.PROJECTILE_RESISTANCE.get(), 0.7D)
+                .add(Attributes.MOVEMENT_SPEED, 0.25D);
     }
 
     @Override
@@ -122,16 +139,6 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
         // Forge: Fix MC-158205: Set part ids to successors of parent mob id
         for (int idx = 0; idx < this.partEntities.length; idx++)
             this.partEntities[idx].setId(pId + idx + 1);
-    }
-
-    public static AttributeSupplier.Builder createAttributes(){
-        return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 200.0D)
-                .add(Attributes.ARMOR, 6.0D)
-                .add(Attributes.ATTACK_DAMAGE, 24.0D)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
-                .add(AttributeInit.PROJECTILE_RESISTANCE.get(), 0.7D)
-                .add(Attributes.MOVEMENT_SPEED, 0.25D);
     }
 
     @Override
@@ -245,6 +252,9 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
+        if (this.hasCustomName()) {
+            this.bossEvent.setName(this.getDisplayName());
+        }
         if(tag.contains("Sleeping", Tag.TAG_ANY_NUMERIC) && tag.getBoolean("Sleeping")){
             this.setPose(Pose.SLEEPING);
         }
@@ -348,7 +358,6 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
 
     @Override
     public void setCurrentAttackType(@Nullable StoneTalusAttackType attackType) {
-        //Constants.LOG.info("Set current attack type to {} for {}", attackType == null ? null : attackType.getSerializedName(), this.getName().getString());
         this.currentAttackType = attackType;
         this.entityData.set(DATA_ATTACK_TYPE_ID, attackType == null ? OptionalInt.empty() : OptionalInt.of(attackType.getId()));
     }
@@ -357,7 +366,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
     protected void playAttackSound(StoneTalusAttackType currentAttackType, AttackPoint currentAttackPoint) {
         if(!this.level().isClientSide){
             if(currentAttackPoint.damageMode() == AttackPoint.DamageMode.AREA_OF_EFFECT){
-                this.playSound(SoundEvents.GENERIC_EXPLODE, 4.0F, (1.0F + (this.level().random.nextFloat() - this.level().random.nextFloat()) * 0.2F) * 0.7F);
+                COTWUtil.playVanillaExplosionSound(this);
             } else if(currentAttackType == StoneTalusAttackType.THROW){
                 if (!this.isSilent()) {
                     this.level().levelEvent(null, WITHER_SHOOT_EVENT_ID, this.blockPosition(), 0);
@@ -503,6 +512,18 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
     public void aiStep() {
         super.aiStep();
         this.partEntityController.tick();
+        if (this.horizontalCollision && Services.PLATFORM.canEntityGrief(this.level(), this)) {
+            AABB searchBox = this.getBoundingBox().inflate(0.2D);
+            COTWUtil.destroyBlocksInBoundingBox(searchBox, this.level(), this, StoneTalus::canDestroy);
+        }
+    }
+
+    @Override
+    protected void finalizeAreaOfEffectAttack(AABB attackBox) {
+        super.finalizeAreaOfEffectAttack(attackBox);
+        if(!this.level().isClientSide && Services.PLATFORM.canEntityGrief(this.level(), this)){
+            COTWUtil.destroyBlocksInBoundingBox(attackBox, this.level(), this, StoneTalus::canDestroy);
+        }
     }
 
     @Override
@@ -547,11 +568,30 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
     }
 
     @Override
+    public void setCustomName(@Nullable Component customName) {
+        super.setCustomName(customName);
+        this.bossEvent.setName(this.getDisplayName());
+    }
+
+    @Override
+    public void startSeenByPlayer(ServerPlayer pPlayer) {
+        super.startSeenByPlayer(pPlayer);
+        this.bossEvent.addPlayer(pPlayer);
+    }
+
+    @Override
+    public void stopSeenByPlayer(ServerPlayer pPlayer) {
+        super.stopSeenByPlayer(pPlayer);
+        this.bossEvent.removePlayer(pPlayer);
+    }
+
+    @Override
     protected void customServerAiStep() {
         super.customServerAiStep();
         if(this.hasPose(Pose.SLEEPING) && this.tickCount % 20 == 0){
             this.heal(1.0F);
         }
+        this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
         this.tickBrain(this);
     }
 
@@ -568,6 +608,8 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
 
     @Override
     public void handleAdditionalBrainSetup(SmartBrain<? extends StoneTalus> brain) {
+        // prevents the Talus from being in idle mode initially when it shouldn't be
+        brain.setActiveActivityIfPossible(Activity.REST);
     }
 
     @Override
@@ -588,11 +630,8 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
     @Override
     public BrainActivityGroup<? extends StoneTalus> getCoreTasks() {
         return BrainActivityGroup.coreTasks(
-                new AdditionalMemories<>(MemoryModuleInit.DIG_COOLDOWN.get(), MemoryModuleInit.IS_SLEEPING.get()),
-                new LookAtTarget<>()
-                        .stopIf(talus -> talus.getBrain().getMemory(MemoryModuleType.LOOK_TARGET).filter(pt -> pt.isVisibleBy(talus)).isEmpty())
-                        .whenStopping(talus -> BrainUtils.clearMemory(talus, MemoryModuleType.LOOK_TARGET))
-                        .runFor(talus -> talus.getRandom().nextIntBetweenInclusive(40, 90)),
+                new AdditionalMemories<>(MemoryModuleInit.DIG_COOLDOWN.get()),
+                COTWSharedAi.createVanillaStyleLookAtTarget(),
                 new MoveToWalkTarget<>()
         );
     }
@@ -602,7 +641,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
         return BrainActivityGroup.fightTasks(
                 new CustomBehaviour<>(StoneTalus::resetDigCooldown),
                 new CustomBehaviour<>(StoneTalus::updateCurrentAttackTypeForTarget),
-                new InvalidateAttackTarget<>(),
+                new InvalidateAttackTarget<StoneTalus>().invalidateIf((talus, target) -> !talus.closerThan(target, COTWUtil.getHitboxAdjustedDistance(talus, target, COTWUtil.getFollowRange(talus)))),
                 new FirstApplicableBehaviour<>(
                         new LookAtAttackTarget<StoneTalus>()
                                 .startCondition(StoneTalus::isInRangedMode),
@@ -711,7 +750,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
                                         BrainUtils.setForgettableMemory(talus, MemoryModuleType.IS_EMERGING, Unit.INSTANCE, EMERGE_TICKS + 1);
                                         BrainUtils.clearMemory(talus, MemoryModuleInit.IS_SLEEPING.get());
                                     })
-                                            .startCondition(talus -> BrainUtils.hasMemory(talus, MemoryModuleType.NEAREST_VISIBLE_PLAYER))
+                                            .startCondition(talus -> BrainUtils.hasMemory(talus, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER))
                             )
                             .requireAndWipeMemoriesOnUse(MemoryModuleInit.IS_SLEEPING.get())
             );

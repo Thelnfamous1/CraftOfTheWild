@@ -6,6 +6,8 @@ import com.Thelnfamous1.craft_of_the_wild.entity.PartEntityController;
 import com.Thelnfamous1.craft_of_the_wild.platform.services.IPlatformHelper;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 
@@ -38,5 +40,10 @@ public class ForgePlatformHelper implements IPlatformHelper {
         }
         builder.universalTicker(COTWPartEntity::basicTicker);
         return builder.build();
+    }
+
+    @Override
+    public boolean canEntityGrief(Level level, Entity entity) {
+        return ForgeEventFactory.getMobGriefingEvent(level, entity);
     }
 }

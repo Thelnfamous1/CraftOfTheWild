@@ -4,6 +4,7 @@ import com.Thelnfamous1.craft_of_the_wild.entity.MultipartEntity;
 import com.Thelnfamous1.craft_of_the_wild.entity.PartEntityController;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 
 public interface IPlatformHelper {
 
@@ -40,4 +41,6 @@ public interface IPlatformHelper {
     }
 
     <P extends LivingEntity & MultipartEntity> PartEntityController<? extends Entity> makePartEntityController(P parent, PartEntityController.Info... infos);
+
+    boolean canEntityGrief(Level level, Entity entity);
 }

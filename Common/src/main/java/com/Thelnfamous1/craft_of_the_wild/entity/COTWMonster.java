@@ -4,7 +4,6 @@ import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.init.DamageTypeInit;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -78,7 +77,7 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
                 if (target != null) {
                     this.doRangedAttack(currentAttackType, currentAttackPoint, target);
                 } else{
-                    // shoot at a target position at a predetermined distance away from this mob's eye position
+                    // shoot at a target position that is a predetermined distance away from this mob's eye position
                     Vec3 baseOffset = COTWUtil.yRotatedZVector(this.getBbWidth() * 0.5F, this.getYHeadRot());
                     Vec3 shootVec = this.getViewVector(1.0F).normalize().scale(this.getProjectileMinimumShootRange());
                     Vec3 targetVec = this.getEyePosition().add(baseOffset).add(shootVec);
@@ -91,11 +90,12 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
         }
     }
 
-    public void doRangedAttack(T currentAttackType, AttackPoint currentAttackPoint, LivingEntity target){
+    protected void doRangedAttack(T currentAttackType, AttackPoint currentAttackPoint, LivingEntity target){
         this.doRangedAttack(currentAttackType, currentAttackPoint, target.getX(), target.getY() + (double)target.getEyeHeight() * 0.5D, target.getZ());
     }
 
-    public abstract void doRangedAttack(T currentAttackType, AttackPoint currentAttackPoint, double targetX, double targetY, double targetZ);
+    protected void doRangedAttack(T currentAttackType, AttackPoint currentAttackPoint, double targetX, double targetY, double targetZ){
+    }
 
     protected double getProjectileMinimumShootRange() {
         return 15;
@@ -105,12 +105,8 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
         if(!this.level().isClientSide){
             Vec3 center = attackBox.getCenter();
             double radius = attackBox.getSize() * 0.5;
-            Vec3 particlePos = center.subtract(0, attackBox.getYsize() * 0.5D + 0.5D, 0);
-            if(radius > 2){
-                ((ServerLevel)this.level()).sendParticles(ParticleTypes.EXPLOSION_EMITTER, particlePos.x, particlePos.y, particlePos.z, 0, 1.0D, 0.0D, 0.0D, 1);
-            } else{
-                ((ServerLevel)this.level()).sendParticles(ParticleTypes.EXPLOSION, particlePos.x, particlePos.y, particlePos.z, 0, 1.0D, 0.0D, 0.0D, 1);
-            }
+            Vec3 particlePos = center.subtract(0, (attackBox.getYsize() * 0.5D) - 0.5D, 0);
+            COTWUtil.spawnVanillaExplosionParticles(((ServerLevel) this.level()), radius, particlePos);
         }
     }
 
