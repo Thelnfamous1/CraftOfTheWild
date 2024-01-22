@@ -141,6 +141,11 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
     }
 
     @Override
+    public boolean canRotateDuringAttack(StoneTalusAttackType currentAttackType) {
+        return currentAttackType == StoneTalusAttackType.THROW;
+    }
+
+    @Override
     protected BodyRotationControl createBodyControl() {
         return new StoneTalusBodyRotationControl<>(this);
     }
@@ -293,9 +298,15 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
     @Override
     public void tick() {
         super.tick();
-        if (this.refuseToMove(true)) {
-            this.clampHeadRotationToBody(this, this.getMaxHeadYRot());
+        if (this.refuseToMove(false)) {
+            this.clampHeadRotationToBody(this);
         }
+    }
+
+    protected void clampHeadRotationToBody(Entity entityToUpdate) {
+        float yHeadRot = entityToUpdate.getYHeadRot();
+        float difference = yHeadRot - Mth.rotateIfNecessary(yHeadRot, this.yBodyRot, (float) this.getMaxHeadYRot());
+        entityToUpdate.setYHeadRot(difference);
     }
 
     public void clientDiggingParticles(AnimationState<StoneTalus> state) {
@@ -325,14 +336,6 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
         return this.hasPose(Pose.DIGGING)
                 && animationTicks >= COTWUtil.secondsToTicks(0.83F)
                 && animationTicks <= COTWUtil.secondsToTicks(1.42F);
-    }
-
-    protected void clampHeadRotationToBody(Entity entityToUpdate, float maxHeadYRot) {
-        float yHeadRot = entityToUpdate.getYHeadRot();
-        float diff = Mth.wrapDegrees(this.yBodyRot - yHeadRot);
-        float clampedDiff = Mth.clamp(diff, -maxHeadYRot, maxHeadYRot);
-        float clampedHeadRotation = yHeadRot + diff - clampedDiff;
-        entityToUpdate.setYHeadRot(clampedHeadRotation);
     }
 
     @Nullable
@@ -653,39 +656,27 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
                 new CustomBehaviour<>(StoneTalus::resetDigCooldown),
                 new CustomBehaviour<>(StoneTalus::updateCurrentAttackTypeForTarget),
                 new InvalidateAttackTarget<StoneTalus>().invalidateIf((talus, target) -> !talus.closerThan(target, COTWUtil.getHitboxAdjustedDistance(talus, target, COTWUtil.getFollowRange(talus)))),
-                new FirstApplicableBehaviour<>(
-                        new LookAtAttackTarget<StoneTalus>()
-                                .startCondition(StoneTalus::isInRangedMode),
-                        new COTWSetWalkTargetToAttackTarget<StoneTalus>()
-                                .isWithinAttackRange((talus, target) -> talus.isWithinMeleeAttackRange(target, 1))
-                                .speedMod((talus, target) -> 1.0F)
-                                .startCondition(StoneTalus::isInMeleeMode)
-                ),
+                new LookAtAttackTarget<>(), // need this so the talus always tries to look at the attack target even if it is within the attack range
+                new COTWSetWalkTargetToAttackTarget<StoneTalus>()
+                        .isWithinAttackRange((talus, target) -> talus.isWithinMeleeAttackRange(target, 1))
+                        .speedMod((talus, target) -> 1.0F)
+                        .startCondition(StoneTalus::isInMeleeMode),
                 new FirstApplicableBehaviour<>(
                         new COTWAnimatableRangedAttack<StoneTalus>(0)
                                 .getPerceivedTargetDistanceSquared(COTWUtil::getDistSqrBetweenHitboxes)
                                 .attackRadius(64)
                                 .attackInterval(StoneTalus::getAttackCooldownDuration)
-                                .startCondition(talus -> isInRangedMode(talus) && isLookingAtTarget(talus)),
+                                .startCondition(StoneTalus::isInRangedMode),
                         new COTWAnimatableMeleeAttack<StoneTalus>(0)
                                 .isWithinMeleeAttackRange((talus, target) -> talus.isWithinMeleeAttackRange(target, 1))
                                 .attackInterval(StoneTalus::getAttackCooldownDuration)
-                                .startCondition(talus -> isInMeleeMode(talus) && isLookingAtTarget(talus))
+                                .startCondition(StoneTalus::isInMeleeMode)
                 )
         );
     }
 
     private static int getAttackCooldownDuration(StoneTalus talus) {
         return AnimatedAttacker.optionalCurrentAttackType(talus).map(AttackType::getAttackDuration).orElse(0) + 20;
-    }
-
-    private static boolean isLookingAtTarget(StoneTalus talus) {
-        LivingEntity target = talus.getTarget();
-        if(target != null){
-            return COTWUtil.isLookingAt(talus, target, false);
-        } else{
-            return false;
-        }
     }
 
     private static boolean isInMeleeMode(StoneTalus talus) {

@@ -47,6 +47,8 @@ public interface AnimatedAttacker<A extends AnimatedAttacker.AttackType> {
 
     void setCurrentAttackType(@Nullable A attackType);
 
+    boolean canRotateDuringAttack(A currentAttackType);
+
     interface AttackType{
         int getId();
 

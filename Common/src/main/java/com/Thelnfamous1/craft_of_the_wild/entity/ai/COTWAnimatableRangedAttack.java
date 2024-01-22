@@ -30,7 +30,7 @@ public class COTWAnimatableRangedAttack<E extends LivingEntity & RangedAttackMob
     protected boolean checkExtraStartConditions(ServerLevel level, E entity) {
         this.target = BrainUtils.getTargetOfEntity(entity);
 
-        return BrainUtils.canSee(entity, this.target) && this.getPerceivedTargetDistanceSquared.apply(entity, target) <= this.attackRadius;
+        return BrainUtils.canSee(entity, this.target) && this.getPerceivedTargetDistanceSquared.apply(entity, this.target) <= this.attackRadius;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class COTWAnimatableRangedAttack<E extends LivingEntity & RangedAttackMob
         if (this.target == null)
             return;
 
-        if (!BrainUtils.canSee(entity, this.target) || this.getPerceivedTargetDistanceSquared.apply(entity, target) > this.attackRadius)
+        if (!BrainUtils.canSee(entity, this.target) || this.getPerceivedTargetDistanceSquared.apply(entity, this.target) > this.attackRadius)
             return;
 
         entity.performRangedAttack(this.target, 1);

@@ -181,15 +181,6 @@ public class COTWUtil {
         return yRotatedXZVector(x, 0, yRot);
     }
 
-    public static boolean isLookingAt(LivingEntity looker, Entity target, boolean requireLineOfSight){
-        Vec3 viewVec = looker.getViewVector(1.0F).normalize();
-        Vec3 distanceVec = new Vec3(target.getX() - looker.getX(), target.getEyeY() - looker.getEyeY(), target.getZ() - looker.getZ());
-        double distanceSqr = distanceVec.lengthSqr();
-        distanceVec = distanceVec.normalize();
-        double dot = viewVec.dot(distanceVec);
-        return dot > 1.0 - (Mth.square(0.025) / distanceSqr) && (!requireLineOfSight || looker.hasLineOfSight(target));
-    }
-
     public static double getFollowRange(Mob mob) {
         return mob.getAttributeValue(Attributes.FOLLOW_RANGE);
     }
@@ -270,4 +261,5 @@ public class COTWUtil {
     public static <U> Optional<U> getOptionalMemory(LivingEntity entity, MemoryModuleType<U> memoryType){
         return entity.getBrain().getMemory(memoryType);
     }
+
 }

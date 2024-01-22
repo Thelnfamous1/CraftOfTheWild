@@ -2,6 +2,7 @@ package com.Thelnfamous1.craft_of_the_wild.entity;
 
 import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
+import com.Thelnfamous1.craft_of_the_wild.entity.ai.AttackingLookController;
 import com.Thelnfamous1.craft_of_the_wild.init.DamageTypeInit;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import net.minecraft.nbt.CompoundTag;
@@ -35,8 +36,9 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
     protected int attackTicker;
     protected int attackCooldownTicks;
 
-    public COTWMonster(EntityType<? extends Monster> $$0, Level $$1) {
-        super($$0, $$1);
+    public COTWMonster(EntityType<? extends Monster> type, Level level) {
+        super(type, level);
+        this.lookControl = new AttackingLookController<>(this);
     }
 
     @Override
@@ -52,6 +54,11 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
         if(dataAccessor.equals(DATA_ATTACKING)){
             this.attackTicker = 0;
         }
+    }
+
+    @Override
+    public boolean canRotateDuringAttack(T currentAttackType) {
+        return false;
     }
 
     protected void executeAttack(T currentAttackType, AttackPoint currentAttackPoint){

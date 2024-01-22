@@ -31,7 +31,7 @@ public class COTWAnimatableMeleeAttack<E extends Mob> extends AnimatableMeleeAtt
     protected boolean checkExtraStartConditions(ServerLevel level, E entity) {
         this.target = BrainUtils.getTargetOfEntity(entity);
 
-        return entity.getSensing().hasLineOfSight(this.target) && this.isWithinMeleeAttackRange.test(entity, target);
+        return entity.getSensing().hasLineOfSight(this.target) && this.isWithinMeleeAttackRange.test(entity, this.target);
     }
 
     /**
@@ -42,7 +42,7 @@ public class COTWAnimatableMeleeAttack<E extends Mob> extends AnimatableMeleeAtt
         if (this.target == null)
             return;
 
-        if (!entity.getSensing().hasLineOfSight(this.target) || !this.isWithinMeleeAttackRange.test(entity, target))
+        if (!entity.getSensing().hasLineOfSight(this.target) || !this.isWithinMeleeAttackRange.test(entity, this.target))
             return;
 
         entity.doHurtTarget(this.target);
