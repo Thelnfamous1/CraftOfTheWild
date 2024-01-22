@@ -21,14 +21,14 @@ public interface AnimatedAttacker<A extends AnimatedAttacker.AttackType> {
     default boolean isAttackAnimationInProgress(){
         if(this.isAttacking()){
             A currentAttackType = this.getCurrentAttackType();
-            return currentAttackType != null && this.getTicksSinceLastAttack() <= currentAttackType.getAttackDuration();
+            return currentAttackType != null && this.getTicksSinceAttackStarted() <= currentAttackType.getAttackDuration();
         }
         return false;
     }
 
     boolean isAttacking();
 
-    int getTicksSinceLastAttack();
+    int getTicksSinceAttackStarted();
 
     @Nullable
     default AttackPoint getCurrentAttackPoint(){
@@ -37,7 +37,7 @@ public interface AnimatedAttacker<A extends AnimatedAttacker.AttackType> {
             return null;
         }
         for(AttackPoint attackPoint : this.getCurrentAttackType().getAttackPoints()){
-            if(this.getTicksSinceLastAttack() == attackPoint.ticksSinceStart())
+            if(this.getTicksSinceAttackStarted() == attackPoint.ticksSinceStart())
                 return attackPoint;
         }
         return null;

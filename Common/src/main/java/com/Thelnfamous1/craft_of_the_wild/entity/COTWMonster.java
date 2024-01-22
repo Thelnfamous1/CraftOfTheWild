@@ -33,6 +33,7 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     protected int customDeathTime;
     protected int attackTicker;
+    protected int attackCooldownTicks;
 
     public COTWMonster(EntityType<? extends Monster> $$0, Level $$1) {
         super($$0, $$1);
@@ -68,7 +69,7 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
             }
             case MELEE -> {
                 LivingEntity target = this.getTarget();
-                if (target != null && this.isWithinMeleeAttackRange(target)) {
+                if (target != null && this.isWithinMeleeAttackRange(target, 1)) {
                     this.modifiedDoHurtTarget(target, currentAttackPoint.baseDamageModifier(), false);
                 }
             }
@@ -154,16 +155,12 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
 
     @Override
     public boolean isWithinMeleeAttackRange(LivingEntity target) {
-        return this.isWithinMeleeAttackRange(target, false);
+        return this.isWithinMeleeAttackRange(target, 1);
     }
 
-    protected boolean isWithinMeleeAttackRange(LivingEntity target, boolean midway) {
+    protected boolean isWithinMeleeAttackRange(LivingEntity target, double radiusScale) {
         double distanceSqr = this.getPerceivedTargetDistanceSquareForMeleeAttack(target);
-        boolean isWithin = distanceSqr <= this.getMeleeAttackRangeSqr(target, midway);
-        if(isWithin && !midway){
-            COTWCommon.debug(Constants.DEBUG_MONSTER, "{} is within melee attack range of {}, distance squared is {}", target, this, distanceSqr);
-        }
-        return isWithin;
+        return distanceSqr <= this.getMeleeAttackRangeSqr(target, radiusScale);
     }
 
     @Override
@@ -173,20 +170,20 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
 
     @Override
     public double getMeleeAttackRangeSqr(LivingEntity target) {
-        return this.getMeleeAttackRangeSqr(target, false);
+        return this.getMeleeAttackRangeSqr(target, 1);
     }
 
-    protected double getMeleeAttackRangeSqr(LivingEntity target, boolean midway){
+    protected double getMeleeAttackRangeSqr(LivingEntity target, double radiusScale){
         T currentAttackType = this.getCurrentAttackType();
         if(currentAttackType != null){
-            return Mth.square(this.getAttackRadius(currentAttackType) * (midway ? 1 : 2));
+            return Mth.square(this.getAttackRadius(currentAttackType) * radiusScale);
         } else{
             return super.getMeleeAttackRangeSqr(target);
         }
     }
 
     @Override
-    public int getTicksSinceLastAttack() {
+    public int getTicksSinceAttackStarted() {
         return this.attackTicker;
     }
 
@@ -266,19 +263,34 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
     }
 
     protected boolean startAttacking(Entity target) {
-        if(!this.level().isClientSide && !this.isAttackAnimationInProgress()){
+        if(!this.level().isClientSide && !this.isAttackAnimationInProgress() && !this.isAttackCoolingDown()){
             this.setAttacking(true);
             if(this.getCurrentAttackType() == null){
                 this.setCurrentAttackType(this.selectAttackTypeForTarget(target));
             }
+
+            this.startAttackCooldown();
             return true;
         }
         return false;
     }
 
+    protected void startAttackCooldown() {
+        this.attackCooldownTicks = AnimatedAttacker.optionalCurrentAttackType(this)
+                .map(AttackType::getAttackDuration)
+                .orElse(0) + 20;
+    }
+
+    protected boolean isAttackCoolingDown() {
+        return this.attackCooldownTicks > 0;
+    }
+
     @Override
     public void tick() {
         super.tick();
+        if(this.attackCooldownTicks > 0){
+            this.attackCooldownTicks--;
+        }
         T currentAttackType = this.getCurrentAttackType();
         if(currentAttackType != null && this.isAttacking()){
             if(this.isAttackAnimationInProgress()){
@@ -300,7 +312,7 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
             T currentAttackType = this.getCurrentAttackType();
             if(currentAttackType == null){
                 this.setCurrentAttackType(this.selectAttackTypeForTarget(target));
-            } else if(!this.isAttackAnimationInProgress()){
+            } else if(!this.isAttackAnimationInProgress() && !this.isAttackCoolingDown()){
                 this.adjustCurrentAttackTypeForTarget(currentAttackType, target);
             }
         }

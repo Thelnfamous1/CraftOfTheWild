@@ -12,7 +12,7 @@ public class StoneTalusBodyRotationControl<T extends StoneTalus> extends BodyRot
 
     @Override
     public void clientTick() {
-        if (!this.stoneTalus.refuseToMove(true)) {
+        if (!this.stoneTalus.refuseToMove(false)) {
             super.clientTick();
         }
 

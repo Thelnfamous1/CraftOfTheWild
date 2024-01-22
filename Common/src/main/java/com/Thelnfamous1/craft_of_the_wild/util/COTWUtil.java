@@ -266,4 +266,8 @@ public class COTWUtil {
             }
         }
     }
+
+    public static <U> Optional<U> getOptionalMemory(LivingEntity entity, MemoryModuleType<U> memoryType){
+        return entity.getBrain().getMemory(memoryType);
+    }
 }

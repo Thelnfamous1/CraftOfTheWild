@@ -8,20 +8,20 @@ import software.bernie.geckolib.core.object.PlayState;
 
 public class COTWAnimations {
 
-    public static RawAnimation WALK = RawAnimation.begin().thenPlay("walk");
-    public static RawAnimation IDLE = RawAnimation.begin().thenPlay("idle");
+    public static RawAnimation WALK = RawAnimation.begin().thenLoop("walk"); // continuous animation
+    public static RawAnimation IDLE = RawAnimation.begin().thenLoop("idle"); // continuous animation
 
-    public static RawAnimation SPAWN = RawAnimation.begin().thenPlay("spawn");
+    public static RawAnimation SPAWN = RawAnimation.begin().thenPlayAndHold("spawn"); // transitional animation
 
-    public static RawAnimation DESPAWN = RawAnimation.begin().thenPlay("despawn");
+    public static RawAnimation DESPAWN = RawAnimation.begin().thenPlayAndHold("despawn"); // transitional animation
 
-    public static RawAnimation SLEEP = RawAnimation.begin().thenLoop("sleep");
+    public static RawAnimation SLEEP = RawAnimation.begin().thenLoop("sleep"); // continuous animation
 
-    public static RawAnimation DEATH = RawAnimation.begin().thenPlay("death");
-    public static RawAnimation STONE_TALUS_POUND = RawAnimation.begin().thenPlay("Move 1");
-    public static RawAnimation STONE_TALUS_THROW = RawAnimation.begin().thenPlay("Move 2");
-    public static RawAnimation STONE_TALUS_HEADBUTT = RawAnimation.begin().thenPlay("Move 3");
-    public static RawAnimation STONE_TALUS_PUNCH = RawAnimation.begin().thenPlay("Move 4");
+    public static RawAnimation DEATH = RawAnimation.begin().thenPlayAndHold("death"); // transitional animation
+    public static RawAnimation STONE_TALUS_POUND = RawAnimation.begin().thenPlay("Move 1"); // one-shot animation
+    public static RawAnimation STONE_TALUS_THROW = RawAnimation.begin().thenPlay("Move 2"); // one-shot animation
+    public static RawAnimation STONE_TALUS_HEADBUTT = RawAnimation.begin().thenPlay("Move 3"); // one-shot animation
+    public static RawAnimation STONE_TALUS_PUNCH = RawAnimation.begin().thenPlay("Move 4"); // one-shot animation
 
     public static AnimationController<StoneTalus> moveController(StoneTalus talus) {
         return new AnimationController<>(talus, "Move", 10, state -> {

@@ -10,6 +10,10 @@ import net.tslat.smartbrainlib.util.BrainUtils;
 
 import java.util.function.BiFunction;
 
+/**
+ * Subclass of {@link AnimatableRangedAttack} that allows for modifying the distance comparison function between attacker and target.
+ * This is helpful for adjusting the perceived distance calculation from center-to-center to hitbox-to-hitbox if needed.
+ */
 public class COTWAnimatableRangedAttack<E extends LivingEntity & RangedAttackMob> extends AnimatableRangedAttack<E> {
     protected BiFunction<E, LivingEntity, Double> getPerceivedTargetDistanceSquared = Entity::distanceToSqr;
 

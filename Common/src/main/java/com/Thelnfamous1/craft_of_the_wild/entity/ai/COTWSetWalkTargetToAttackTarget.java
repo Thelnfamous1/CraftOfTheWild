@@ -7,10 +7,16 @@ import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.ai.behavior.EntityTracker;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.WalkTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
 import net.tslat.smartbrainlib.util.BrainUtils;
 
 import java.util.function.BiPredicate;
+
+/**
+ * Subclass of {@link AnimatableMeleeAttack} that allows adjusting the BiPredicate used for detecting if the target is within attack range.
+ * This is helpful for using hitbox-to-hitbox instead of center-to-center distance checks if needed.
+ */
 
 public class COTWSetWalkTargetToAttackTarget<E extends Mob> extends SetWalkTargetToAttackTarget<E> {
 

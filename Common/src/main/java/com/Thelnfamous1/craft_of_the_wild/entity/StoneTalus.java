@@ -61,7 +61,6 @@ import net.tslat.smartbrainlib.api.core.SmartBrain;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.CustomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
@@ -79,7 +78,6 @@ import software.bernie.geckolib.core.animation.AnimationState;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.OptionalInt;
 
 public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements SmartBrainOwner<StoneTalus>, MultipartEntity, StoneTalusBase, RangedAttackMob {
@@ -120,6 +118,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
 
     public static AttributeSupplier.Builder createAttributes(){
         return Monster.createMonsterAttributes()
+                .add(Attributes.FOLLOW_RANGE, 20.0D)
                 .add(Attributes.MAX_HEALTH, 200.0D)
                 .add(Attributes.ARMOR, 6.0D)
                 .add(Attributes.ATTACK_DAMAGE, 24.0D)
@@ -378,14 +377,26 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
     }
 
     @Override
+    protected boolean isAttackCoolingDown() {
+        return BrainUtils.hasMemory(this, MemoryModuleType.ATTACK_COOLING_DOWN);
+    }
+
+    @Override
+    protected void startAttackCooldown() {
+        // NO-OP, already handled with Behaviors setting MemoryModuleType.ATTACK_COOLING_DOWN
+    }
+
+    @Override
     protected double getAttackRadius(StoneTalusAttackType currentAttackType) {
         switch (currentAttackType){
             case HEADBUTT -> {
-                return 1.5 * SCALE * this.getScale(); // diameter = 3, scaled up by 7/3 to be 7
+                return 2 * SCALE * this.getScale(); // diameter = 4, scaled up by 7/3 to be 28/3 (9 + 1/3)
             }
-            case POUND, PUNCH -> {
+            case POUND -> {
+                return 1.5 * SCALE * this.getScale(); // diameter = 3, scaled up by 7/3 to be 21/3 (7)
+            }
+            case PUNCH -> {
                 return 1 * SCALE * this.getScale(); // diameter = 2, scaled up by 7/3 to be 14/3 (4 + 2/3)
-                //return 9D/14D * SCALE * this.getScale(); // diameter = 9/7, scaled up by 7/3 to be 3
             }
             default -> {
                 return 0;
@@ -646,7 +657,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
                         new LookAtAttackTarget<StoneTalus>()
                                 .startCondition(StoneTalus::isInRangedMode),
                         new COTWSetWalkTargetToAttackTarget<StoneTalus>()
-                                .isWithinAttackRange((talus, target) -> talus.isWithinMeleeAttackRange(target, true))
+                                .isWithinAttackRange((talus, target) -> talus.isWithinMeleeAttackRange(target, 1))
                                 .speedMod((talus, target) -> 1.0F)
                                 .startCondition(StoneTalus::isInMeleeMode)
                 ),
@@ -656,7 +667,8 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
                                 .attackRadius(64)
                                 .attackInterval(StoneTalus::getAttackCooldownDuration)
                                 .startCondition(talus -> isInRangedMode(talus) && isLookingAtTarget(talus)),
-                        new AnimatableMeleeAttack<StoneTalus>(0)
+                        new COTWAnimatableMeleeAttack<StoneTalus>(0)
+                                .isWithinMeleeAttackRange((talus, target) -> talus.isWithinMeleeAttackRange(target, 1))
                                 .attackInterval(StoneTalus::getAttackCooldownDuration)
                                 .startCondition(talus -> isInMeleeMode(talus) && isLookingAtTarget(talus))
                 )
@@ -694,8 +706,8 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
         return BrainActivityGroup.idleTasks(
                 new FirstApplicableBehaviour<StoneTalus>(
                         new SetAttackTarget<>(false)
-                                .targetFinder(talus -> Optional.ofNullable(BrainUtils.getMemory(talus, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER))
-                                        .filter(player -> player.closerThan(talus, COTWUtil.getHitboxAdjustedDistance(talus, player, 5)))
+                                .targetFinder(talus -> COTWUtil.getOptionalMemory(this, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER)
+                                        .filter(player -> player.closerThan(talus, COTWUtil.getHitboxAdjustedDistance(talus, player, 15)))
                                         .orElse(null)),
                         new SetRetaliateTarget<>()
                                 .alertAlliesWhen((talus, target) -> true)
@@ -750,7 +762,9 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
                                         BrainUtils.setForgettableMemory(talus, MemoryModuleType.IS_EMERGING, Unit.INSTANCE, EMERGE_TICKS + 1);
                                         BrainUtils.clearMemory(talus, MemoryModuleInit.IS_SLEEPING.get());
                                     })
-                                            .startCondition(talus -> BrainUtils.hasMemory(talus, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER))
+                                            .startCondition(talus -> COTWUtil.getOptionalMemory(this, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER)
+                                                    .filter(player -> player.closerThan(talus, COTWUtil.getHitboxAdjustedDistance(talus, player, 5)))
+                                                    .isPresent())
                             )
                             .requireAndWipeMemoriesOnUse(MemoryModuleInit.IS_SLEEPING.get())
             );
