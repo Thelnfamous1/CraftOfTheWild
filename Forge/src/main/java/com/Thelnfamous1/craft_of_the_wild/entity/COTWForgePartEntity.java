@@ -1,46 +1,42 @@
 package com.Thelnfamous1.craft_of_the_wild.entity;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 import org.jetbrains.annotations.Nullable;
 
-public class COTWPartEntity<T extends LivingEntity & MultipartEntity> extends PartEntity<T> {
+public class COTWForgePartEntity<T extends LivingEntity & COTWMultipartEntity> extends PartEntity<T> implements COTWPartEntity{
 
-    private final PartEntityController.Info info;
-    private final EntityDimensions size;
+    private final PartEntityController.PartInfo partInfo;
+    private final EntityDimensions defaultSize;
+    private EntityDimensions currentSize;
+    private final PartEntityController.PartResizer<T> partResizer;
 
-    public COTWPartEntity(T parent, PartEntityController.Info info) {
+    public COTWForgePartEntity(T parent, PartEntityController.PartInfo partInfo, PartEntityController.PartResizer<T> partResizer) {
         super(parent);
-        this.info = info;
-        this.size = EntityDimensions.scalable(info.width(), info.height()).scale(info.scale());
+        this.partInfo = partInfo;
+        this.defaultSize = EntityDimensions.scalable(partInfo.width(), partInfo.height()).scale(partInfo.scale());
+        this.currentSize = this.defaultSize;
+        this.partResizer = partResizer;
         this.refreshDimensions();
     }
 
-    public static <T extends LivingEntity & MultipartEntity> void basicTicker(COTWPartEntity<T> part){
-        T parent = part.getParent();
-        float yRot = part.info.bodyPart() ? parent.yBodyRot : parent.getYRot();
-        float xRot = parent.getXRot();
-        Vec3 offsetVec = new Vec3(part.info.xOffset(), part.info.yOffset(), part.info.zOffset())
-                .yRot(-yRot * Mth.DEG_TO_RAD)
-                .xRot(-xRot * Mth.DEG_TO_RAD)
-                .scale(parent.getScale() * part.info.scale());
-        part.setPos(parent.getX() + offsetVec.x, parent.getY() + offsetVec.y, parent.getZ() + offsetVec.z);
+    public static <T extends LivingEntity & COTWMultipartEntity> PartEntityController.PartTicker<T, COTWForgePartEntity<T>> typedPartTicker(PartEntityController.PartTicker<T, ? extends Entity> untypedTicker){
+        return (PartEntityController.PartTicker<T, COTWForgePartEntity<T>>) untypedTicker;
     }
 
-    public PartEntityController.Info getInfo(){
-        return this.info;
+    @Override
+    public PartEntityController.PartInfo getInfo(){
+        return this.partInfo;
     }
 
     public String getPartName() {
-        return this.info.name();
+        return this.partInfo.name();
     }
 
     @Override
@@ -81,11 +77,15 @@ public class COTWPartEntity<T extends LivingEntity & MultipartEntity> extends Pa
 
     @Override
     public EntityDimensions getDimensions(Pose pPose) {
-        return this.size;
+        if(this.partResizer != null){ // null during Entity superclass construction, as this method is called within it
+            this.currentSize = this.partResizer.resizePart(this, this.getParent(), this.defaultSize);
+        }
+        return this.currentSize;
     }
 
     @Override
     public boolean shouldBeSaved() {
         return false;
     }
+
 }

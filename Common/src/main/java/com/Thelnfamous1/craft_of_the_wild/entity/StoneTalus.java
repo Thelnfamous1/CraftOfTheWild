@@ -63,6 +63,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.CustomBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.CustomHeldBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
@@ -79,18 +80,21 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.OptionalInt;
+import java.util.function.Predicate;
 
-public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements SmartBrainOwner<StoneTalus>, MultipartEntity, StoneTalusBase, RangedAttackMob {
+public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements SmartBrainOwner<StoneTalus>, COTWMultipartEntity, StoneTalusBase, RangedAttackMob {
     public static final float SCALE = 1F; // desired target is 7/3
+    public static final float FACEPLANT_ROTATION = 85.0F;
     protected static final EntityDataAccessor<OptionalInt> DATA_ATTACK_TYPE_ID = SynchedEntityData.defineId(StoneTalus.class, EntityDataSerializers.OPTIONAL_UNSIGNED_INT);
     protected static final EntityDataAccessor<Integer> DATA_LAST_POSE_CHANGE_TICK = SynchedEntityData.defineId(StoneTalus.class, EntityDataSerializers.INT);
     protected static final EntityDataAccessor<Boolean> DATA_BATTLE = SynchedEntityData.defineId(StoneTalus.class, EntityDataSerializers.BOOLEAN);
+    protected static final EntityDataAccessor<Boolean> DATA_FACEPLANTED = SynchedEntityData.defineId(StoneTalus.class, EntityDataSerializers.BOOLEAN);
     public static final int EMERGE_TICKS = COTWUtil.secondsToTicks(2.8333F);
     public static final int DIG_TICKS = COTWUtil.secondsToTicks(6.2083F);
     public static final int DEATH_TICKS = COTWUtil.secondsToTicks(2.5F);
     public static final int WITHER_SHOOT_EVENT_ID = 1024;
     private final Entity[] partEntities;
-    private final PartEntityController<? extends Entity> partEntityController;
+    private final PartEntityController<StoneTalus, ? extends Entity> partEntityController;
     private final ServerBossEvent bossEvent = (ServerBossEvent)(new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS)).setDarkenScreen(true);
     @Nullable
     private StoneTalusAttackType currentAttackType;
@@ -100,14 +104,15 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
         this.setMaxUpStep(1.0F);
         this.xpReward = 60;
         this.partEntityController = Services.PLATFORM.makePartEntityController(this,
-                new PartEntityController.Info("weakPoint", 0.6875F, 0.6875F, true, 0, 2.9375, 0, StoneTalus.SCALE),
-                new PartEntityController.Info("head", 3.125F, 1.125F, true, 0, 1.8125, 0, StoneTalus.SCALE),
-                new PartEntityController.Info("body", 2.625F, 1.0625F, true, 0, 0.75, 0, StoneTalus.SCALE),
-                new PartEntityController.Info("leftArm", 1.125F, 1.5625F, true, -1.6875, 0, 0, StoneTalus.SCALE),
-                new PartEntityController.Info("rightArm", 1.125F, 1.5625F, true, 1.6875, 0, 0, StoneTalus.SCALE),
-                new PartEntityController.Info("leftLeg", 0.5625F, 0.75F, true, -0.5, 0, 0, StoneTalus.SCALE),
-                new PartEntityController.Info("rightLeg", 0.5625F, 0.75F, true, 0.5, 0, 0, StoneTalus.SCALE));
-        this.partEntities = this.partEntityController.getParts().toArray(Entity[]::new);
+                StoneTalus::tickParts,
+                StoneTalus::resizeParts,
+                new PartEntityController.PartInfo("weakPoint", 0.6875F, 0.6875F, true, 0, 2.9375, -0.5, StoneTalus.SCALE),
+                new PartEntityController.PartInfo("head", 3.125F, 1.125F, true, 0, 1.8125, 0, StoneTalus.SCALE),
+                new PartEntityController.PartInfo("body", 2.625F, 1.0625F, true, 0, 0.75, 0, StoneTalus.SCALE),
+                new PartEntityController.PartInfo("leftArm", 1.125F, 1.5625F, true, -1.6875, 0, 0, StoneTalus.SCALE),
+                new PartEntityController.PartInfo("rightArm", 1.125F, 1.5625F, true, 1.6875, 0, 0, StoneTalus.SCALE),
+                new PartEntityController.PartInfo("leftLeg", 0.5625F, 0.75F, true, -0.5, 0, 0, StoneTalus.SCALE), new PartEntityController.PartInfo("rightLeg", 0.5625F, 0.75F, true, 0.5, 0, 0, StoneTalus.SCALE));
+        this.partEntities = this.partEntityController.collectParts().toArray(Entity[]::new);
         // Forge: Fix MC-158205: Make sure part ids are successors of parent mob id
         this.setId(EntityAccessor.craft_of_the_wild$getENTITY_COUNTER().getAndAdd(this.partEntities.length + 1) + 1);
     }
@@ -125,6 +130,28 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
                 .add(AttributeInit.PROJECTILE_RESISTANCE.get(), 0.7D)
                 .add(Attributes.MOVEMENT_SPEED, 0.25D);
+    }
+
+    private static void tickParts(Entity part, StoneTalus talus, PartEntityController.PartInfo partInfo){
+        if(talus.isFaceplanting()){
+            float yRot = partInfo.bodyPart() ? talus.yBodyRot : talus.getYRot();
+            float xRot = talus.getXRot();
+            Vec3 offsetVec = new Vec3(partInfo.xOffset(), partInfo.yOffset(), partInfo.zOffset())
+                    .xRot(-xRot * Mth.DEG_TO_RAD)
+                    .yRot(-yRot * Mth.DEG_TO_RAD)
+                    .scale(talus.getScale() * partInfo.scale());
+            part.setPos(talus.getX() + offsetVec.x, talus.getY() + offsetVec.y, talus.getZ() + offsetVec.z);
+        } else{
+            COTWPartEntity.basicTicker(part, talus, partInfo);
+        }
+    }
+
+    private static EntityDimensions resizeParts(Entity part, StoneTalus talus,  EntityDimensions defaultSize){
+        if(talus.isFaceplanted()){
+            return EntityDimensions.fixed(defaultSize.height, defaultSize.width); // since it becomes horizontal, switch bounding box dimensions
+        } else{
+            return defaultSize;
+        }
     }
 
     @Override
@@ -222,7 +249,13 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
     @Override
     public EntityDimensions getDimensions(Pose pPose) {
         EntityDimensions baseDimensions = super.getDimensions(Pose.STANDING);
-        return this.isInsideGround() ? EntityDimensions.fixed(baseDimensions.width, 1.0F) : super.getDimensions(pPose);
+        if(this.isInsideGround()){
+            return EntityDimensions.fixed(baseDimensions.width, 1.125F * SCALE * this.getScale());
+        } else if(this.isFaceplanted()){
+            return EntityDimensions.fixed(baseDimensions.height, 2.0625F * SCALE * this.getScale()); // since it becomes horizontal, invert bounding box dimensions
+        } else{
+            return super.getDimensions(pPose);
+        }
     }
 
     @Override
@@ -236,11 +269,31 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
         this.entityData.define(DATA_ATTACK_TYPE_ID, OptionalInt.empty());
         this.entityData.define(DATA_LAST_POSE_CHANGE_TICK, 0);
         this.entityData.define(DATA_BATTLE, false);
+        this.entityData.define(DATA_FACEPLANTED, false);
     }
 
     @Override
     public void onSyncedDataUpdated(EntityDataAccessor<?> pKey) {
         super.onSyncedDataUpdated(pKey);
+        if(pKey.equals(DATA_FACEPLANTED)){
+            this.refreshDimensions();
+        }
+    }
+
+    @Override
+    public void refreshDimensions() {
+        super.refreshDimensions();
+        for(Entity partEntity : this.partEntities){
+            partEntity.refreshDimensions();
+        }
+    }
+
+    public boolean isFaceplanted(){
+        return this.entityData.get(DATA_FACEPLANTED);
+    }
+
+    public void setFaceplanted(boolean faceplanted){
+        this.entityData.set(DATA_FACEPLANTED, faceplanted);
     }
 
     @Override
@@ -416,6 +469,9 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
     }
 
     private StoneTalusAttackType selectMeleeAttackType() {
+        if(Constants.DEBUG_STONE_TALUS_HEADBUTT){ // only for testing
+            return StoneTalusAttackType.HEADBUTT;
+        }
         int nextInt = this.level().random.nextInt(9);
         if(nextInt == 0){ // 1 in 9 chance for headbutt
             return StoneTalusAttackType.HEADBUTT;
@@ -468,7 +524,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
             double yDist = targetY - y;
             double zDist = targetZ - z;
             StoneTalusArm stoneTalusArm = new StoneTalusArm(this.level(), this, xDist, yDist, zDist);
-            stoneTalusArm.setOwner(this);
+            stoneTalusArm.setBattle(this.isBattle());
             stoneTalusArm.setBaseDamage(this.getAttributeValue(Attributes.ATTACK_DAMAGE) * currentAttackPoint.baseDamageModifier());
 
             stoneTalusArm.setPosRaw(x, y, z);
@@ -646,8 +702,40 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
         return BrainActivityGroup.coreTasks(
                 new AdditionalMemories<>(MemoryModuleInit.DIG_COOLDOWN.get()),
                 COTWSharedAi.createVanillaStyleLookAtTarget(),
-                new MoveToWalkTarget<>()
+                new MoveToWalkTarget<>(),
+                new CustomHeldBehaviour<>(StoneTalus::updateXRotForFaceplant)
+                        .startCondition(StoneTalus::isFaceplanting)
+                        .stopIf(Predicate.not(StoneTalus::isFaceplanting))
+                        .whenStarting(talus -> talus.setXRot(0.0F))
+                        .whenStopping(talus -> {
+                            talus.setFaceplanted(false);
+                            COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "{} is forced to no longer faceplanted!", talus);
+                        })
         );
+    }
+
+    private boolean isFaceplanting() {
+        return this.isAttackAnimationInProgress() && AnimatedAttacker.hasCurrentAttackType(this, StoneTalusAttackType.HEADBUTT);
+    }
+
+    private static void updateXRotForFaceplant(StoneTalus talus){
+        int ticksSinceAttackStarted = talus.getTicksSinceAttackStarted();
+        if(ticksSinceAttackStarted >= COTWUtil.secondsToTicks(1.5F) && ticksSinceAttackStarted <= COTWUtil.secondsToTicks(2.71F)){
+            float tickDelta = COTWUtil.getTickDelta(FACEPLANT_ROTATION, COTWUtil.getSecondsDifferenceInTicks(1.5F, 2.71F));
+            talus.setXRot(Math.min(talus.getXRot() + tickDelta, FACEPLANT_ROTATION));
+            //COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "{} is faceplanting! X-Rotation is {}", talus, talus.getXRot());
+        } else if(ticksSinceAttackStarted >= COTWUtil.secondsToTicks(5.21F)){
+            float tickDelta = COTWUtil.getTickDelta(FACEPLANT_ROTATION, COTWUtil.getSecondsDifferenceInTicks(5.21F, 6.4583F));
+            talus.setXRot(Math.max(talus.getXRot() - tickDelta, 0.0F));
+            //COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "{} is unfaceplanting! X-Rotation is {}", talus, talus.getXRot());
+        }
+        if(talus.getXRot() == FACEPLANT_ROTATION && !talus.isFaceplanted()){
+            talus.setFaceplanted(true);
+            COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "{} is now faceplanted!", talus);
+        } else if(talus.getXRot() == 0.0F && talus.isFaceplanted()){
+            talus.setFaceplanted(false);
+            COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "{} is no longer faceplanted!", talus);
+        }
     }
 
     @Override

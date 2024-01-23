@@ -1,7 +1,7 @@
 package com.Thelnfamous1.craft_of_the_wild.platform;
 
-import com.Thelnfamous1.craft_of_the_wild.entity.COTWPartEntity;
-import com.Thelnfamous1.craft_of_the_wild.entity.MultipartEntity;
+import com.Thelnfamous1.craft_of_the_wild.entity.COTWForgePartEntity;
+import com.Thelnfamous1.craft_of_the_wild.entity.COTWMultipartEntity;
 import com.Thelnfamous1.craft_of_the_wild.entity.PartEntityController;
 import com.Thelnfamous1.craft_of_the_wild.platform.services.IPlatformHelper;
 import net.minecraft.world.entity.Entity;
@@ -32,13 +32,13 @@ public class ForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public <P extends LivingEntity & MultipartEntity> PartEntityController<? extends Entity> makePartEntityController(P parent, PartEntityController.Info... infos) {
-        PartEntityController.Builder<COTWPartEntity<P>> builder = new PartEntityController.Builder<COTWPartEntity<P>>()
-                .useNameProvider(COTWPartEntity::getPartName);
-        for(PartEntityController.Info info : infos){
-            builder.addPart(new COTWPartEntity<>(parent, info));
+    public <P extends LivingEntity & COTWMultipartEntity> PartEntityController<P, ? extends Entity> makePartEntityController(P parent, PartEntityController.PartTicker<P, Entity> partTicker, PartEntityController.PartResizer<P> partResizer, PartEntityController.PartInfo... partInfos) {
+        PartEntityController.Builder<P, COTWForgePartEntity<P>> builder = new PartEntityController.Builder<P, COTWForgePartEntity<P>>(parent)
+                .useNameProvider(COTWForgePartEntity::getPartName);
+        for(PartEntityController.PartInfo partInfo : partInfos){
+            builder.addPart(new COTWForgePartEntity<>(parent, partInfo, partResizer), partInfo);
         }
-        builder.universalTicker(COTWPartEntity::basicTicker);
+        builder.universalTicker(COTWForgePartEntity.typedPartTicker(partTicker));
         return builder.build();
     }
 
