@@ -177,6 +177,12 @@ public class COTWUtil {
         return yRotatedXZVector(0, z, yRot);
     }
 
+    public static Vec3 xYRotatedZVector(double z, float xRot, float yRot) {
+        return new Vec3(0.0D, 0.0D, z)
+                .xRot(-xRot * Mth.DEG_TO_RAD)
+                .yRot(-yRot * Mth.DEG_TO_RAD);
+    }
+
     public static Vec3 yRotatedXVector(double x, float yRot) {
         return yRotatedXZVector(x, 0, yRot);
     }
@@ -260,6 +266,14 @@ public class COTWUtil {
 
     public static <U> Optional<U> getOptionalMemory(LivingEntity entity, MemoryModuleType<U> memoryType){
         return entity.getBrain().getMemory(memoryType);
+    }
+
+    public static float getTickDelta(float totalDelta, float ticks){
+        return totalDelta / ticks;
+    }
+
+    public static int getSecondsDifferenceInTicks(float start, float end){
+        return Mth.abs(secondsToTicks(end) - secondsToTicks(start));
     }
 
 }

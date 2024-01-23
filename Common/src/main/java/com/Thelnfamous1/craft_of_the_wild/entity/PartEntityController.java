@@ -1,16 +1,20 @@
 package com.Thelnfamous1.craft_of_the_wild.entity;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 
-public class PartEntityController<T extends Entity> {
-    private final Map<String, T> partsByName;
-    private final Map<String, PartTicker<T>> tickersByName;
+public class PartEntityController<P extends Entity, T extends Entity> {
+    private final Map<String, Pair<T, PartInfo>> partsByName;
+    private final Map<String, PartTicker<P, T>> tickersByName;
+    private final P parent;
 
-    public PartEntityController(Map<String, T> partsByName, Map<String, PartTicker<T>> tickersByName){
+    public PartEntityController(P parent, Map<String, Pair<T, PartInfo>> partsByName, Map<String, PartTicker<P, T>> tickersByName){
+        this.parent = parent;
         this.partsByName = partsByName;
         this.tickersByName = tickersByName;
     }
@@ -21,21 +25,28 @@ public class PartEntityController<T extends Entity> {
 
     @Nullable
     public T getPart(String name) {
-        return this.partsByName.get(name);
+        Pair<T, PartInfo> partInfoPair = this.partsByName.get(name);
+        if(partInfoPair == null) return null;
+        return partInfoPair.getFirst();
     }
 
-    public Collection<T> getParts() {
-        return this.partsByName.values();
+    public Collection<T> collectParts() {
+        List<T> parts = new ArrayList<>(this.partsByName.values().size());
+        for(Pair<T, PartInfo> partInfoPair : this.partsByName.values()){
+            parts.add(partInfoPair.getFirst());
+        }
+        return Collections.unmodifiableList(parts);
     }
 
     public void tick() {
-        this.partsByName.forEach((name, part) -> {
+        this.partsByName.forEach((name, partInfoPair) -> {
+            T part = partInfoPair.getFirst();
             double prevX = part.getX();
             double prevY = part.getY();
             double prevZ = part.getZ();
 
-            PartTicker<T> ticker = this.tickersByName.get(name);
-            if(ticker != null) ticker.tick(part);
+            PartTicker<P, T> ticker = this.tickersByName.get(name);
+            if(ticker != null) ticker.tickPart(part, this.parent, partInfoPair.getSecond());
 
             part.xo = prevX;
             part.yo = prevY;
@@ -46,53 +57,60 @@ public class PartEntityController<T extends Entity> {
         });
     }
 
-    public static class Builder<T extends Entity>{
-        private final Map<String, T> partsByName = new LinkedHashMap<>();
-        private final Map<String, PartTicker<T>> tickersByName = new LinkedHashMap<>();
+    public static class Builder<P extends Entity, T extends Entity>{
+        private final Map<String, Pair<T, PartInfo>> partsByName = new LinkedHashMap<>();
+        private final Map<String, PartTicker<P, T>> tickersByName = new LinkedHashMap<>();
+        private final P parent;
         @Nullable
         private Function<T, String> nameProvider;
 
-        public Builder(){
+        public Builder(P parent){
+            this.parent = parent;
         }
 
-        public Builder<T> useNameProvider(Function<T, String> nameGetter){
-            this.nameProvider = nameGetter;
+        public Builder<P, T> useNameProvider(Function<T, String> nameProvider){
+            this.nameProvider = nameProvider;
             return this;
         }
 
-        public Builder<T> addPart(T part){
+        public Builder<P, T> addPart(T part, PartInfo partInfo){
             if(this.nameProvider == null) throw new IllegalStateException("Cannot add part without a name!");
-            return this.addPart(this.nameProvider.apply(part), part);
+            return this.addPart(this.nameProvider.apply(part), part, partInfo);
         }
 
-        public Builder<T> addPart(String name, T part){
-            this.partsByName.put(name, part);
+        public Builder<P, T> addPart(String name, T part, PartInfo partInfo){
+            this.partsByName.put(name, Pair.of(part, partInfo));
             return this;
         }
 
-        public Builder<T> addPart(String name, T part, PartTicker<T> ticker){
-            this.partsByName.put(name, part);
+        public Builder<P, T> addPart(String name, T part, PartInfo partInfo, PartTicker<P, T> ticker){
+            this.addPart(name, part, partInfo);
             this.tickersByName.put(name, ticker);
             return this;
         }
 
-        public Builder<T> universalTicker(PartTicker<T> ticker){
+        public Builder<P, T> universalTicker(PartTicker<P, T> ticker){
             if(this.partsByName.keySet().isEmpty()) throw new IllegalStateException("Cannot add a universal ticker without any added parts!");
             this.partsByName.keySet().forEach(name -> this.tickersByName.put(name, ticker));
             return this;
         }
 
-        public PartEntityController<T> build(){
-            return new PartEntityController<>(Collections.unmodifiableMap(this.partsByName), Collections.unmodifiableMap(this.tickersByName));
+        public PartEntityController<P, T> build(){
+            return new PartEntityController<>(this.parent, Collections.unmodifiableMap(this.partsByName), Collections.unmodifiableMap(this.tickersByName));
         }
     }
 
     @FunctionalInterface
-    public interface PartTicker<T extends Entity>{
-        void tick(T part);
+    public interface PartTicker<P extends Entity, T extends Entity>{
+        void tickPart(T part, P parent, PartInfo partInfo);
     }
 
-    public record Info(String name, float width, float height, boolean bodyPart, double xOffset, double yOffset, double zOffset,
-                       float scale) {
+    @FunctionalInterface
+    public interface PartResizer<P extends Entity>{
+        EntityDimensions resizePart(Entity part, P parent, EntityDimensions defaultSize);
+    }
+
+    public record PartInfo(String name, float width, float height, boolean bodyPart, double xOffset, double yOffset, double zOffset,
+                           float scale) {
     }
 }

@@ -1,6 +1,6 @@
 package com.Thelnfamous1.craft_of_the_wild.platform;
 
-import com.Thelnfamous1.craft_of_the_wild.entity.MultipartEntity;
+import com.Thelnfamous1.craft_of_the_wild.entity.COTWMultipartEntity;
 import com.Thelnfamous1.craft_of_the_wild.entity.PartEntityController;
 import com.Thelnfamous1.craft_of_the_wild.platform.services.IPlatformHelper;
 import net.fabricmc.loader.api.FabricLoader;
@@ -29,8 +29,8 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public <P extends LivingEntity & MultipartEntity> PartEntityController<? extends Entity> makePartEntityController(P parent, PartEntityController.Info... infos) {
-        return new PartEntityController.Builder<>().build(); // TODO: Need a Fabric equivalent for Forge's PartEntity system
+    public <P extends LivingEntity & COTWMultipartEntity> PartEntityController<P, ? extends Entity> makePartEntityController(P parent, PartEntityController.PartTicker<P, Entity> partTicker, PartEntityController.PartResizer<P> partResizer, PartEntityController.PartInfo... partInfos) {
+        return new PartEntityController.Builder<>(parent).build(); // TODO: Need a Fabric equivalent for Forge's PartEntity system
     }
 
     @Override

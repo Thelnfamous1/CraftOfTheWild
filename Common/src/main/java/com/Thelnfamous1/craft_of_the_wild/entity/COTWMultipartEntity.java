@@ -7,9 +7,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public interface MultipartEntity {
+public interface COTWMultipartEntity {
 
-    static List<Entity> partEntityList(MultipartEntity mpe){
+    static List<Entity> partEntityList(COTWMultipartEntity mpe){
         return Collections.unmodifiableList(Arrays.asList(mpe.getPartEntities()));
     }
 

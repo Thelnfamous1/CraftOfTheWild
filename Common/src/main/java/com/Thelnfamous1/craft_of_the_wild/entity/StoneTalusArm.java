@@ -71,7 +71,7 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
 
     @Override
     protected boolean canHitEntity(Entity entity) {
-        if(this.getOwner() instanceof MultipartEntity mpe && MultipartEntity.partEntityList(mpe).contains(entity)){
+        if(this.getOwner() instanceof COTWMultipartEntity mpe && COTWMultipartEntity.partEntityList(mpe).contains(entity)){
             return false;
         }
         return super.canHitEntity(entity);

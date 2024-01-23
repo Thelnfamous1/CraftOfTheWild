@@ -2,6 +2,7 @@ package com.Thelnfamous1.craft_of_the_wild.entity;
 
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import com.google.common.collect.ImmutableList;
+import net.minecraft.util.Mth;
 
 import javax.annotation.Nullable;
 
@@ -16,6 +17,17 @@ public interface AnimatedAttacker<A extends AnimatedAttacker.AttackType> {
 
     static <A extends AnimatedAttacker.AttackType> boolean hasCurrentAttackType(AnimatedAttacker<A> attacker, A attackType){
         return attackType.equals(attacker.getCurrentAttackType());
+    }
+
+    static <A extends AnimatedAttacker.AttackType> float getAttackProgress(AnimatedAttacker<A> attacker){
+        A attackType = attacker.getCurrentAttackType();
+        if(attackType == null) return 0;
+
+        int attackDuration = attackType.getAttackDuration();
+        if(attackDuration <= 0) return 0;
+
+        float ticksSinceAttackStarted = Mth.clamp((float)attacker.getTicksSinceAttackStarted(), 0.0F, attackDuration);
+        return Mth.clamp(ticksSinceAttackStarted / attackDuration, 0.0F, 1.0F);
     }
 
     default boolean isAttackAnimationInProgress(){

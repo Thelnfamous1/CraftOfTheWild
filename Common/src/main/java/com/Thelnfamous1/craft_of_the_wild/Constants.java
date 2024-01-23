@@ -13,4 +13,5 @@ public class Constants {
 	public static final boolean FIX_DEBUG_UTILS_MULTIPART_ENTITIES = true;
 	public static final boolean FIX_JADE_MULTIPART_ENTITIES = true;
 	public static final boolean DEBUG_BRAIN_DESERIALIZATION = true;
+	public static final boolean DEBUG_STONE_TALUS_HEADBUTT = true;
 }

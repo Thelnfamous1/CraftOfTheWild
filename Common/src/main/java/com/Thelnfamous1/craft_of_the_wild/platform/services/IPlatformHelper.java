@@ -1,6 +1,6 @@
 package com.Thelnfamous1.craft_of_the_wild.platform.services;
 
-import com.Thelnfamous1.craft_of_the_wild.entity.MultipartEntity;
+import com.Thelnfamous1.craft_of_the_wild.entity.COTWMultipartEntity;
 import com.Thelnfamous1.craft_of_the_wild.entity.PartEntityController;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -40,7 +40,7 @@ public interface IPlatformHelper {
         return isDevelopmentEnvironment() ? "development" : "production";
     }
 
-    <P extends LivingEntity & MultipartEntity> PartEntityController<? extends Entity> makePartEntityController(P parent, PartEntityController.Info... infos);
+    <P extends LivingEntity & COTWMultipartEntity> PartEntityController<P, ? extends Entity> makePartEntityController(P parent, PartEntityController.PartTicker<P, Entity> partTicker, PartEntityController.PartResizer<P> partResizer, PartEntityController.PartInfo... partInfos);
 
     boolean canEntityGrief(Level level, Entity entity);
 }
