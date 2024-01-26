@@ -89,7 +89,7 @@ import java.util.OptionalInt;
 import java.util.function.Predicate;
 
 public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements BossMusicPlayer, SmartBrainOwner<StoneTalus>, COTWMultipartEntity, StoneTalusBase, RangedAttackMob {
-    public static final float SCALE = 1F; // desired target is 7/3
+    public static final float SCALE = 7F/3F; // desired target is 7/3
     public static final float FACEPLANT_ROTATION = 85.0F;
     protected static final EntityDataAccessor<OptionalInt> DATA_ATTACK_TYPE_ID = SynchedEntityData.defineId(StoneTalus.class, EntityDataSerializers.OPTIONAL_UNSIGNED_INT);
     protected static final EntityDataAccessor<Integer> DATA_LAST_POSE_CHANGE_TICK = SynchedEntityData.defineId(StoneTalus.class, EntityDataSerializers.INT);
@@ -144,17 +144,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
     }
 
     private static void tickParts(Entity part, StoneTalus talus, PartEntityController.PartInfo partInfo){
-        if(talus.isFaceplanting()){
-            float yRot = partInfo.bodyPart() ? talus.yBodyRot : talus.getYRot();
-            float xRot = talus.getXRot();
-            Vec3 offsetVec = new Vec3(partInfo.xOffset(), partInfo.yOffset(), partInfo.zOffset())
-                    .xRot(-xRot * Mth.DEG_TO_RAD)
-                    .yRot(-yRot * Mth.DEG_TO_RAD)
-                    .scale(talus.getScale() * partInfo.scale());
-            part.setPos(talus.getX() + offsetVec.x, talus.getY() + offsetVec.y, talus.getZ() + offsetVec.z);
-        } else{
-            COTWPartEntity.basicTicker(part, talus, partInfo);
-        }
+        COTWPartEntity.basicTicker(part, talus, partInfo);
     }
 
     private static EntityDimensions resizeParts(Entity part, StoneTalus talus,  EntityDimensions defaultSize){
