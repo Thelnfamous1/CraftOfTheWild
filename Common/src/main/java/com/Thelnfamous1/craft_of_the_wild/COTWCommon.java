@@ -1,9 +1,12 @@
 package com.Thelnfamous1.craft_of_the_wild;
 
+import com.Thelnfamous1.craft_of_the_wild.client.COTWCommonClient;
+import com.Thelnfamous1.craft_of_the_wild.entity.BossMusicPlayer;
 import com.Thelnfamous1.craft_of_the_wild.init.*;
 import com.Thelnfamous1.craft_of_the_wild.item.COTWSpawnEggItem;
 import com.Thelnfamous1.craft_of_the_wild.mixin.SpawnEggItemAccessor;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 
 // This class is part of the common project meaning it is shared between all supported loaders. Code written here can only
 // import and access the vanilla codebase, libraries used by vanilla, and optionally third party libraries that provide
@@ -22,6 +25,7 @@ public class COTWCommon {
         MemoryModuleInit.loadClass();
         DamageTypeInit.loadClass();
         AttributeInit.loadClass();
+        SoundInit.loadClass();
     }
 
     public static void registerSpawnEggs() {
@@ -35,5 +39,17 @@ public class COTWCommon {
 
     public static void debug(boolean debugFlag, String format, Object... args){
         if(debugFlag) Constants.LOG.info(format, args);
+    }
+
+    public static <T extends LivingEntity & BossMusicPlayer> void playBossMusicFor(T boss) {
+        if(boss.level().isClientSide){
+            COTWCommonClient.playBossMusicFor(boss);
+        }
+    }
+
+    public static <T extends LivingEntity & BossMusicPlayer> void stopBossMusicFor(T boss) {
+        if(boss.level().isClientSide){
+            COTWCommonClient.stopBossMusicFor(boss);
+        }
     }
 }

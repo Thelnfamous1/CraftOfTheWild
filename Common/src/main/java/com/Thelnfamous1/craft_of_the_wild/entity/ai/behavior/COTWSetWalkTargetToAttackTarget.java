@@ -1,4 +1,4 @@
-package com.Thelnfamous1.craft_of_the_wild.entity.ai;
+package com.Thelnfamous1.craft_of_the_wild.entity.ai.behavior;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;

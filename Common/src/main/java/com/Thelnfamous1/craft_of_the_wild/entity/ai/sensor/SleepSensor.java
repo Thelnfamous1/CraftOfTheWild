@@ -1,4 +1,4 @@
-package com.Thelnfamous1.craft_of_the_wild.entity.ai;
+package com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor;
 
 import com.Thelnfamous1.craft_of_the_wild.init.MemoryModuleInit;
 import com.Thelnfamous1.craft_of_the_wild.init.SensorInit;

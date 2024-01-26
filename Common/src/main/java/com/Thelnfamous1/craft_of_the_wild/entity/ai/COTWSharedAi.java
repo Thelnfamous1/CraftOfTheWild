@@ -10,7 +10,9 @@ import net.tslat.smartbrainlib.util.BrainUtils;
 public class COTWSharedAi {
     public static ExtendedBehaviour<Mob> createVanillaStyleLookAtTarget() {
         return new LookAtTarget<>()
-                .stopIf(mob -> COTWUtil.getOptionalMemory(mob, MemoryModuleType.LOOK_TARGET).filter(pt -> pt.isVisibleBy(mob)).isEmpty())
+                .stopIf(mob -> COTWUtil.getOptionalMemory(mob, MemoryModuleType.LOOK_TARGET)
+                        .filter(pt -> pt.isVisibleBy(mob))
+                        .isEmpty())
                 .whenStopping(talus -> BrainUtils.clearMemory(talus, MemoryModuleType.LOOK_TARGET))
                 .runFor(talus -> talus.getRandom().nextIntBetweenInclusive(45, 90));
     }

@@ -1,4 +1,4 @@
-package com.Thelnfamous1.craft_of_the_wild.entity.ai;
+package com.Thelnfamous1.craft_of_the_wild.entity.ai.controller;
 
 import com.Thelnfamous1.craft_of_the_wild.entity.AnimatedAttacker;
 import net.minecraft.world.entity.Mob;

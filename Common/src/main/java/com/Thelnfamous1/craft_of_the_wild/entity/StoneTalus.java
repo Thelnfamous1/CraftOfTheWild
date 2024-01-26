@@ -3,9 +3,13 @@ package com.Thelnfamous1.craft_of_the_wild.entity;
 import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.*;
+import com.Thelnfamous1.craft_of_the_wild.entity.ai.behavior.*;
+import com.Thelnfamous1.craft_of_the_wild.entity.ai.navigation.COTWGroundPathNavigation;
+import com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor.SleepSensor;
 import com.Thelnfamous1.craft_of_the_wild.entity.animation.COTWAnimations;
 import com.Thelnfamous1.craft_of_the_wild.init.AttributeInit;
 import com.Thelnfamous1.craft_of_the_wild.init.MemoryModuleInit;
+import com.Thelnfamous1.craft_of_the_wild.init.SoundInit;
 import com.Thelnfamous1.craft_of_the_wild.mixin.EntityAccessor;
 import com.Thelnfamous1.craft_of_the_wild.platform.Services;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWTags;
@@ -45,8 +49,10 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -82,7 +88,7 @@ import java.util.Map;
 import java.util.OptionalInt;
 import java.util.function.Predicate;
 
-public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements SmartBrainOwner<StoneTalus>, COTWMultipartEntity, StoneTalusBase, RangedAttackMob {
+public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements BossMusicPlayer, SmartBrainOwner<StoneTalus>, COTWMultipartEntity, StoneTalusBase, RangedAttackMob {
     public static final float SCALE = 1F; // desired target is 7/3
     public static final float FACEPLANT_ROTATION = 85.0F;
     protected static final EntityDataAccessor<OptionalInt> DATA_ATTACK_TYPE_ID = SynchedEntityData.defineId(StoneTalus.class, EntityDataSerializers.OPTIONAL_UNSIGNED_INT);
@@ -115,6 +121,11 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
         this.partEntities = this.partEntityController.collectParts().toArray(Entity[]::new);
         // Forge: Fix MC-158205: Make sure part ids are successors of parent mob id
         this.setId(EntityAccessor.craft_of_the_wild$getENTITY_COUNTER().getAndAdd(this.partEntities.length + 1) + 1);
+    }
+
+    @Override
+    protected PathNavigation createNavigation(Level level) {
+        return new COTWGroundPathNavigation(this, level);
     }
 
     public static boolean canDestroy(BlockState blockState) {
@@ -354,12 +365,41 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
         if (this.refuseToMove(false)) {
             this.clampHeadRotationToBody(this);
         }
+        if (!this.level().isClientSide) {
+            if (this.canPlayBossMusic()) {
+                this.level().broadcastEntityEvent(this, MUSIC_PLAY_ID);
+            }
+            else {
+                this.level().broadcastEntityEvent(this, MUSIC_STOP_ID);
+            }
+        }
     }
 
     protected void clampHeadRotationToBody(Entity entityToUpdate) {
         float yHeadRot = entityToUpdate.getYHeadRot();
         float difference = yHeadRot - Mth.rotateIfNecessary(yHeadRot, this.yBodyRot, (float) this.getMaxHeadYRot());
         entityToUpdate.setYHeadRot(difference);
+    }
+
+    @Override
+    public boolean canPlayBossMusic() {
+        return !this.isSilent() && this.getTarget() instanceof Player;
+    }
+
+    @Override
+    public SoundEvent getBossMusic() {
+        return SoundInit.STONE_TALUS_BOSS_MUSIC.get();
+    }
+
+    @Override
+    public void handleEntityEvent(byte eventId) {
+        if (eventId == BossMusicPlayer.MUSIC_PLAY_ID) {
+            COTWCommon.playBossMusicFor(this);
+        }
+        if (eventId == BossMusicPlayer.MUSIC_STOP_ID) {
+            COTWCommon.stopBossMusicFor(this);
+        }
+        super.handleEntityEvent(eventId);
     }
 
     public void clientDiggingParticles(AnimationState<StoneTalus> state) {
@@ -469,7 +509,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Sma
     }
 
     private StoneTalusAttackType selectMeleeAttackType() {
-        if(Constants.DEBUG_STONE_TALUS_HEADBUTT){ // only for testing
+        if(Constants.DEBUG_STONE_TALUS_HEADBUTT){
             return StoneTalusAttackType.HEADBUTT;
         }
         int nextInt = this.level().random.nextInt(9);

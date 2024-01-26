@@ -1,8 +1,8 @@
 package com.Thelnfamous1.craft_of_the_wild.init;
 
 import com.Thelnfamous1.craft_of_the_wild.Constants;
-import com.Thelnfamous1.craft_of_the_wild.entity.ai.COTWAttackTargetSensor;
-import com.Thelnfamous1.craft_of_the_wild.entity.ai.SleepSensor;
+import com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor.COTWAttackTargetSensor;
+import com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor.SleepSensor;
 import com.nyfaria.craft_of_the_wild.registration.RegistrationProvider;
 import com.nyfaria.craft_of_the_wild.registration.RegistryObject;
 import net.minecraft.core.registries.Registries;

@@ -2,7 +2,7 @@ package com.Thelnfamous1.craft_of_the_wild.entity;
 
 import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
-import com.Thelnfamous1.craft_of_the_wild.entity.ai.AttackingLookController;
+import com.Thelnfamous1.craft_of_the_wild.entity.ai.controller.AttackingLookController;
 import com.Thelnfamous1.craft_of_the_wild.init.DamageTypeInit;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import net.minecraft.nbt.CompoundTag;

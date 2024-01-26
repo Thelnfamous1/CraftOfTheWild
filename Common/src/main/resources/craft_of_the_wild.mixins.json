@@ -6,10 +6,13 @@
   "refmap": "${mod_id}.refmap.json",
   "mixins": [
     "EntityAccessor",
-    "SpawnEggItemAccessor"
+    "PathFinderMixin",
+    "SpawnEggItemAccessor",
+    "WalkNodeEvaluatorAccess"
   ],
   "client": [
-    "ExampleMixin"
+    "ExampleMixin",
+    "LocalPlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
