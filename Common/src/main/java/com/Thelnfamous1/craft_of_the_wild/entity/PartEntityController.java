@@ -30,7 +30,7 @@ public class PartEntityController<P extends Entity, T extends Entity> {
         return partInfoPair.getFirst();
     }
 
-    public Collection<T> collectParts() {
+    public List<T> collectParts() {
         List<T> parts = new ArrayList<>(this.partsByName.values().size());
         for(Pair<T, PartInfo> partInfoPair : this.partsByName.values()){
             parts.add(partInfoPair.getFirst());

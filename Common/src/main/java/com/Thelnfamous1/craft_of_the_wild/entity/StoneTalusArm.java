@@ -1,5 +1,7 @@
 package com.Thelnfamous1.craft_of_the_wild.entity;
 
+import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
+import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.init.DamageTypeInit;
 import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
 import com.Thelnfamous1.craft_of_the_wild.platform.Services;
@@ -14,21 +16,25 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import javax.annotation.Nullable;
+import java.util.List;
+
 public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntity, StoneTalusBase {
     protected static final EntityDataAccessor<Boolean> DATA_BATTLE_ID = SynchedEntityData.defineId(StoneTalusArm.class, EntityDataSerializers.BOOLEAN);
 
     private final AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
     private double baseDamage = 32.0D;
+    private double radius = 1 * StoneTalus.SCALE;
 
     public StoneTalusArm(EntityType<? extends StoneTalusArm> type, Level level) {
         super(type, level);
@@ -54,6 +60,9 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
         if (tag.contains("damage", Tag.TAG_ANY_NUMERIC)) {
             this.baseDamage = tag.getDouble("damage");
         }
+        if (tag.contains("radius", Tag.TAG_ANY_NUMERIC)) {
+            this.radius = tag.getDouble("radius");
+        }
         this.readBattleFromTag(tag);
     }
 
@@ -61,6 +70,7 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putDouble("damage", this.baseDamage);
+        tag.putDouble("radius", this.radius);
         this.writeBattleToTag(tag);
     }
 
@@ -82,27 +92,27 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
         super.onHit(hitResult);
         if (!this.level().isClientSide) {
             COTWUtil.playVanillaExplosionSound(this);
-            COTWUtil.spawnVanillaExplosionParticles(((ServerLevel) this.level()), 1, this.position());
+            double radius = this.getRadius();
+            double attackSize = radius * 2;
+            AABB attackBox = AABB.ofSize(this.position(), attackSize, attackSize, attackSize);
+            COTWCommon.debug(Constants.DEBUG_STONE_TALUS_ARM, "Created attack box of size {} for {}", attackBox.getSize(), this);
+            if(Constants.DEBUG_STONE_TALUS_ARM) COTWUtil.sendHitboxParticles(attackBox, this.level());
+            LivingEntity owner = this.getOwner() instanceof LivingEntity livingOwner ? livingOwner : null;
+            //noinspection ConstantConditions
+            List<LivingEntity> targets = this.level().getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT, owner, attackBox);
+            targets.forEach(target -> this.applyDamage(target, owner));
+            COTWUtil.spawnVanillaExplosionParticles(((ServerLevel) this.level()), radius, this.position());
             if(Services.PLATFORM.canEntityGrief(this.level(), this)){
-                AABB searchBox = this.getBoundingBox().inflate(0.2D);
-                COTWUtil.destroyBlocksInBoundingBox(searchBox, this.level(), this, StoneTalus::canDestroy);
+                COTWUtil.destroyBlocksInBoundingBox(attackBox, this.level(), this, StoneTalus::canDestroy);
             }
             this.discard();
         }
     }
 
-    @Override
-    protected void onHitEntity(EntityHitResult ehr) {
-        super.onHitEntity(ehr);
-        if (!this.level().isClientSide) {
-            Entity target = ehr.getEntity();
-            Entity owner = this.getOwner();
-            boolean hurt = target.hurt(DamageTypeInit.stoneTalusArm(this, owner), (float) this.getBaseDamage());
-            if (hurt && owner instanceof LivingEntity shooter) {
-                if (target.isAlive()) {
-                    this.doEnchantDamageEffects(shooter, target);
-                }
-            }
+    private void applyDamage(LivingEntity target, @Nullable LivingEntity owner){
+        boolean hurt = target.hurt(DamageTypeInit.stoneTalusArm(this, owner), (float) this.getBaseDamage());
+        if (hurt && owner != null && target.isAlive()) {
+            this.doEnchantDamageEffects(owner, target);
         }
     }
 
@@ -147,5 +157,13 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
     @Override
     public void setBattle(boolean battle) {
         this.entityData.set(DATA_BATTLE_ID, battle);
+    }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
+
+    public double getRadius() {
+        return radius;
     }
 }

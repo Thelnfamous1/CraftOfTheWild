@@ -107,7 +107,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
 
     public StoneTalus(EntityType<? extends StoneTalus> type, Level level) {
         super(type, level);
-        this.setMaxUpStep(1.0F);
+        this.setMaxUpStep(2.0F); // Talus can step up 2 blocks without triggering a jump
         this.xpReward = 60;
         this.partEntityController = Services.PLATFORM.makePartEntityController(this,
                 StoneTalus::tickParts,
@@ -117,7 +117,8 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
                 new PartEntityController.PartInfo("body", 2.625F, 1.0625F, true, 0, 0.75, 0, StoneTalus.SCALE),
                 new PartEntityController.PartInfo("leftArm", 1.125F, 1.5625F, true, -1.6875, 0, 0, StoneTalus.SCALE),
                 new PartEntityController.PartInfo("rightArm", 1.125F, 1.5625F, true, 1.6875, 0, 0, StoneTalus.SCALE),
-                new PartEntityController.PartInfo("leftLeg", 0.5625F, 0.75F, true, -0.5, 0, 0, StoneTalus.SCALE), new PartEntityController.PartInfo("rightLeg", 0.5625F, 0.75F, true, 0.5, 0, 0, StoneTalus.SCALE));
+                new PartEntityController.PartInfo("leftLeg", 0.5625F, 0.75F, true, -0.5, 0, 0, StoneTalus.SCALE),
+                new PartEntityController.PartInfo("rightLeg", 0.5625F, 0.75F, true, 0.5, 0, 0, StoneTalus.SCALE));
         this.partEntities = this.partEntityController.collectParts().toArray(Entity[]::new);
         // Forge: Fix MC-158205: Make sure part ids are successors of parent mob id
         this.setId(EntityAccessor.craft_of_the_wild$getENTITY_COUNTER().getAndAdd(this.partEntities.length + 1) + 1);
@@ -144,14 +145,14 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
     }
 
     private static void tickParts(Entity part, StoneTalus talus, PartEntityController.PartInfo partInfo){
-        COTWPartEntity.basicTicker(part, talus, partInfo);
+        COTWPartEntity.basicTicker(part, talus, partInfo, talus.isFaceplanting());
     }
 
     private static EntityDimensions resizeParts(Entity part, StoneTalus talus,  EntityDimensions defaultSize){
         if(talus.isFaceplanted()){
-            return EntityDimensions.fixed(defaultSize.height, defaultSize.width); // since it becomes horizontal, switch bounding box dimensions
+            return EntityDimensions.scalable(defaultSize.height, defaultSize.width).scale(talus.getScale()); // since it becomes horizontal, switch bounding box dimensions
         } else{
-            return defaultSize;
+            return defaultSize.scale(talus.getScale());
         }
     }
 
@@ -556,6 +557,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
             StoneTalusArm stoneTalusArm = new StoneTalusArm(this.level(), this, xDist, yDist, zDist);
             stoneTalusArm.setBattle(this.isBattle());
             stoneTalusArm.setBaseDamage(this.getAttributeValue(Attributes.ATTACK_DAMAGE) * currentAttackPoint.baseDamageModifier());
+            stoneTalusArm.setRadius(1 * SCALE * this.getScale()); // diameter = 2, scaled up by 7/3 to be 14/3 (4 + 2/3)
 
             stoneTalusArm.setPosRaw(x, y, z);
             this.level().addFreshEntity(stoneTalusArm);
