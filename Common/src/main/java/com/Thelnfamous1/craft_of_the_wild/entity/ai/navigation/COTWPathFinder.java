@@ -1,5 +1,6 @@
 package com.Thelnfamous1.craft_of_the_wild.entity.ai.navigation;
 
+import com.Thelnfamous1.craft_of_the_wild.mixin.PathAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -20,6 +21,7 @@ import java.util.Set;
  * Credit: <a href="https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/server/ai/MMPathFinder.java">Mowzie's Mobs</a>
  */
 public class COTWPathFinder extends PathFinder {
+
     public COTWPathFinder(NodeEvaluator processor, int maxVisitedNodes) {
         super(processor, maxVisitedNodes);
     }
@@ -34,6 +36,8 @@ public class COTWPathFinder extends PathFinder {
     static class PatchedPath extends Path {
         public PatchedPath(Path original) {
             super(copyPathPoints(original), original.getTarget(), original.canReach());
+            // Needed so DebugUtils / the vanilla DebugRenderer works properly for this subclass of Path
+            ((PathAccessor)this).callSetDebug(original.getOpenSet(), original.getClosedSet(), ((PathAccessor)original).getTargetNodes());
         }
 
         @Override
@@ -41,8 +45,8 @@ public class COTWPathFinder extends PathFinder {
             Node point = this.getNode(index);
             double x = point.x + Mth.floor(entity.getBbWidth() + 1.0F) * 0.5D;
             double y = point.y;
-            double d2 = point.z + Mth.floor(entity.getBbWidth() + 1.0F) * 0.5D;
-            return new Vec3(x, y, d2);
+            double z = point.z + Mth.floor(entity.getBbWidth() + 1.0F) * 0.5D;
+            return new Vec3(x, y, z);
         }
 
         private static List<Node> copyPathPoints(Path original) {

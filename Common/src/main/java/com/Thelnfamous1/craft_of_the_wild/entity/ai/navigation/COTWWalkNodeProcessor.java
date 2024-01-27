@@ -80,6 +80,7 @@ public class COTWWalkNodeProcessor extends WalkNodeEvaluator {
         }
 
         return this.getStartNode(BlockPos.containing(x, y, z));
+        // End Mowzie's Mobs patch
     }
 
     @Nullable
@@ -154,6 +155,7 @@ public class COTWWalkNodeProcessor extends WalkNodeEvaluator {
                             return result;
                         }
                     }
+                    // End Mowzie's Mobs patch
 
 
                     int fallDistance = 0;

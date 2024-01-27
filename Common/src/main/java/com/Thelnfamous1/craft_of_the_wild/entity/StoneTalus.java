@@ -5,6 +5,7 @@ import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.*;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.behavior.*;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.navigation.COTWGroundPathNavigation;
+import com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor.COTWNearbyPlayersSensor;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor.SleepSensor;
 import com.Thelnfamous1.craft_of_the_wild.entity.animation.COTWAnimations;
 import com.Thelnfamous1.craft_of_the_wild.init.AttributeInit;
@@ -77,7 +78,6 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.target.*;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
-import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
 import net.tslat.smartbrainlib.util.BrainUtils;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationState;
@@ -135,7 +135,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
 
     public static AttributeSupplier.Builder createAttributes(){
         return Monster.createMonsterAttributes()
-                .add(Attributes.FOLLOW_RANGE, 20.0D)
+                .add(Attributes.FOLLOW_RANGE, 35.0D)
                 .add(Attributes.MAX_HEALTH, 200.0D)
                 .add(Attributes.ARMOR, 6.0D)
                 .add(Attributes.ATTACK_DAMAGE, 24.0D)
@@ -630,7 +630,9 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
 
     @Override
     public boolean isPickable() {
-        return false; // Need to return false so the regular hitbox is not used for hit detection
+        // Need to return false so the regular hitbox is not used for hit detection
+        // Not needed on Fabric, as this mob will not have sub-parts until a Fabric subpart API is available
+        return Services.PLATFORM.getPlatformName().equals("Forge");
     }
 
     @Override
@@ -722,7 +724,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
     @Override
     public List<? extends ExtendedSensor<? extends StoneTalus>> getSensors() {
         return ObjectArrayList.of(
-                new NearbyPlayersSensor<>(),
+                new COTWNearbyPlayersSensor<>(),
                 new NearbyLivingEntitySensor<>(),
                 new HurtBySensor<>(),
                 new SleepSensor<>()
@@ -775,7 +777,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
         return BrainActivityGroup.fightTasks(
                 new CustomBehaviour<>(StoneTalus::resetDigCooldown),
                 new CustomBehaviour<>(StoneTalus::updateCurrentAttackTypeForTarget),
-                new InvalidateAttackTarget<StoneTalus>().invalidateIf((talus, target) -> !talus.closerThan(target, COTWUtil.getHitboxAdjustedDistance(talus, target, COTWUtil.getFollowRange(talus)))),
+                new InvalidateAttackTarget<StoneTalus>().invalidateIf((talus, target) -> !talus.closerThan(target, COTWUtil.getHitboxAdjustedDistance(talus, target, getFollowingRange(talus)))),
                 new LookAtAttackTarget<>(), // need this so the talus always tries to look at the attack target even if it is within the attack range
                 new COTWSetWalkTargetToAttackTarget<StoneTalus>()
                         .isWithinAttackRange((talus, target) -> talus.isWithinMeleeAttackRange(target, 1))
@@ -793,6 +795,10 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
                                 .startCondition(StoneTalus::isInMeleeMode)
                 )
         );
+    }
+
+    private static double getFollowingRange(StoneTalus talus) {
+        return COTWUtil.getFollowRange(talus);
     }
 
     private static int getAttackCooldownDuration(StoneTalus talus) {
@@ -815,10 +821,10 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
     @Override
     public BrainActivityGroup<? extends StoneTalus> getIdleTasks() {
         return BrainActivityGroup.idleTasks(
-                new FirstApplicableBehaviour<StoneTalus>(
-                        new SetAttackTarget<>(false)
+                new FirstApplicableBehaviour<>(
+                        new SetAttackTarget<StoneTalus>(false)
                                 .targetFinder(talus -> COTWUtil.getOptionalMemory(this, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER)
-                                        .filter(player -> player.closerThan(talus, COTWUtil.getHitboxAdjustedDistance(talus, player, 15)))
+                                        .filter(player -> player.closerThan(talus, COTWUtil.getHitboxAdjustedDistance(talus, player, getTargetingRange(talus))))
                                         .orElse(null)),
                         new SetRetaliateTarget<>()
                                 .alertAlliesWhen((talus, target) -> true)
@@ -828,6 +834,10 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
                 new OneRandomBehaviour<>(
                         new SetRandomWalkTarget<>().speedModifier(0.6F),
                         new Idle<>().runFor(talus -> talus.getRandom().nextInt(30, 60))));
+    }
+
+    private static double getTargetingRange(StoneTalus talus) {
+        return COTWUtil.getFollowRange(talus);
     }
 
     @Override
@@ -874,11 +884,15 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
                                         BrainUtils.clearMemory(talus, MemoryModuleInit.IS_SLEEPING.get());
                                     })
                                             .startCondition(talus -> COTWUtil.getOptionalMemory(this, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER)
-                                                    .filter(player -> player.closerThan(talus, COTWUtil.getHitboxAdjustedDistance(talus, player, 5)))
+                                                    .filter(player -> player.closerThan(talus, COTWUtil.getHitboxAdjustedDistance(talus, player, getDetectingRange())))
                                                     .isPresent())
                             )
                             .requireAndWipeMemoriesOnUse(MemoryModuleInit.IS_SLEEPING.get())
             );
         });
+    }
+
+    private static int getDetectingRange() {
+        return 5;
     }
 }

@@ -1,5 +1,6 @@
 package com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor;
 
+import com.Thelnfamous1.craft_of_the_wild.init.SensorInit;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.NearestVisibleLivingEntities;
@@ -7,7 +8,6 @@ import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.tslat.smartbrainlib.api.core.sensor.EntityFilteringSensor;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.PredicateSensor;
-import net.tslat.smartbrainlib.registry.SBLSensors;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiPredicate;
@@ -39,6 +39,6 @@ public class COTWAttackTargetSensor<E extends LivingEntity> extends EntityFilter
 
 	@Override
 	public SensorType<? extends ExtendedSensor<?>> type() {
-		return SBLSensors.GENERIC_ATTACK_TARGET.get();
+		return SensorInit.ATTACK_TARGET.get();
 	}
 }
