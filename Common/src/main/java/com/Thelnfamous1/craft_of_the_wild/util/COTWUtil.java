@@ -276,4 +276,10 @@ public class COTWUtil {
         return Mth.abs(secondsToTicks(end) - secondsToTicks(start));
     }
 
+    public static boolean isInRange(double value, double min, double max) {
+        if(min > max){
+            throw new IllegalArgumentException("Min cannot be greater than max!");
+        }
+        return value >= min && value <= max;
+    }
 }

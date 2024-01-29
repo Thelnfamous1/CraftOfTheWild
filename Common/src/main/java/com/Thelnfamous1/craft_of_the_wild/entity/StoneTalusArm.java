@@ -8,6 +8,7 @@ import com.Thelnfamous1.craft_of_the_wild.platform.Services;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -42,6 +43,21 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
 
     public StoneTalusArm(Level level, LivingEntity shooter, double xDist, double yDist, double zDist) {
         super(EntityInit.STONE_TALUS_ARM.get(), shooter, xDist, yDist, zDist, level);
+        this.applyPowerScaling();
+        COTWCommon.debug(Constants.DEBUG_STONE_TALUS_ARM, "{} was created with {}, {}, {} power within [-3.9, 3.9] range: {}, {}, {}",
+                this,
+                this.xPower,
+                this.yPower,
+                this.zPower,
+                COTWUtil.isInRange(this.xPower, -3.9, 3.9),
+                COTWUtil.isInRange(this.yPower, -3.9, 3.9),
+                COTWUtil.isInRange(this.zPower, -3.9, 3.9));
+    }
+
+    protected void applyPowerScaling() {
+        this.xPower *= 2;
+        this.yPower *= 2;
+        this.zPower *= 2;
     }
 
     public StoneTalusArm(Level level, double x, double y, double z, double xDist, double yDist, double zDist) {
@@ -164,6 +180,20 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
     }
 
     public double getRadius() {
-        return radius;
+        return this.radius;
+    }
+
+    @Override
+    public void recreateFromPacket(ClientboundAddEntityPacket packet) {
+        super.recreateFromPacket(packet);
+        this.applyPowerScaling();
+        COTWCommon.debug(Constants.DEBUG_STONE_TALUS_ARM, "{} was recreated with {}, {}, {} power within [-3.9, 3.9] range: {}, {}, {}",
+                this,
+                this.xPower,
+                this.yPower,
+                this.zPower,
+                COTWUtil.isInRange(this.xPower, -3.9, 3.9),
+                COTWUtil.isInRange(this.yPower, -3.9, 3.9),
+                COTWUtil.isInRange(this.zPower, -3.9, 3.9));
     }
 }
