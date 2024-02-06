@@ -275,11 +275,15 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
             if(this.getCurrentAttackType() == null){
                 this.setCurrentAttackType(this.selectAttackTypeForTarget(target));
             }
-
             this.startAttackCooldown();
+            this.onAttackStarted(this.getCurrentAttackType());
             return true;
         }
         return false;
+    }
+
+    protected void onAttackStarted(T currentAttackType) {
+
     }
 
     protected void startAttackCooldown() {

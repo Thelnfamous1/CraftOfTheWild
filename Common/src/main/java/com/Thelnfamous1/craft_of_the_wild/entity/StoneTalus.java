@@ -353,6 +353,10 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
     @Override
     public void tick() {
         super.tick();
+        if(!this.level().isClientSide && AnimatedAttacker.hasCurrentAttackType(this, StoneTalusAttackType.THROW) && this.getTicksSinceAttackStarted() == COTWUtil.secondsToTicks(3)){
+            this.playSoundEvent(SoundInit.STONE_TALUS_REGENERATE_ARMS.get());
+            COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "{} is playing the {} sound!", this, SoundInit.STONE_TALUS_REGENERATE_ARMS.get().getLocation());
+        }
         if (this.refuseToMove(false)) {
             this.clampHeadRotationToBody(this);
         }
@@ -449,18 +453,32 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
     }
 
     @Override
+    protected void onAttackStarted(StoneTalusAttackType currentAttackType) {
+        switch (currentAttackType){
+            case HEADBUTT -> this.playSoundEvent(SoundInit.STONE_TALUS_HEADBUTT.get());
+            case POUND -> this.playSoundEvent(SoundInit.STONE_TALUS_POUND.get());
+            case THROW -> this.playSoundEvent(SoundInit.STONE_TALUS_THROW_ARMS.get());
+        }
+    }
+
+    protected void playSoundEvent(SoundEvent soundEvent){
+        this.playSound(soundEvent, this.getSoundVolume(), this.getVoicePitch());
+    }
+
+    @Override
     protected void playAttackSound(StoneTalusAttackType currentAttackType, AttackPoint currentAttackPoint) {
         if(!this.level().isClientSide){
             if(currentAttackPoint.damageMode() == AttackPoint.DamageMode.AREA_OF_EFFECT){
                 COTWUtil.playVanillaExplosionSound(this);
-            } else if(currentAttackType == StoneTalusAttackType.THROW){
-                if (!this.isSilent()) {
-                    this.level().levelEvent(null, WITHER_SHOOT_EVENT_ID, this.blockPosition(), 0);
-                }
-            } else{
-                this.playSound(SoundEvents.IRON_GOLEM_ATTACK);
+            } else if(currentAttackType == StoneTalusAttackType.PUNCH){
+                this.playSoundEvent(SoundEvents.IRON_GOLEM_ATTACK);
             }
         }
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 4.0F;
     }
 
     @Override
@@ -592,17 +610,17 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvents.IRON_GOLEM_DEATH;
+        return SoundInit.STONE_TALUS_DEATH.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvents.IRON_GOLEM_HURT;
+        return SoundInit.STONE_TALUS_HURT.get();
     }
 
     @Override
     protected void playStepSound(BlockPos stepPos, BlockState stepState) {
-        this.playSound(SoundEvents.IRON_GOLEM_STEP, 1.0F, 1.0F);
+        this.playSoundEvent(SoundInit.STONE_TALUS_WALK.get());
     }
 
     @Override
@@ -846,7 +864,11 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
             map.put(Activity.EMERGE,
                     new BrainActivityGroup<StoneTalus>(Activity.EMERGE)
                             .behaviours(
-                                    new Emerging<>(EMERGE_TICKS)
+                                    new Emerging<StoneTalus>(EMERGE_TICKS)
+                                            .startEmerging(talus -> {
+                                                talus.setPose(Pose.EMERGING);
+                                                talus.playSoundEvent(SoundInit.STONE_TALUS_SPAWN.get());
+                                            })
                                             .finishEmerging(talus -> {
                                                 if (talus.hasPose(Pose.EMERGING)) {
                                                     talus.setPose(Pose.STANDING);

@@ -3,5 +3,69 @@
     "sounds": [
       "craft_of_the_wild:stone_talus_boss_music"
     ]
+  },
+  "stone_talus_death": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:stone_talus_death",
+        "volume": 2.0
+      }
+    ]
+  },
+  "stone_talus_headbutt": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:stone_talus_headbutt",
+        "volume": 2.0
+      }
+    ]
+  },
+  "stone_talus_hurt": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:stone_talus_hurt",
+        "volume": 2.0
+      }
+    ]
+  },
+  "stone_talus_pound": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:stone_talus_pound",
+        "volume": 2.0
+      }
+    ]
+  },
+  "stone_talus_regenerate_arms": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:stone_talus_regenerate_arms",
+        "volume": 2.0
+      }
+    ]
+  },
+  "stone_talus_spawn": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:stone_talus_spawn",
+        "volume": 2.0
+      }
+    ]
+  },
+  "stone_talus_throw_arms": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:stone_talus_throw_arms",
+        "volume": 2.0
+      }
+    ]
+  },
+  "stone_talus_walk": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:stone_talus_walk",
+        "volume": 2.0
+      }
+    ]
   }
 }
