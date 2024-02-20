@@ -36,6 +36,14 @@
       }
     ]
   },
+  "stone_talus_punch": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:stone_talus_punch",
+        "volume": 2.0
+      }
+    ]
+  },
   "stone_talus_regenerate_arms": {
     "sounds": [
       {
@@ -44,10 +52,26 @@
       }
     ]
   },
+  "stone_talus_shake": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:stone_talus_shake",
+        "volume": 2.0
+      }
+    ]
+  },
   "stone_talus_spawn": {
     "sounds": [
       {
         "name": "craft_of_the_wild:stone_talus_spawn",
+        "volume": 2.0
+      }
+    ]
+  },
+  "stone_talus_stun": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:stone_talus_stun",
         "volume": 2.0
       }
     ]

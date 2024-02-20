@@ -29,6 +29,12 @@ public class SoundInit {
 
     public static final RegistryObject<SoundEvent> STONE_TALUS_WALK = registerSoundEvent("stone_talus_walk");
 
+    public static final RegistryObject<SoundEvent> STONE_TALUS_STUN = registerSoundEvent("stone_talus_stun");
+
+    public static final RegistryObject<SoundEvent> STONE_TALUS_PUNCH = registerSoundEvent("stone_talus_punch");
+
+    public static final RegistryObject<SoundEvent> STONE_TALUS_SHAKE = registerSoundEvent("stone_talus_shake");
+
     private static RegistryObject<SoundEvent> registerSoundEvent(String path) {
         return SOUND_EVENTS.register(path, () -> SoundEvent.createVariableRangeEvent(COTWCommon.getResourceLocation(path)));
     }

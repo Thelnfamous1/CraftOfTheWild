@@ -27,14 +27,14 @@ public class EntityInit {
     public static final RegistryObject<EntityType<StoneTalus>> STONE_TALUS = registerEntity("stone_talus", () ->
             EntityType.Builder.of(StoneTalus::new, MobCategory.MONSTER)
                     .fireImmune()
-                    .sized(3.125F * StoneTalus.SCALE, 2.9375F * StoneTalus.SCALE)
+                    .sized(3.125F * StoneTalus.LOGICAL_SCALE, 2.9375F * StoneTalus.LOGICAL_SCALE)
                     .clientTrackingRange(10),
             StoneTalus::createAttributes);
 
     public static final RegistryObject<EntityType<StoneTalusArm>> STONE_TALUS_ARM = registerEntity("stone_talus_arm", () ->
                     EntityType.Builder.<StoneTalusArm>of(StoneTalusArm::new, MobCategory.MISC)
                             .fireImmune()
-                            .sized(1.5625F * StoneTalus.SCALE, 1.125F * StoneTalus.SCALE) // the arm will be horizontal when thrown, so flip the width/height from the part entity
+                            .sized(1.5625F * StoneTalus.LOGICAL_SCALE, 1.125F * StoneTalus.LOGICAL_SCALE) // the arm will be horizontal when thrown, so flip the width/height from the part entity
                             .clientTrackingRange(4)
                             .updateInterval(10));
 

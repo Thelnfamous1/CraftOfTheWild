@@ -8,13 +8,14 @@ import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class StoneTalusArmModel extends DefaultedEntityGeoModel<StoneTalusArm> {
-    private final ResourceLocation battleTexturePath;
+    private final Map<String, ResourceLocation> TEXTURE_PATHS = new HashMap<>();
 
     public StoneTalusArmModel() {
         super(EntityInit.STONE_TALUS_ARM.getId());
-        this.withAltTexture(EntityInit.STONE_TALUS_ARM.getId().withPath(path -> path + "/normal"));
-        this.battleTexturePath = this.buildFormattedTexturePath(EntityInit.STONE_TALUS_ARM.getId().withPath(path -> path + "/battle"));
     }
 
     @Override
@@ -35,9 +36,8 @@ public class StoneTalusArmModel extends DefaultedEntityGeoModel<StoneTalusArm> {
 
     @Override
     public ResourceLocation getTextureResource(StoneTalusArm animatable) {
-        if(animatable.isBattle()){
-            return battleTexturePath;
-        }
-        return super.getTextureResource(animatable);
+        return this.TEXTURE_PATHS.computeIfAbsent(animatable.getVariant().getName(),
+                k -> this.buildFormattedTexturePath(EntityInit.STONE_TALUS_ARM.getId()
+                        .withPath(path -> path + "/" + animatable.getVariant().getName())));
     }
 }

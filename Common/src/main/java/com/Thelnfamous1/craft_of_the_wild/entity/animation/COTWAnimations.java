@@ -20,8 +20,10 @@ public class COTWAnimations {
     public static RawAnimation DEATH = RawAnimation.begin().thenPlayAndHold("death"); // transitional animation
     public static RawAnimation STONE_TALUS_POUND = RawAnimation.begin().thenPlay("Move 1"); // one-shot animation
     public static RawAnimation STONE_TALUS_THROW = RawAnimation.begin().thenPlay("Move 2"); // one-shot animation
-    public static RawAnimation STONE_TALUS_HEADBUTT = RawAnimation.begin().thenPlay("Move 3"); // one-shot animation
-    public static RawAnimation STONE_TALUS_PUNCH = RawAnimation.begin().thenPlay("Move 4"); // one-shot animation
+    public static RawAnimation STONE_TALUS_HEADBUTT = RawAnimation.begin().thenPlay("drop"); // one-shot animation
+    public static RawAnimation STONE_TALUS_PUNCH = RawAnimation.begin().thenPlay("punch"); // one-shot animation
+    public static RawAnimation STONE_TALUS_STUN = RawAnimation.begin().thenPlay("Move 3"); // one-shot animation
+    public static RawAnimation STONE_TALUS_SHAKE = RawAnimation.begin().thenPlay("Move 5"); // one-shot animation
 
     public static AnimationController<StoneTalus> moveController(StoneTalus talus) {
         return new AnimationController<>(talus, "Move", 10, state -> {

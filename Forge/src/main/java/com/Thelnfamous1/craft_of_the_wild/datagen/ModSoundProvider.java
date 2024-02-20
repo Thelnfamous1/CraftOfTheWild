@@ -26,6 +26,9 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
         this.addSound(SoundInit.STONE_TALUS_REGENERATE_ARMS, 2);
         this.addSound(SoundInit.STONE_TALUS_THROW_ARMS, 2);
         this.addSound(SoundInit.STONE_TALUS_WALK, 2);
+        this.addSound(SoundInit.STONE_TALUS_STUN, 2);
+        this.addSound(SoundInit.STONE_TALUS_PUNCH, 2);
+        this.addSound(SoundInit.STONE_TALUS_SHAKE, 2);
     }
 
     public void addSound(RegistryObject<SoundEvent> entry, float volume) {

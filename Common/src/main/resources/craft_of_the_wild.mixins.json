@@ -11,7 +11,6 @@
     "WalkNodeEvaluatorAccess"
   ],
   "client": [
-    "ExampleMixin",
     "LocalPlayerMixin"
   ],
   "injectors": {

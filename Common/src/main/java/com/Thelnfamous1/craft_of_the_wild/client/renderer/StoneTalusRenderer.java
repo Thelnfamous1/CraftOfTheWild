@@ -13,7 +13,7 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
 public class StoneTalusRenderer extends GeoEntityRenderer<StoneTalus> {
     public StoneTalusRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new StoneTalusModel());
-        this.withScale(StoneTalus.SCALE);
+        this.withScale(StoneTalus.VISUAL_SCALE);
     }
 
     @Override

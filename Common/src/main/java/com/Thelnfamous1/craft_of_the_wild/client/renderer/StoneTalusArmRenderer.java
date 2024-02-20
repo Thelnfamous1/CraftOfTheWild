@@ -12,7 +12,7 @@ public class StoneTalusArmRenderer extends GeoEntityRenderer<StoneTalusArm> {
 
     public StoneTalusArmRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new StoneTalusArmModel());
-        this.withScale(StoneTalus.SCALE);
+        this.withScale(StoneTalus.VISUAL_SCALE);
     }
 
     @Override

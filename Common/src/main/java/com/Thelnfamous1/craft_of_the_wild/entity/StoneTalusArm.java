@@ -31,11 +31,13 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntity, StoneTalusBase {
-    protected static final EntityDataAccessor<Boolean> DATA_BATTLE_ID = SynchedEntityData.defineId(StoneTalusArm.class, EntityDataSerializers.BOOLEAN);
+    protected static final EntityDataAccessor<Integer> DATA_VARIANT_ID = SynchedEntityData.defineId(StoneTalusArm.class, EntityDataSerializers.INT);
 
     private final AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
     private double baseDamage = 32.0D;
-    private double radius = 1 * StoneTalus.SCALE;
+    private double radius = 1 * StoneTalus.LOGICAL_SCALE;
+    @Nullable
+    private Variant cachedVariant;
 
     public StoneTalusArm(EntityType<? extends StoneTalusArm> type, Level level) {
         super(type, level);
@@ -76,7 +78,28 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(DATA_BATTLE_ID, false);
+        this.entityData.define(DATA_VARIANT_ID, Variant.NORMAL.getId());
+    }
+
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> dataAccessor) {
+        super.onSyncedDataUpdated(dataAccessor);
+        if(dataAccessor.equals(DATA_VARIANT_ID)){
+            this.cachedVariant = null;
+        }
+    }
+
+    @Override
+    public void setVariant(Variant variant) {
+        this.entityData.set(DATA_VARIANT_ID, variant.getId());
+    }
+
+    @Override
+    public Variant getVariant() {
+        if(this.cachedVariant == null){
+            this.cachedVariant = Variant.byId(this.entityData.get(DATA_VARIANT_ID));
+        }
+        return this.cachedVariant;
     }
 
     @Override
@@ -88,7 +111,7 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
         if (tag.contains("radius", Tag.TAG_ANY_NUMERIC)) {
             this.radius = tag.getDouble("radius");
         }
-        this.readBattleFromTag(tag);
+        this.readVariantFromTag(tag);
     }
 
     @Override
@@ -96,7 +119,7 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
         super.addAdditionalSaveData(tag);
         tag.putDouble("damage", this.baseDamage);
         tag.putDouble("radius", this.radius);
-        this.writeBattleToTag(tag);
+        this.writeVariantToTag(tag);
     }
 
     @Override
@@ -172,16 +195,6 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.factory;
-    }
-
-    @Override
-    public boolean isBattle() {
-        return this.entityData.get(DATA_BATTLE_ID);
-    }
-
-    @Override
-    public void setBattle(boolean battle) {
-        this.entityData.set(DATA_BATTLE_ID, battle);
     }
 
     public void setRadius(double radius) {
