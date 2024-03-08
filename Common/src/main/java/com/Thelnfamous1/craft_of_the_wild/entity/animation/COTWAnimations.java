@@ -69,8 +69,14 @@ public class COTWAnimations {
                     case HEADBUTT -> {
                         return state.setAndContinue(STONE_TALUS_HEADBUTT);
                     }
+                    case STUN -> {
+                        return state.setAndContinue(STONE_TALUS_STUN);
+                    }
                     case PUNCH -> {
                         return state.setAndContinue(STONE_TALUS_PUNCH);
+                    }
+                    case SHAKE -> {
+                        return state.setAndContinue(STONE_TALUS_SHAKE);
                     }
                 }
             }

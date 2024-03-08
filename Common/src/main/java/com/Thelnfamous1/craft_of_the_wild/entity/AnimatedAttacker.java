@@ -83,7 +83,8 @@ public interface AnimatedAttacker<A extends AnimatedAttacker.AttackType> {
         public enum DamageMode{
             MELEE,
             AREA_OF_EFFECT,
-            RANGED
+            RANGED,
+            KNOCKBACK
         }
     }
 }

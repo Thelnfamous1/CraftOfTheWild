@@ -107,6 +107,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
     private StoneTalusAttackType currentAttackType;
     @Nullable
     private Variant cachedVariant;
+    private int stunCooldown;
 
     public StoneTalus(EntityType<? extends StoneTalus> type, Level level) {
         super(type, level);
@@ -261,6 +262,8 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
             BrainUtils.setMemory(this, MemoryModuleInit.IS_SLEEPING.get(), true);
         }
 
+        this.setVariant(Util.getRandom(Variant.values(), pLevel.getRandom()));
+
         return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
     }
 
@@ -362,6 +365,9 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
     @Override
     public void tick() {
         super.tick();
+        if(this.stunCooldown > 0){
+            this.stunCooldown--;
+        }
         if(!this.level().isClientSide && AnimatedAttacker.hasCurrentAttackType(this, StoneTalusAttackType.THROW) && this.getTicksSinceAttackStarted() == COTWUtil.secondsToTicks(3)){
             this.playSoundEvent(SoundInit.STONE_TALUS_REGENERATE_ARMS.get());
             COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "{} is playing the {} sound!", this, SoundInit.STONE_TALUS_REGENERATE_ARMS.get().getLocation());
@@ -465,6 +471,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
     protected void onAttackStarted(StoneTalusAttackType currentAttackType) {
         switch (currentAttackType){
             case HEADBUTT -> this.playSoundEvent(SoundInit.STONE_TALUS_HEADBUTT.get());
+            case STUN -> this.playSoundEvent(SoundInit.STONE_TALUS_STUN.get());
             case POUND -> this.playSoundEvent(SoundInit.STONE_TALUS_POUND.get());
             case THROW -> this.playSoundEvent(SoundInit.STONE_TALUS_THROW_ARMS.get());
         }
@@ -503,7 +510,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
     @Override
     protected double getAttackRadius(StoneTalusAttackType currentAttackType) {
         switch (currentAttackType){
-            case HEADBUTT -> {
+            case HEADBUTT, STUN -> {
                 return 2 * LOGICAL_SCALE * this.getScale(); // diameter = 4, scaled up by 7/3 to be 28/3 (9 + 1/3)
             }
             case POUND -> {
@@ -676,12 +683,29 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
     public boolean hurt(Entity partEntity, DamageSource pSource, float pDamage) {
         if(partEntity == this.partEntityController.getPart("weakPoint")){
             COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "Hit weakpoint for {} with {}, {}", this, pSource, pDamage);
+            if(pSource.is(DamageTypeTags.IS_PROJECTILE) && !this.isStunned()){
+                this.stun();
+            }
             return this.reallyHurt(pSource, pDamage);
         } else if(pSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY)){
             COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "Damaging {} with non-weakpoint damage {}, {}", this, pSource, pDamage);
             return this.reallyHurt(pSource, pDamage);
         }
         return false;
+    }
+
+    private boolean isStunned() {
+        return AnimatedAttacker.hasCurrentAttackType(this, StoneTalusAttackType.STUN);
+    }
+
+    private void stun() {
+        if(this.stunCooldown <= 0){
+            this.startAttack(() -> StoneTalusAttackType.STUN, true);
+            // manually set attack cooling down memory for STUN since it is not set by the main attacking Behaviors
+            BrainUtils.setForgettableMemory(this, MemoryModuleType.ATTACK_COOLING_DOWN, true, getAttackCooldownDuration(this));
+            this.stunCooldown = StoneTalusAttackType.STUN.getAttackDuration() + COTWUtil.secondsToTicks(6F);
+        }
+
     }
 
     protected boolean reallyHurt(DamageSource pSource, float pAmount) {
@@ -770,39 +794,43 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
                         .whenStarting(talus -> talus.setXRot(0.0F))
                         .whenStopping(talus -> {
                             talus.setFaceplanted(false);
-                            COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "{} is forced to no longer faceplanted!", talus);
+                            COTWCommon.debug(Constants.DEBUG_STONE_TALUS_FACEPLANT, "{} is forced to no longer faceplanted!", talus);
                         })
         );
     }
 
     private boolean isFaceplanting() {
-        return this.isAttackAnimationInProgress() && AnimatedAttacker.hasCurrentAttackType(this, StoneTalusAttackType.HEADBUTT);
+        return this.isAttackAnimationInProgress() && (this.isHeadbutting() || this.isStunned());
+    }
+
+    private boolean isHeadbutting() {
+        return AnimatedAttacker.hasCurrentAttackType(this, StoneTalusAttackType.HEADBUTT);
     }
 
     private static void updateXRotForFaceplant(StoneTalus talus){
         int ticksSinceAttackStarted = talus.getTicksSinceAttackStarted();
-        boolean headbuttAttack = AnimatedAttacker.hasCurrentAttackType(talus, StoneTalusAttackType.HEADBUTT);
+        boolean headbuttAttack = talus.isHeadbutting();
         int fallStart = headbuttAttack ? COTWUtil.secondsToTicks(1.96F) : COTWUtil.secondsToTicks(1.5F);
         int fallEnd = headbuttAttack ? COTWUtil.secondsToTicks(2.25F) : COTWUtil.secondsToTicks(2.71F);
         if(ticksSinceAttackStarted >= fallStart && ticksSinceAttackStarted <= fallEnd){
-            float tickDelta = COTWUtil.getTickDelta(FACEPLANT_ROTATION, COTWUtil.getSecondsDifferenceInTicks(fallStart, fallEnd));
+            float tickDelta = COTWUtil.getTickDelta(FACEPLANT_ROTATION, Math.abs(fallEnd - fallStart));
             talus.setXRot(Math.min(talus.getXRot() + tickDelta, FACEPLANT_ROTATION));
-            //COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "{} is faceplanting! X-Rotation is {}", talus, talus.getXRot());
+            COTWCommon.debug(Constants.DEBUG_STONE_TALUS_FACEPLANT, "{} is faceplanting! X-Rotation is {}", talus, talus.getXRot());
         } else {
             int riseStart = headbuttAttack ? COTWUtil.secondsToTicks(4.58F) : COTWUtil.secondsToTicks(5.21F);
             int riseEnd = headbuttAttack ? COTWUtil.secondsToTicks(5.17F) : COTWUtil.secondsToTicks(6.4583F);
             if(ticksSinceAttackStarted >= riseStart && ticksSinceAttackStarted <= riseEnd){
-                float tickDelta = COTWUtil.getTickDelta(FACEPLANT_ROTATION, COTWUtil.getSecondsDifferenceInTicks(riseStart, riseEnd));
+                float tickDelta = COTWUtil.getTickDelta(FACEPLANT_ROTATION, Math.abs(riseEnd - riseStart));
                 talus.setXRot(Math.max(talus.getXRot() - tickDelta, 0.0F));
-                //COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "{} is unfaceplanting! X-Rotation is {}", talus, talus.getXRot());
+                COTWCommon.debug(Constants.DEBUG_STONE_TALUS_FACEPLANT, "{} is unfaceplanting! X-Rotation is {}", talus, talus.getXRot());
             }
         }
         if(talus.getXRot() == FACEPLANT_ROTATION && !talus.isFaceplanted()){
             talus.setFaceplanted(true);
-            COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "{} is now faceplanted!", talus);
+            COTWCommon.debug(Constants.DEBUG_STONE_TALUS_FACEPLANT, "{} is now faceplanted!", talus);
         } else if(talus.getXRot() == 0.0F && talus.isFaceplanted()){
             talus.setFaceplanted(false);
-            COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "{} is no longer faceplanted!", talus);
+            COTWCommon.debug(Constants.DEBUG_STONE_TALUS_FACEPLANT, "{} is no longer faceplanted!", talus);
         }
     }
 
@@ -840,11 +868,11 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
     }
 
     private static boolean isInMeleeMode(StoneTalus talus) {
-        return !isInRangedMode(talus);
+        return !isInRangedMode(talus) && !talus.isStunned();
     }
 
     private static boolean isInRangedMode(StoneTalus talus) {
-        return talus.getCurrentAttackType() == StoneTalusAttackType.THROW;
+        return talus.getCurrentAttackType() == StoneTalusAttackType.THROW && !talus.isStunned();
     }
 
 

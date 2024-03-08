@@ -27,6 +27,7 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends Monster implements GeoEntity, AnimatedAttacker<T> {
     public static final EntityDataAccessor<Boolean> DATA_ATTACKING = SynchedEntityData.defineId(COTWMonster.class, EntityDataSerializers.BOOLEAN);
@@ -270,10 +271,14 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
     }
 
     protected boolean startAttacking(Entity target) {
-        if(!this.level().isClientSide && !this.isAttackAnimationInProgress() && !this.isAttackCoolingDown()){
+        return this.startAttack(() -> this.selectAttackTypeForTarget(target), false);
+    }
+
+    protected boolean startAttack(Supplier<T> attackTypeSelector, boolean force) {
+        if(!this.level().isClientSide && (force || !this.isAttackAnimationInProgress() && !this.isAttackCoolingDown())){
             this.setAttacking(true);
-            if(this.getCurrentAttackType() == null){
-                this.setCurrentAttackType(this.selectAttackTypeForTarget(target));
+            if(force || this.getCurrentAttackType() == null) {
+                this.setCurrentAttackType(attackTypeSelector.get());
             }
             this.startAttackCooldown();
             this.onAttackStarted(this.getCurrentAttackType());
