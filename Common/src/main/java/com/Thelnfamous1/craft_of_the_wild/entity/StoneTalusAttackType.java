@@ -21,13 +21,13 @@ public enum StoneTalusAttackType implements AnimatedAttacker.AttackType, StringR
             AnimatedAttacker.AttackPoint.of(2.25F, 5D / 3D, AnimatedAttacker.AttackPoint.DamageMode.AREA_OF_EFFECT)),
             COTWUtil.secondsToTicks(5.5F)),
     PUNCH(3, "punch", ImmutableList.of(
-            AnimatedAttacker.AttackPoint.of(1.71F, 1, AnimatedAttacker.AttackPoint.DamageMode.MELEE)),
+            AnimatedAttacker.AttackPoint.of(1.71F, 1, AnimatedAttacker.AttackPoint.DamageMode.AREA_OF_EFFECT)),
             COTWUtil.secondsToTicks(5.5417F)),
     STUN(4, "stun", ImmutableList.of(
             AnimatedAttacker.AttackPoint.of(2.71F, 5D / 3D, AnimatedAttacker.AttackPoint.DamageMode.AREA_OF_EFFECT)),
             COTWUtil.secondsToTicks(6.4583F)),
     SHAKE(5, "shake", ImmutableList.of(
-            AnimatedAttacker.AttackPoint.of(3.67F, 0, AnimatedAttacker.AttackPoint.DamageMode.KNOCKBACK)),
+            AnimatedAttacker.AttackPoint.of(3.67F, 0, AnimatedAttacker.AttackPoint.DamageMode.CUSTOM)),
             COTWUtil.secondsToTicks(5F));
 
     public static final StringRepresentable.EnumCodec<StoneTalusAttackType> CODEC = StringRepresentable.fromEnum(StoneTalusAttackType::values);

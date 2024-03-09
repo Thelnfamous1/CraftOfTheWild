@@ -96,7 +96,14 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
                     this.doRangedAttack(currentAttackType, currentAttackPoint, targetX, targetY, targetZ);
                 }
             }
+            case CUSTOM -> {
+                this.doCustomAttack(currentAttackType, currentAttackPoint);
+            }
         }
+    }
+
+    protected void doCustomAttack(T currentAttackType, AttackPoint currentAttackPoint) {
+
     }
 
     protected void doRangedAttack(T currentAttackType, AttackPoint currentAttackPoint, LivingEntity target){
@@ -200,8 +207,8 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
         return this.entityData.get(DATA_ATTACKING);
     }
 
-    public void setAttacking(boolean attacking) {
-        this.entityData.set(DATA_ATTACKING, attacking);
+    public void setAttacking(boolean attacking, boolean force) {
+        this.entityData.set(DATA_ATTACKING, attacking, force);
     }
 
     protected abstract void playAttackSound(T currentAttackType, AttackPoint currentAttackPoint);
@@ -276,9 +283,9 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
 
     protected boolean startAttack(Supplier<T> attackTypeSelector, boolean force) {
         if(!this.level().isClientSide && (force || !this.isAttackAnimationInProgress() && !this.isAttackCoolingDown())){
-            this.setAttacking(true);
+            this.setAttacking(true, force);
             if(force || this.getCurrentAttackType() == null) {
-                this.setCurrentAttackType(attackTypeSelector.get());
+                this.setCurrentAttackType(attackTypeSelector.get(), force);
             }
             this.startAttackCooldown();
             this.onAttackStarted(this.getCurrentAttackType());
@@ -316,8 +323,8 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
                 }
                 this.attackTicker++;
             } else if(!this.level().isClientSide){
-                this.setCurrentAttackType(null);
-                this.setAttacking(false);
+                this.setCurrentAttackType(null, false);
+                this.setAttacking(false, false);
             }
         }
     }
@@ -327,7 +334,7 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
         if(target != null && !this.level().isClientSide){
             T currentAttackType = this.getCurrentAttackType();
             if(currentAttackType == null){
-                this.setCurrentAttackType(this.selectAttackTypeForTarget(target));
+                this.setCurrentAttackType(this.selectAttackTypeForTarget(target), false);
             } else if(!this.isAttackAnimationInProgress() && !this.isAttackCoolingDown()){
                 this.adjustCurrentAttackTypeForTarget(currentAttackType, target);
             }

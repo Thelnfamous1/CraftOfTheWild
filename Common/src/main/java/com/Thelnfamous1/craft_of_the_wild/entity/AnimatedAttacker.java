@@ -57,7 +57,7 @@ public interface AnimatedAttacker<A extends AnimatedAttacker.AttackType> {
 
     @Nullable A getCurrentAttackType();
 
-    void setCurrentAttackType(@Nullable A attackType);
+    void setCurrentAttackType(@Nullable A attackType, boolean force);
 
     boolean canRotateDuringAttack(A currentAttackType);
 
@@ -84,7 +84,7 @@ public interface AnimatedAttacker<A extends AnimatedAttacker.AttackType> {
             MELEE,
             AREA_OF_EFFECT,
             RANGED,
-            KNOCKBACK
+            CUSTOM
         }
     }
 }

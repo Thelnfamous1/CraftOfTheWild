@@ -21,13 +21,14 @@ public class StoneTalusArmModel extends DefaultedEntityGeoModel<StoneTalusArm> {
     @Override
     public void setCustomAnimations(StoneTalusArm animatable, long instanceId, AnimationState<StoneTalusArm> animationState) {
         super.setCustomAnimations(animatable, instanceId, animationState);
-        float yRot = Mth.rotLerp(animationState.getPartialTick(), animatable.yRotO, animatable.getYRot()) - 90;
-        float xRot = Mth.lerp(animationState.getPartialTick(), animatable.xRotO, animatable.getXRot());
+        // for some reason the new model needs an additional 180 degrees of y rot and an additional 90 degrees of x rot
+        float yRot = Mth.rotLerp(animationState.getPartialTick(), animatable.yRotO, animatable.getYRot()) + 180;
+        float xRot = Mth.lerp(animationState.getPartialTick(), animatable.xRotO, animatable.getXRot()) + 90;
         this.rotateArm(yRot, xRot);
     }
 
     private void rotateArm(float yRot, float xRot) {
-        CoreGeoBone arm = getAnimationProcessor().getBone("arm_left");
+        CoreGeoBone arm = this.getAnimationProcessor().getBone("all");
         if(arm != null){
             arm.setRotY(-yRot * Mth.DEG_TO_RAD);
             arm.setRotX(-xRot * Mth.DEG_TO_RAD);

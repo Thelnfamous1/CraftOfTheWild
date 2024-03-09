@@ -12,9 +12,9 @@ public class Constants {
 	public static final boolean DEBUG_MONSTER = true;
 	public static final boolean FIX_DEBUG_UTILS_MULTIPART_ENTITIES = true;
 	public static final boolean FIX_JADE_MULTIPART_ENTITIES = true;
-	public static final boolean DEBUG_BRAIN_DESERIALIZATION = true;
+	public static final boolean DEBUG_BRAIN_DESERIALIZATION = false;
 	public static final boolean DEBUG_STONE_TALUS_HEADBUTT = false;
-	public static final boolean DEBUG_STONE_TALUS_FACEPLANT = true;
-	public static final boolean DEBUG_BOSS_MUSIC = true;
-	public static final boolean DEBUG_STONE_TALUS_ARM = true;
+	public static final boolean DEBUG_STONE_TALUS_FACEPLANT = false;
+	public static final boolean DEBUG_BOSS_MUSIC = false;
+	public static final boolean DEBUG_STONE_TALUS_ARM = false;
 }

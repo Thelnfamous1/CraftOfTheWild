@@ -34,7 +34,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -462,9 +461,9 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
     }
 
     @Override
-    public void setCurrentAttackType(@Nullable StoneTalusAttackType attackType) {
+    public void setCurrentAttackType(@Nullable StoneTalusAttackType attackType, boolean force) {
         this.currentAttackType = attackType;
-        this.entityData.set(DATA_ATTACK_TYPE_ID, attackType == null ? OptionalInt.empty() : OptionalInt.of(attackType.getId()));
+        this.entityData.set(DATA_ATTACK_TYPE_ID, attackType == null ? OptionalInt.empty() : OptionalInt.of(attackType.getId()), force);
     }
 
     @Override
@@ -472,6 +471,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
         switch (currentAttackType){
             case HEADBUTT -> this.playSoundEvent(SoundInit.STONE_TALUS_HEADBUTT.get());
             case STUN -> this.playSoundEvent(SoundInit.STONE_TALUS_STUN.get());
+            case PUNCH -> this.playSoundEvent(SoundInit.STONE_TALUS_PUNCH.get());
             case POUND -> this.playSoundEvent(SoundInit.STONE_TALUS_POUND.get());
             case THROW -> this.playSoundEvent(SoundInit.STONE_TALUS_THROW_ARMS.get());
         }
@@ -486,8 +486,6 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
         if(!this.level().isClientSide){
             if(currentAttackPoint.damageMode() == AttackPoint.DamageMode.AREA_OF_EFFECT){
                 COTWUtil.playVanillaExplosionSound(this);
-            } else if(currentAttackType == StoneTalusAttackType.PUNCH){
-                this.playSoundEvent(SoundEvents.IRON_GOLEM_ATTACK);
             }
         }
     }
@@ -517,7 +515,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
                 return 1.5 * LOGICAL_SCALE * this.getScale(); // diameter = 3, scaled up by 7/3 to be 21/3 (7)
             }
             case PUNCH -> {
-                return 1 * LOGICAL_SCALE * this.getScale(); // diameter = 2, scaled up by 7/3 to be 14/3 (4 + 2/3)
+                return 1.5 * LOGICAL_SCALE * this.getScale(); // diameter = 2, scaled up by 7/3 to be 14/3 (4 + 2/3)
             }
             default -> {
                 return 0;
@@ -557,7 +555,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
         if(currentAttackType == StoneTalusAttackType.THROW && !shouldUseRangedAttack){
             this.selectMeleeAttackType();
         } else if(currentAttackType != StoneTalusAttackType.THROW && shouldUseRangedAttack){
-            this.setCurrentAttackType(StoneTalusAttackType.THROW);
+            this.setCurrentAttackType(StoneTalusAttackType.THROW, false);
         }
     }
 
@@ -659,6 +657,12 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
         super.finalizeAreaOfEffectAttack(attackBox);
         if(!this.level().isClientSide && Services.PLATFORM.canEntityGrief(this.level(), this)){
             COTWUtil.destroyBlocksInBoundingBox(attackBox, this.level(), this, StoneTalus::canDestroy);
+        }
+    }
+
+    @Override
+    protected void doCustomAttack(StoneTalusAttackType currentAttackType, AttackPoint currentAttackPoint) {
+        if(currentAttackType == StoneTalusAttackType.SHAKE){
         }
     }
 
