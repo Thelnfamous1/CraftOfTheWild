@@ -691,11 +691,13 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
             AABB attackBox = AABB.ofSize(this.position().add(0, this.getBbHeight(), 0).add(0, yAttackRadius, 0), xZAttackSize, yAttackSize, xZAttackSize);
             List<LivingEntity> targets = this.level().getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT, this, attackBox);
             targets.forEach(target -> {
-                float yRot = this.getRandom().nextFloat() * 360F;
-                Vec3 pushVec = new Vec3(0, 0, -1).yRot(-yRot * Mth.DEG_TO_RAD).add(0, 0.2, 0);
-                Vec3 existingMovement = target.getDeltaMovement();
-                target.setDeltaMovement(existingMovement.x / 2.0D + pushVec.x, existingMovement.y / 2.0D + pushVec.y, existingMovement.z / 2.0D + pushVec.z);
-                target.hurtMarked = true;
+                if(!target.level().isClientSide){
+                    float yRot = this.getRandom().nextFloat() * 360F;
+                    Vec3 pushVec = new Vec3(0, 1, -1).yRot(-yRot * Mth.DEG_TO_RAD).normalize().scale(2);
+                    Vec3 existingMovement = target.getDeltaMovement();
+                    target.setDeltaMovement(existingMovement.x / 2.0D + pushVec.x, existingMovement.y / 2.0D + pushVec.y, existingMovement.z / 2.0D + pushVec.z);
+                    target.hurtMarked = true;
+                }
             });
         }
     }
