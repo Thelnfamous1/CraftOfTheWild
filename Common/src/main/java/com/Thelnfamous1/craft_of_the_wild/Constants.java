@@ -17,4 +17,5 @@ public class Constants {
 	public static final boolean DEBUG_STONE_TALUS_FACEPLANT = false;
 	public static final boolean DEBUG_BOSS_MUSIC = false;
 	public static final boolean DEBUG_STONE_TALUS_ARM = false;
+	public static final boolean DEBUG_STONE_TALUS_SHAKE = true;
 }

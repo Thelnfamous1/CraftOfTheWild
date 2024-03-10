@@ -50,6 +50,7 @@ import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
@@ -474,6 +475,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
             case PUNCH -> this.playSoundEvent(SoundInit.STONE_TALUS_PUNCH.get());
             case POUND -> this.playSoundEvent(SoundInit.STONE_TALUS_POUND.get());
             case THROW -> this.playSoundEvent(SoundInit.STONE_TALUS_THROW_ARMS.get());
+            case SHAKE -> this.playSoundEvent(SoundInit.STONE_TALUS_SHAKE.get());
         }
     }
 
@@ -525,10 +527,19 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
 
     @Override
     protected StoneTalusAttackType selectAttackTypeForTarget(Entity target) {
+        if(this.isTargetOnTopOfMe(target)){
+            COTWCommon.debug(Constants.DEBUG_STONE_TALUS_SHAKE, "{} is now trying to shake off {}", this, target);
+            return StoneTalusAttackType.SHAKE;
+        }
+
         if(this.shouldUseRangedAttack(target)){
             return StoneTalusAttackType.THROW;
         }
         return this.selectMeleeAttackType();
+    }
+
+    private boolean isTargetOnTopOfMe(Entity target) {
+        return this.getBoundingBox().expandTowards(0, 1, 0).intersects(target.getBoundingBox());
     }
 
     private StoneTalusAttackType selectMeleeAttackType() {
@@ -551,9 +562,13 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
 
     @Override
     protected void adjustCurrentAttackTypeForTarget(StoneTalusAttackType currentAttackType, LivingEntity target) {
+        if(this.isTargetOnTopOfMe(target)){
+            COTWCommon.debug(Constants.DEBUG_STONE_TALUS_SHAKE, "{} is now trying to shake off {}", this, target);
+            this.setCurrentAttackType(StoneTalusAttackType.SHAKE, false);
+        }
         boolean shouldUseRangedAttack = this.shouldUseRangedAttack(target);
         if(currentAttackType == StoneTalusAttackType.THROW && !shouldUseRangedAttack){
-            this.selectMeleeAttackType();
+            this.setCurrentAttackType(this.selectMeleeAttackType(), false);
         } else if(currentAttackType != StoneTalusAttackType.THROW && shouldUseRangedAttack){
             this.setCurrentAttackType(StoneTalusAttackType.THROW, false);
         }
@@ -663,6 +678,18 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
     @Override
     protected void doCustomAttack(StoneTalusAttackType currentAttackType, AttackPoint currentAttackPoint) {
         if(currentAttackType == StoneTalusAttackType.SHAKE){
+            double xZAttackRadius = this.getBbWidth() * 0.5F;
+            double yAttackRadius = 0.5F;
+            double xZAttackSize = xZAttackRadius * 2;
+            double yAttackSize = xZAttackRadius * 2;
+            AABB attackBox = AABB.ofSize(this.position().add(0, this.getBbHeight(), 0).add(0, yAttackRadius, 0), xZAttackSize, yAttackSize, xZAttackSize);
+            List<LivingEntity> targets = this.level().getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT, this, attackBox);
+            targets.forEach(target -> {
+                float yRot = this.getRandom().nextFloat() * 360F;
+                Vec3 pushVec = new Vec3(0, 0, -1).yRot(-yRot * Mth.DEG_TO_RAD).add(0, 0.2, 0);
+                target.push(pushVec.x, pushVec.y, pushVec.z);
+                target.hurtMarked = true;
+            });
         }
     }
 
@@ -850,6 +877,25 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
                         .speedMod((talus, target) -> 1.0F)
                         .startCondition(StoneTalus::isInMeleeMode),
                 new FirstApplicableBehaviour<>(
+                        /*new CustomBehaviour<StoneTalus>(talus -> {
+                            talus.startAttack(() -> StoneTalusAttackType.SHAKE, true);
+                            // manually set attack cooling down memory for SHAKE since it is not set by the main attacking Behaviors
+                            BrainUtils.setForgettableMemory(this, MemoryModuleType.ATTACK_COOLING_DOWN, true, getAttackCooldownDuration(this));
+                        }).startCondition(talus -> {
+                                    if(!talus.isAttackAnimationInProgress() && !talus.isAttackCoolingDown()){
+                                        LivingEntity target = talus.getTarget();
+                                        if(target == null) return false;
+
+                                        AABB talusBB = talus.getBoundingBox();
+                                        AABB targetBB = target.getBoundingBox();
+                                        if(talusBB.expandTowards(0, 1, 0).intersects(targetBB)){
+                                            COTWCommon.debug(Constants.DEBUG_STONE_TALUS_SHAKE, "{} is now trying to shake off {}", talus, target);
+                                            return true;
+                                        }
+                                    }
+                                    return false;
+                                }),
+                         */
                         new COTWAnimatableRangedAttack<StoneTalus>(0)
                                 .getPerceivedTargetDistanceSquared(COTWUtil::getDistSqrBetweenHitboxes)
                                 .attackRadius(64)

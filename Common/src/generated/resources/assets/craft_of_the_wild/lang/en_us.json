@@ -7,6 +7,8 @@
   "entity.craft_of_the_wild.stone_talus.attack_type.headbutt": "Headbutt",
   "entity.craft_of_the_wild.stone_talus.attack_type.pound": "Pound",
   "entity.craft_of_the_wild.stone_talus.attack_type.punch": "Punch",
+  "entity.craft_of_the_wild.stone_talus.attack_type.shake": "Shake",
+  "entity.craft_of_the_wild.stone_talus.attack_type.stun": "Stun",
   "entity.craft_of_the_wild.stone_talus.attack_type.throw": "Throw",
   "entity.craft_of_the_wild.stone_talus_arm": "Stone Talus Arm",
   "item.craft_of_the_wild.stone_talus_spawn_egg": "Stone Talus Spawn Egg",

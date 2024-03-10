@@ -283,19 +283,4 @@ public class COTWUtil {
         return value >= min && value <= max;
     }
 
-    public static void throwTarget(LivingEntity attacker, LivingEntity target) {
-        double attackerKnockback = attacker.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
-        double targetResistance = target.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
-        double knockbackStrength = attackerKnockback - targetResistance;
-        if (!(knockbackStrength <= 0.0)) {
-            double xDist = target.getX() - attacker.getX();
-            double zDist = target.getZ() - attacker.getZ();
-            float yRot = (float)(attacker.level().random.nextInt(21) - 10);
-            double knockback = knockbackStrength * (double)(attacker.level().random.nextFloat() * 0.5F + 0.2F);
-            Vec3 horizontalD = (new Vec3(xDist, 0.0, zDist)).normalize().scale(knockback).yRot(yRot);
-            double yD = knockbackStrength * (double)attacker.level().random.nextFloat() * 0.5;
-            target.push(horizontalD.x, yD, horizontalD.z);
-            target.hurtMarked = true;
-        }
-    }
 }
