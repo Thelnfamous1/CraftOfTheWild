@@ -2,7 +2,7 @@ package com.Thelnfamous1.craft_of_the_wild.entity;
 
 import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
-import com.Thelnfamous1.craft_of_the_wild.entity.ai.*;
+import com.Thelnfamous1.craft_of_the_wild.entity.ai.COTWSharedAi;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.behavior.*;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.navigation.COTWGroundPathNavigation;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor.COTWNearbyPlayersSensor;
@@ -70,6 +70,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.CustomBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.CustomDelayedBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.CustomHeldBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
@@ -539,6 +540,9 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
     }
 
     private boolean isTargetOnTopOfMe(Entity target) {
+        if(target.getBoundingBox().minY < this.getBoundingBox().maxY){
+            return false;
+        }
         return this.getBoundingBox().expandTowards(0, 1, 0).intersects(target.getBoundingBox());
     }
 
@@ -562,9 +566,11 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
 
     @Override
     protected void adjustCurrentAttackTypeForTarget(StoneTalusAttackType currentAttackType, LivingEntity target) {
-        if(this.isTargetOnTopOfMe(target)){
+        boolean shouldShake = this.isTargetOnTopOfMe(target);
+        if(currentAttackType != StoneTalusAttackType.SHAKE && shouldShake){
             COTWCommon.debug(Constants.DEBUG_STONE_TALUS_SHAKE, "{} is now trying to shake off {}", this, target);
             this.setCurrentAttackType(StoneTalusAttackType.SHAKE, false);
+            return;
         }
         boolean shouldUseRangedAttack = this.shouldUseRangedAttack(target);
         if(currentAttackType == StoneTalusAttackType.THROW && !shouldUseRangedAttack){
@@ -687,7 +693,8 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
             targets.forEach(target -> {
                 float yRot = this.getRandom().nextFloat() * 360F;
                 Vec3 pushVec = new Vec3(0, 0, -1).yRot(-yRot * Mth.DEG_TO_RAD).add(0, 0.2, 0);
-                target.push(pushVec.x, pushVec.y, pushVec.z);
+                Vec3 existingMovement = target.getDeltaMovement();
+                target.setDeltaMovement(existingMovement.x / 2.0D + pushVec.x, existingMovement.y / 2.0D + pushVec.y, existingMovement.z / 2.0D + pushVec.z);
                 target.hurtMarked = true;
             });
         }
@@ -877,25 +884,14 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
                         .speedMod((talus, target) -> 1.0F)
                         .startCondition(StoneTalus::isInMeleeMode),
                 new FirstApplicableBehaviour<>(
-                        /*new CustomBehaviour<StoneTalus>(talus -> {
-                            talus.startAttack(() -> StoneTalusAttackType.SHAKE, true);
-                            // manually set attack cooling down memory for SHAKE since it is not set by the main attacking Behaviors
-                            BrainUtils.setForgettableMemory(this, MemoryModuleType.ATTACK_COOLING_DOWN, true, getAttackCooldownDuration(this));
-                        }).startCondition(talus -> {
-                                    if(!talus.isAttackAnimationInProgress() && !talus.isAttackCoolingDown()){
-                                        LivingEntity target = talus.getTarget();
-                                        if(target == null) return false;
-
-                                        AABB talusBB = talus.getBoundingBox();
-                                        AABB targetBB = target.getBoundingBox();
-                                        if(talusBB.expandTowards(0, 1, 0).intersects(targetBB)){
-                                            COTWCommon.debug(Constants.DEBUG_STONE_TALUS_SHAKE, "{} is now trying to shake off {}", talus, target);
-                                            return true;
-                                        }
-                                    }
-                                    return false;
-                                }),
-                         */
+                        new CustomDelayedBehaviour<StoneTalus>(COTWUtil.secondsToTicks(3F))
+                                .whenActivating(talus -> {
+                                    talus.startAttack(() -> StoneTalusAttackType.SHAKE, true);
+                                    // manually set attack cooling down memory for SHAKE since it is not set by the main attacking Behaviors
+                                    BrainUtils.setForgettableMemory(this, MemoryModuleType.ATTACK_COOLING_DOWN, true, getAttackCooldownDuration(this));
+                                })
+                                .startCondition(StoneTalus::isPreShakeOffTarget)
+                                .stopIf(talus -> !isPreShakeOffTarget(talus)),
                         new COTWAnimatableRangedAttack<StoneTalus>(0)
                                 .getPerceivedTargetDistanceSquared(COTWUtil::getDistSqrBetweenHitboxes)
                                 .attackRadius(64)
@@ -907,6 +903,11 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
                                 .startCondition(StoneTalus::isInMeleeMode)
                 )
         );
+    }
+
+    private static boolean isPreShakeOffTarget(StoneTalus talus) {
+        if(!AnimatedAttacker.hasCurrentAttackType(talus, StoneTalusAttackType.SHAKE)) return false;
+        return !talus.isAttackAnimationInProgress() && !talus.isAttackCoolingDown();
     }
 
     private static double getFollowingRange(StoneTalus talus) {
