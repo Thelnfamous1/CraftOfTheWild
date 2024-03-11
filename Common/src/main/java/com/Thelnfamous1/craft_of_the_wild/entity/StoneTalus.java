@@ -144,7 +144,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
                 .add(Attributes.FOLLOW_RANGE, 35.0D)
                 .add(Attributes.MAX_HEALTH, 200.0D)
                 .add(Attributes.ARMOR, 6.0D)
-                .add(Attributes.ATTACK_DAMAGE, 24.0D)
+                .add(Attributes.ATTACK_DAMAGE, 16.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
                 .add(AttributeInit.PROJECTILE_RESISTANCE.get(), 0.7D)
                 .add(Attributes.MOVEMENT_SPEED, 0.25D);
@@ -489,7 +489,11 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
     protected void playAttackSound(StoneTalusAttackType currentAttackType, AttackPoint currentAttackPoint) {
         if(!this.level().isClientSide){
             if(currentAttackPoint.damageMode() == AttackPoint.DamageMode.AREA_OF_EFFECT){
-                COTWUtil.playVanillaExplosionSound(this, SoundEvents.GENERIC_EXPLODE, 4.0F);
+                switch (currentAttackType){
+                    case PUNCH, POUND -> COTWUtil.playVanillaExplosionSound(this, SoundInit.STONE_TALUS_BREAK_ROCKS.get(), 4.0F);
+                    case HEADBUTT, STUN -> COTWUtil.playVanillaExplosionSound(this, SoundEvents.GENERIC_EXPLODE, 4.0F);
+                }
+
             }
         }
     }

@@ -29,7 +29,7 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
         this.addSound(SoundInit.STONE_TALUS_STUN, 2);
         this.addSound(SoundInit.STONE_TALUS_PUNCH, 2);
         this.addSound(SoundInit.STONE_TALUS_SHAKE, 2);
-        this.addSound(SoundInit.STONE_TALUS_ARM_EXPLOSION, 2);
+        this.addSound(SoundInit.STONE_TALUS_BREAK_ROCKS, 2);
     }
 
     public void addSound(RegistryObject<SoundEvent> entry, float volume) {

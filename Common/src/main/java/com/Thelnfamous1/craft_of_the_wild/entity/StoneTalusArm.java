@@ -7,6 +7,7 @@ import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
 import com.Thelnfamous1.craft_of_the_wild.init.SoundInit;
 import com.Thelnfamous1.craft_of_the_wild.platform.Services;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -34,7 +35,7 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
     protected static final EntityDataAccessor<Integer> DATA_VARIANT_ID = SynchedEntityData.defineId(StoneTalusArm.class, EntityDataSerializers.INT);
 
     private final AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
-    private double baseDamage = 32.0D;
+    private double baseDamage = 24.0D;
     private double radius = 1 * StoneTalus.LOGICAL_SCALE;
     @Nullable
     private Variant cachedVariant;
@@ -140,9 +141,11 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
         super.onHit(hitResult);
         if (!this.level().isClientSide) {
             double radius = this.getRadius();
-            COTWUtil.playVanillaExplosionSound(this, SoundInit.STONE_TALUS_ARM_EXPLOSION.get(), 4.0F);
+            COTWUtil.playVanillaExplosionSound(this, SoundInit.STONE_TALUS_BREAK_ROCKS.get(), 4.0F);
             double attackSize = radius * 2;
-            AABB attackBox = AABB.ofSize(this.position(), attackSize, attackSize, attackSize);
+
+            Vec3 location = hitResult.getLocation();
+            AABB attackBox = AABB.ofSize(this.position(), attackSize, attackSize, attackSize).inflate(1.0D);
             COTWCommon.debug(Constants.DEBUG_STONE_TALUS_ARM, "Created attack box of size {} for {}", attackBox.getSize(), this);
             if(Constants.DEBUG_STONE_TALUS_ARM) COTWUtil.sendHitboxParticles(attackBox, this.level());
             LivingEntity owner = this.getOwner() instanceof LivingEntity livingOwner ? livingOwner : null;
@@ -152,10 +155,13 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
             if(Services.PLATFORM.canEntityGrief(this.level(), this)){
                 COTWUtil.destroyBlocksInBoundingBox(attackBox, this.level(), this, StoneTalus::canDestroy);
             }
-
-            Vec3 location = hitResult.getLocation();
-            COTWCommon.debug(Constants.DEBUG_STONE_TALUS_ARM_PARTICLES, "{} is spawning particles at {}", this, location);
-            Services.PLATFORM.sendCircleParticlesPacket(ParticleTypes.CAMPFIRE_COSY_SMOKE, location.x, location.y, location.z, this.getRadius(), 100);
+            COTWCommon.debug(Constants.DEBUG_STONE_TALUS_ARM_PARTICLES, "{} is spawning particles at {}", this, this.position());
+            Vec3 particlePos = this.position();
+            BlockPos blockPos = BlockPos.containing(particlePos);
+            if(!level().getBlockState(blockPos.below()).canBeReplaced()){
+                particlePos = new Vec3(particlePos.x, blockPos.getY(), particlePos.z);
+                Services.PLATFORM.sendCircleParticlesPacket(ParticleTypes.CAMPFIRE_COSY_SMOKE, particlePos.x, particlePos.y, particlePos.z, this.getRadius(), 100);
+            }
             this.discard();
         }
     }

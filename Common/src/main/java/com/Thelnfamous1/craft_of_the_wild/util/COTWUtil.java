@@ -285,15 +285,17 @@ public class COTWUtil {
         return value >= min && value <= max;
     }
 
-    public static void spawnParticlesInCircle(LevelAccessor world, ParticleOptions particleType, double x, double y, double z, double xzRadius, double amount) {
-        double counter;
-        counter = 0;
+    public static void spawnParticlesInCircle(LevelAccessor world, ParticleOptions particleType, double x, double y, double z, double xzRadius, int amount) {
+        int counter = 0;
         while (counter < amount) {
+            double targetX = x + Math.cos((Mth.TWO_PI / amount) * counter) * xzRadius;
+            double targetZ = z + Math.sin((Mth.TWO_PI / amount) * counter) * xzRadius;
+            Vec3 step = new Vec3(targetX - x, 0, targetZ - z).normalize().scale(0.1);
             world.addParticle(particleType,
-                    (x + Math.cos((Mth.TWO_PI / amount) * counter) * xzRadius),
+                    x,
                     y,
-                    (z + Math.sin((Mth.TWO_PI / amount) * counter) * xzRadius),
-                    0, 0.01, 0);
+                    z,
+                    step.x, 0.01, step.z);
             counter = counter + 1;
         }
     }

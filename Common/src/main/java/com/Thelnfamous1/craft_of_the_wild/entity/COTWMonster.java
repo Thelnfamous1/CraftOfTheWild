@@ -5,6 +5,7 @@ import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.controller.AttackingLookController;
 import com.Thelnfamous1.craft_of_the_wild.init.DamageTypeInit;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -121,8 +122,12 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
         if(this.level().isClientSide){
             Vec3 center = attackBox.getCenter();
             double radius = attackBox.getSize() * 0.5;
-            Vec3 particlePos = center.subtract(0, (attackBox.getYsize() * 0.5F) + 0.5F, 0);
-            COTWUtil.spawnParticlesInCircle(this.level(), ParticleTypes.CAMPFIRE_COSY_SMOKE, particlePos.x, particlePos.y, particlePos.z, radius, 100);
+            Vec3 particlePos = center.subtract(0, (attackBox.getYsize() * 0.5F) - 0.5F, 0);
+            BlockPos blockPos = BlockPos.containing(particlePos);
+            if(!level().getBlockState(blockPos.below()).canBeReplaced()){
+                particlePos = new Vec3(particlePos.x, blockPos.getY(), particlePos.z);
+                COTWUtil.spawnParticlesInCircle(this.level(), ParticleTypes.CAMPFIRE_COSY_SMOKE, particlePos.x, particlePos.y, particlePos.z, radius, 100);
+            }
         }
     }
 
