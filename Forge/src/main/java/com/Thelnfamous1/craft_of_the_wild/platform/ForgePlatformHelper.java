@@ -3,13 +3,17 @@ package com.Thelnfamous1.craft_of_the_wild.platform;
 import com.Thelnfamous1.craft_of_the_wild.entity.COTWForgePartEntity;
 import com.Thelnfamous1.craft_of_the_wild.entity.COTWMultipartEntity;
 import com.Thelnfamous1.craft_of_the_wild.entity.PartEntityController;
+import com.Thelnfamous1.craft_of_the_wild.network.COTWForgeNetwork;
+import com.Thelnfamous1.craft_of_the_wild.network.ClientboundCircleParticlesPacket;
 import com.Thelnfamous1.craft_of_the_wild.platform.services.IPlatformHelper;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.network.PacketDistributor;
 
 public class ForgePlatformHelper implements IPlatformHelper {
 
@@ -45,5 +49,10 @@ public class ForgePlatformHelper implements IPlatformHelper {
     @Override
     public boolean canEntityGrief(Level level, Entity entity) {
         return ForgeEventFactory.getMobGriefingEvent(level, entity);
+    }
+
+    @Override
+    public <T extends ParticleOptions> void sendCircleParticlesPacket(T particle, double x, double y, double z, double xZRadius, int count) {
+        COTWForgeNetwork.SYNC_CHANNEL.send(PacketDistributor.ALL.noArg(), new ClientboundCircleParticlesPacket(particle, x, y, z, xZRadius, count));
     }
 }

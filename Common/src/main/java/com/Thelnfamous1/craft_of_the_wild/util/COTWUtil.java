@@ -10,6 +10,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -17,7 +18,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,6 +29,7 @@ import net.minecraft.world.entity.ai.memory.ExpirableValue;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -191,8 +193,8 @@ public class COTWUtil {
         return mob.getAttributeValue(Attributes.FOLLOW_RANGE);
     }
 
-    public static void playVanillaExplosionSound(Entity entity) {
-        entity.playSound(SoundEvents.GENERIC_EXPLODE, 4.0F, (1.0F + (entity.level().random.nextFloat() - entity.level().random.nextFloat()) * 0.2F) * 0.7F);
+    public static void playVanillaExplosionSound(Entity entity, SoundEvent explosionSound, float volume) {
+        entity.playSound(explosionSound, volume, (1.0F + (entity.level().random.nextFloat() - entity.level().random.nextFloat()) * 0.2F) * 0.7F);
     }
 
     public static void spawnVanillaExplosionParticles(ServerLevel level, double radius, Vec3 posVec) {
@@ -281,6 +283,19 @@ public class COTWUtil {
             throw new IllegalArgumentException("Min cannot be greater than max!");
         }
         return value >= min && value <= max;
+    }
+
+    public static void spawnParticlesInCircle(LevelAccessor world, ParticleOptions particleType, double x, double y, double z, double xzRadius, double amount) {
+        double counter;
+        counter = 0;
+        while (counter < amount) {
+            world.addParticle(particleType,
+                    (x + Math.cos((Mth.TWO_PI / amount) * counter) * xzRadius),
+                    y,
+                    (z + Math.sin((Mth.TWO_PI / amount) * counter) * xzRadius),
+                    0, 0.01, 0);
+            counter = counter + 1;
+        }
     }
 
 }

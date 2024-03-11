@@ -34,6 +34,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -488,7 +489,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
     protected void playAttackSound(StoneTalusAttackType currentAttackType, AttackPoint currentAttackPoint) {
         if(!this.level().isClientSide){
             if(currentAttackPoint.damageMode() == AttackPoint.DamageMode.AREA_OF_EFFECT){
-                COTWUtil.playVanillaExplosionSound(this);
+                COTWUtil.playVanillaExplosionSound(this, SoundEvents.GENERIC_EXPLODE, 4.0F);
             }
         }
     }

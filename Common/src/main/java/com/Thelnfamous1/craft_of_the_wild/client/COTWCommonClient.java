@@ -1,5 +1,6 @@
 package com.Thelnfamous1.craft_of_the_wild.client;
 
+import com.Thelnfamous1.craft_of_the_wild.client.network.COTWClientPacketHandler;
 import com.Thelnfamous1.craft_of_the_wild.client.renderer.StoneTalusArmRenderer;
 import com.Thelnfamous1.craft_of_the_wild.client.renderer.StoneTalusRenderer;
 import com.Thelnfamous1.craft_of_the_wild.duck.BossMusicListener;
@@ -17,6 +18,12 @@ import net.minecraft.world.level.ItemLike;
 import java.util.function.BiConsumer;
 
 public class COTWCommonClient {
+
+    private static COTWClientPacketHandler packetHandler;
+
+    public static void init(){
+        packetHandler = new COTWClientPacketHandler();
+    }
 
     public static void registerRenderers(BiConsumer<EntityType, EntityRendererProvider> register){
         registerRendererTyped(EntityInit.STONE_TALUS.get(), StoneTalusRenderer::new, register);
@@ -41,5 +48,9 @@ public class COTWCommonClient {
         if (Minecraft.getInstance().player != null) {
             ((BossMusicListener)Minecraft.getInstance().player).craft_of_the_wild$getBossMusicSoundHandler().stopBossMusicFor(boss);
         }
+    }
+
+    public static COTWClientPacketHandler getPacketHandler() {
+        return packetHandler;
     }
 }

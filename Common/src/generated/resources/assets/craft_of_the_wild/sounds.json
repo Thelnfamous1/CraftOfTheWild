@@ -1,4 +1,12 @@
 {
+  "stone_talus_arm_explosion": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:stone_talus_arm_explosion",
+        "volume": 2.0
+      }
+    ]
+  },
   "stone_talus_boss_music": {
     "sounds": [
       "craft_of_the_wild:stone_talus_boss_music"

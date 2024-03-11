@@ -5,12 +5,12 @@ import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.controller.AttackingLookController;
 import com.Thelnfamous1.craft_of_the_wild.init.DamageTypeInit;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -118,11 +118,11 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
     }
 
     protected void finalizeAreaOfEffectAttack(AABB attackBox) {
-        if(!this.level().isClientSide){
+        if(this.level().isClientSide){
             Vec3 center = attackBox.getCenter();
             double radius = attackBox.getSize() * 0.5;
-            Vec3 particlePos = center.subtract(0, (attackBox.getYsize() * 0.5D) - 0.5D, 0);
-            COTWUtil.spawnVanillaExplosionParticles(((ServerLevel) this.level()), radius, particlePos);
+            Vec3 particlePos = center.subtract(0, (attackBox.getYsize() * 0.5F) + 0.5F, 0);
+            COTWUtil.spawnParticlesInCircle(this.level(), ParticleTypes.CAMPFIRE_COSY_SMOKE, particlePos.x, particlePos.y, particlePos.z, radius, 100);
         }
     }
 
