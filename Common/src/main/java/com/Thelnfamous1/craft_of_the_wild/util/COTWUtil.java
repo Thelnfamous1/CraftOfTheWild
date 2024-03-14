@@ -33,6 +33,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.tslat.smartbrainlib.util.BrainUtils;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
@@ -297,6 +298,14 @@ public class COTWUtil {
                     z,
                     step.x, 0.01, step.z);
             counter = counter + 1;
+        }
+    }
+
+    public static void setAttackTarget(LivingEntity attacker, @Nullable LivingEntity target){
+        if (target == null) {
+            BrainUtils.clearMemory(attacker, MemoryModuleType.ATTACK_TARGET);
+        } else {
+            BrainUtils.setMemory(attacker, MemoryModuleType.ATTACK_TARGET, target);
         }
     }
 

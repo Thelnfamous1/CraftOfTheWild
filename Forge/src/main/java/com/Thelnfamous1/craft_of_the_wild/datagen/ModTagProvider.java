@@ -6,6 +6,7 @@ import com.Thelnfamous1.craft_of_the_wild.util.COTWTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.tags.BiomeTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
@@ -13,6 +14,8 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -71,6 +74,23 @@ public class ModTagProvider {
         }
         public void populateTag(TagKey<DamageType> tag, ResourceKey<DamageType>... damageTypes){
             for (ResourceKey<DamageType> damageType : damageTypes) {
+                tag(tag).add(damageType);
+            }
+        }
+    }
+
+    public static class BiomeTags extends BiomeTagsProvider {
+
+        public BiomeTags(PackOutput pGenerator, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
+            super(pGenerator, lookupProvider, Constants.MODID, existingFileHelper);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider pProvider) {
+            this.tag(COTWTags.SPAWNS_STONE_TALUS).add(Biomes.PLAINS, Biomes.WINDSWEPT_HILLS, Biomes.WINDSWEPT_GRAVELLY_HILLS);
+        }
+        public void populateTag(TagKey<Biome> tag, ResourceKey<Biome>... damageTypes){
+            for (ResourceKey<Biome> damageType : damageTypes) {
                 tag(tag).add(damageType);
             }
         }

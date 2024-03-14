@@ -151,6 +151,13 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
                 .add(Attributes.MOVEMENT_SPEED, 0.25D);
     }
 
+    public static <T extends StoneTalus> boolean checkStoneTalusSpawnRules(EntityType<T> entityType, ServerLevelAccessor serverLevelAccessor, MobSpawnType mobSpawnType, BlockPos blockPos, RandomSource randomSource) {
+        if(mobSpawnType == MobSpawnType.NATURAL && NearestBurrowSensor.canBurrowInto(serverLevelAccessor, blockPos.below(), entityType.getWidth(), entityType.getHeight())){
+            return true;
+        }
+        return Mob.checkMobSpawnRules(entityType, serverLevelAccessor, mobSpawnType, blockPos, randomSource);
+    }
+
     private static void tickParts(Entity part, StoneTalus talus, PartEntityController.PartInfo partInfo){
         COTWPartEntity.basicTicker(part, talus, partInfo, talus.isFaceplanting());
     }
@@ -266,6 +273,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
         }
 
         this.setVariant(Util.getRandom(Variant.values(), pLevel.getRandom()));
+        COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "Spawned {} at {}", this, this.blockPosition());
 
         return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
     }
@@ -451,7 +459,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
 
     @Override
     public void setTarget(@Nullable LivingEntity target) {
-        BrainUtils.setTargetOfEntity(this, target);
+        COTWUtil.setAttackTarget(this, target);
     }
 
     @Override
@@ -729,7 +737,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
     public boolean hurt(Entity partEntity, DamageSource pSource, float pDamage) {
         if(partEntity == this.partEntityController.getPart("weakPoint")){
             COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "Hit weakpoint for {} with {}, {}", this, pSource, pDamage);
-            if(pSource.is(DamageTypeTags.IS_PROJECTILE) && !this.isStunned()){
+            if(pSource.is(DamageTypeTags.IS_PROJECTILE) && !this.isStunned() && !this.isInvulnerableTo(pSource)){
                 this.stun();
             }
             return this.reallyHurt(pSource, pDamage);

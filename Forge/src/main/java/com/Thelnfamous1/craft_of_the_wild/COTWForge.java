@@ -3,23 +3,32 @@ package com.Thelnfamous1.craft_of_the_wild;
 import com.Thelnfamous1.craft_of_the_wild.client.COTWForgeClient;
 import com.Thelnfamous1.craft_of_the_wild.datagen.*;
 import com.Thelnfamous1.craft_of_the_wild.init.DamageTypeInit;
+import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
+import com.Thelnfamous1.craft_of_the_wild.util.COTWTags;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import net.minecraft.Util;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.world.ForgeBiomeModifiers;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 
 @Mod(Constants.MODID)
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -48,16 +57,58 @@ public class COTWForge {
         generator.addProvider(includeClient, new ModItemModelProvider(packOutput, existingFileHelper));
         generator.addProvider(includeClient, new ModBlockStateProvider(packOutput, existingFileHelper));
         generator.addProvider(includeClient, new ModLangProvider(packOutput));
+        generator.addProvider(includeServer, new ModTagProvider.BiomeTags(packOutput, event.getLookupProvider(), existingFileHelper));
         RegistrySetBuilder builder = createRegistrySetBuilder();
         CompletableFuture<HolderLookup.Provider> registries = getRegistries(builder);
-        generator.addProvider(includeServer, new DatapackBuiltinEntriesProvider(packOutput, registries, Set.of(Constants.MODID)));
+        generator.addProvider(includeServer, new DatapackBuiltinEntriesProvider(packOutput, event.getLookupProvider(), builder, Set.of(Constants.MODID)));
         generator.addProvider(includeServer, new ModTagProvider.DamageTypes(packOutput,registries, existingFileHelper));
     }
 
     private static RegistrySetBuilder createRegistrySetBuilder() {
-        RegistrySetBuilder builder = new RegistrySetBuilder();
-        builder.add(Registries.DAMAGE_TYPE, DamageTypeInit::bootstrap);
+        RegistrySetBuilder builder = registrySetBuilder();
+        builder
+                .add(Registries.DAMAGE_TYPE, DamageTypeInit::bootstrap)
+                .add(ForgeRegistries.Keys.BIOME_MODIFIERS, context -> {
+                    HolderGetter<Biome> biomeLookup = context.lookup(Registries.BIOME);
+                    context.register(ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, COTWCommon.getResourceLocation("stone_talus_spawns")),
+                            ForgeBiomeModifiers.AddSpawnsBiomeModifier.singleSpawn(
+                                    biomeLookup.getOrThrow(COTWTags.SPAWNS_STONE_TALUS),
+                                    new MobSpawnSettings.SpawnerData(EntityInit.STONE_TALUS.get(), 30, 1, 1)));
+                });
         return builder;
+    }
+
+    // Got this from Commoble
+    private static RegistrySetBuilder registrySetBuilder() {
+        return new RegistrySetBuilder() {
+            @Override
+            public HolderLookup.Provider build(RegistryAccess pRegistryAccess) {
+                RegistrySetBuilder.BuildState registrysetbuilder$buildstate = this.createState(pRegistryAccess);
+                Stream<HolderLookup.RegistryLookup<?>> stream = pRegistryAccess.registries().map((re) -> re.value().asLookup());
+                Stream<HolderLookup.RegistryLookup<?>> stream1 = this.entries.stream().map((rs) -> rs.collectChanges(registrysetbuilder$buildstate).buildAsLookup());
+                HolderLookup.Provider holderlookup$provider = HolderLookup.Provider.create(Stream.concat(stream, stream1.peek(registrysetbuilder$buildstate::addOwner)));
+                // don't validate missing holder values
+                // registrysetbuilder$buildstate.reportRemainingUnreferencedValues();
+                registrysetbuilder$buildstate.throwOnError();
+                return holderlookup$provider;
+            }
+
+            @Override
+            public HolderLookup.Provider buildPatch(RegistryAccess registries, HolderLookup.Provider lookup) {
+                RegistrySetBuilder.BuildState state = this.createState(registries);
+                Map<ResourceKey<? extends Registry<?>>, RegistryContents<?>> map = new HashMap<>();
+                state.collectReferencedRegistries().forEach((rc) -> map.put(rc.key(), rc));
+                this.entries.stream().map((RegistryStub<?> stub) -> stub.collectChanges(state)).forEach((contents) -> map.put(contents.key(), contents));
+                Stream<HolderLookup.RegistryLookup<?>> stream = registries.registries().map((entry) -> entry.value().asLookup());
+                HolderLookup.Provider holderlookup$provider = HolderLookup.Provider
+                        .create(Stream.concat(stream, map.values().stream().map(RegistrySetBuilder.RegistryContents::buildAsLookup).peek(state::addOwner)));
+                state.fillMissingHolders(lookup);
+                // don't validate missing holder values
+                //registrysetbuilder$buildstate.reportRemainingUnreferencedValues();
+                state.throwOnError();
+                return holderlookup$provider;
+            }
+        };
     }
 
     private static CompletableFuture<HolderLookup.Provider> getRegistries(RegistrySetBuilder builder) {

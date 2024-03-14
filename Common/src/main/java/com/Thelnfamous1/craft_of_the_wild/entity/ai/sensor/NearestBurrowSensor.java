@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.SensorType;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
@@ -68,7 +69,7 @@ public class NearestBurrowSensor<E extends Mob> extends PredicateSensor<E, E> {
             if (++this.tries >= 5)
                 return false;
 
-            if (!this.canBurrowInto(level, entity, pos)) return false;
+            if (!canBurrowInto(level, pos, entity.getBbWidth(), entity.getBbHeight())) return false;
 
             this.burrowsMap.put(pos, nodeExpiryTime + 40);
             return true;
@@ -89,7 +90,7 @@ public class NearestBurrowSensor<E extends Mob> extends PredicateSensor<E, E> {
         }
         if (pathToBurrow != null && pathToBurrow.canReach()) {
             BlockPos targetPos = pathToBurrow.getTarget();
-            if(!this.canBurrowInto(level, entity, targetPos)){
+            if(!canBurrowInto(level, targetPos, entity.getBbWidth(), entity.getBbHeight())){
                 COTWCommon.debug(Constants.DEBUG_NEAREST_BURROW_SENSOR, "{} cannot burrow into target position {}", entity, targetPos);
                 BrainUtils.clearMemory(entity, MemoryModuleInit.NEAREST_BURROW.get());
             } else{
@@ -102,9 +103,8 @@ public class NearestBurrowSensor<E extends Mob> extends PredicateSensor<E, E> {
         }
     }
 
-    private boolean canBurrowInto(ServerLevel level, E entity, BlockPos pos) {
-        AABB entityBB = entity.getBoundingBox();
-        return BlockPos.betweenClosedStream(AABB.ofSize(pos.getCenter(), entityBB.getXsize(), entityBB.getYsize(), entityBB.getZsize()).move(0, -entityBB.getYsize() * 0.5F, 0))
+    public static boolean canBurrowInto(BlockGetter level, BlockPos pos, double width, double height) {
+        return BlockPos.betweenClosedStream(AABB.ofSize(pos.getCenter(), width, height, width).move(0, -height * 0.5F, 0))
                 .noneMatch(bp -> level.getBlockState(bp).canBeReplaced());
     }
 }

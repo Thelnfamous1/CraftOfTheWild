@@ -1,0 +1,10 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": "#craft_of_the_wild:spawns_stone_talus",
+  "spawners": {
+    "type": "craft_of_the_wild:stone_talus",
+    "maxCount": 1,
+    "minCount": 1,
+    "weight": 30
+  }
+}
