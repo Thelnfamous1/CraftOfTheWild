@@ -19,4 +19,6 @@ public class Constants {
 	public static final boolean DEBUG_STONE_TALUS_ARM = false;
 	public static final boolean DEBUG_STONE_TALUS_SHAKE = true;
 	public static final boolean DEBUG_STONE_TALUS_ARM_PARTICLES = true;
+	public static final boolean DEBUG_NEAREST_BURROW_SENSOR = true;
+	public static final boolean DEBUG_STONE_TALUS_DIG = false;
 }

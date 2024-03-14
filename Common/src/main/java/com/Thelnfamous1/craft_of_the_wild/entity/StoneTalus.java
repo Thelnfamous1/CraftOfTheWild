@@ -6,6 +6,7 @@ import com.Thelnfamous1.craft_of_the_wild.entity.ai.COTWSharedAi;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.behavior.*;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.navigation.COTWGroundPathNavigation;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor.COTWNearbyPlayersSensor;
+import com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor.NearestBurrowSensor;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor.SleepSensor;
 import com.Thelnfamous1.craft_of_the_wild.entity.animation.COTWAnimations;
 import com.Thelnfamous1.craft_of_the_wild.init.AttributeInit;
@@ -49,7 +50,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
@@ -81,6 +81,7 @@ import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.util.BrainUtils;
+import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationState;
 
@@ -104,7 +105,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
     public static final int WITHER_SHOOT_EVENT_ID = 1024;
     private final Entity[] partEntities;
     private final PartEntityController<StoneTalus, ? extends Entity> partEntityController;
-    private final ServerBossEvent bossEvent = (ServerBossEvent)(new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS)).setDarkenScreen(true);
+    private final ServerBossEvent bossEvent = (ServerBossEvent)(new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS)).setDarkenScreen(true);
     @Nullable
     private StoneTalusAttackType currentAttackType;
     @Nullable
@@ -823,14 +824,16 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
                 new COTWNearbyPlayersSensor<>(),
                 new NearbyLivingEntitySensor<>(),
                 new HurtBySensor<>(),
-                new SleepSensor<>()
+                new SleepSensor<>(),
+                new NearestBurrowSensor<StoneTalus>()
+                        .setPredicate((e, talus) -> !this.isInsideGround() && !BrainUtils.hasMemory(this, MemoryModuleInit.DIG_COOLDOWN.get()))
         );
     }
 
     @Override
     public BrainActivityGroup<? extends StoneTalus> getCoreTasks() {
         return BrainActivityGroup.coreTasks(
-                new AdditionalMemories<>(MemoryModuleInit.DIG_COOLDOWN.get()),
+                new AdditionalMemories<>(MemoryModuleInit.DIG_COOLDOWN.get(), MemoryModuleInit.IS_DIGGING.get()),
                 COTWSharedAi.createVanillaStyleLookAtTarget(),
                 new MoveToWalkTarget<>(),
                 new CustomHeldBehaviour<>(StoneTalus::updateXRotForFaceplant)
@@ -935,25 +938,68 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
 
 
     private static void resetDigCooldown(LivingEntity entity) {
-        BrainUtils.setForgettableMemory(entity, MemoryModuleInit.DIG_COOLDOWN.get(), true, 1200);
+        BrainUtils.setForgettableMemory(entity, MemoryModuleInit.DIG_COOLDOWN.get(), true, Constants.DEBUG_STONE_TALUS_DIG ? 120 : 1200);
     }
 
     @Override
     public BrainActivityGroup<? extends StoneTalus> getIdleTasks() {
         return BrainActivityGroup.idleTasks(
-                new FirstApplicableBehaviour<>(
-                        new SetAttackTarget<StoneTalus>(false)
-                                .targetFinder(talus -> COTWUtil.getOptionalMemory(this, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER)
-                                        .filter(player -> player.closerThan(talus, COTWUtil.getHitboxAdjustedDistance(talus, player, getTargetingRange(talus))))
-                                        .orElse(null)),
-                        new SetRetaliateTarget<>()
-                                .alertAlliesWhen((talus, target) -> true)
-                                .attackablePredicate(target -> !this.isAlliedTo(target)),
-                        new SetPlayerLookTarget<>(),
-                        new SetRandomLookTarget<>()),
-                new OneRandomBehaviour<>(
-                        new SetRandomWalkTarget<>().speedModifier(0.6F),
-                        new Idle<>().runFor(talus -> talus.getRandom().nextInt(30, 60))));
+                firstApplicableIdleTask(this),
+                randomIdleTask());
+    }
+
+    @NotNull
+    private static OneRandomBehaviour<PathfinderMob> randomIdleTask() {
+        return new OneRandomBehaviour<>(
+                new SetRandomWalkTarget<>().speedModifier(0.6F),
+                new Idle<>().runFor(talus -> talus.getRandom().nextInt(30, 60)));
+    }
+
+    @NotNull
+    private static FirstApplicableBehaviour<StoneTalus> firstApplicableIdleTask(StoneTalus talus) {
+        return new FirstApplicableBehaviour<>(
+                new SetAttackTarget<StoneTalus>(false)
+                        .attackPredicate(st -> {
+                            Player attackablePlayer = BrainUtils.getMemory(st, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER);
+                            if(attackablePlayer == null) return false;
+                            return attackablePlayer.closerThan(st, COTWUtil.getHitboxAdjustedDistance(st, attackablePlayer, getTargetingRange(st)));
+                        })
+                        .targetFinder(st -> COTWUtil.getOptionalMemory(st, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER)
+                                .filter(player -> player.closerThan(st, COTWUtil.getHitboxAdjustedDistance(st, player, getTargetingRange(st))))
+                                .orElse(null)),
+                new SetRetaliateTarget<>()
+                        .alertAlliesWhen((st, target) -> true)
+                        .attackablePredicate(target -> !talus.isAlliedTo(target)),
+                new COTWSetWalkTargetToBlock<StoneTalus>(MemoryModuleInit.NEAREST_BURROW.get()) // walks to the nearest burrow if possible
+                        .predicate((st, block) -> !canStartDigging(st, block.getFirst()))
+                        .startCondition(st -> !BrainUtils.hasMemory(st, MemoryModuleType.WALK_TARGET))
+                        .whenStarting(st -> COTWCommon.debug(Constants.DEBUG_STONE_TALUS_DIG, "{} is walking to nearest burrow {}", st, BrainUtils.getMemory(st, MemoryModuleInit.NEAREST_BURROW.get()))),
+                new CustomBehaviour<>(StoneTalus::startDigging) // starts digging if on top of the nearest burrow
+                        .startCondition(st -> {
+                            BlockPos nearestBurrow = BrainUtils.getMemory(st, MemoryModuleInit.NEAREST_BURROW.get());
+                            if(nearestBurrow == null) return false;
+                            return canStartDigging(st, nearestBurrow);
+                        })
+                        .whenStarting(st -> {
+                            st.getNavigation().stop();
+                            BrainUtils.clearMemory(st, MemoryModuleType.WALK_TARGET);
+                        }),
+                new SetPlayerLookTarget<>(),
+                new SetRandomLookTarget<>());
+    }
+
+    private static void startDigging(StoneTalus st) {
+        BrainUtils.setForgettableMemory(st, MemoryModuleInit.IS_DIGGING.get(), Unit.INSTANCE, DIG_TICKS + 1);
+    }
+
+    private static boolean hasDigCooldown(StoneTalus stoneTalus){
+        return BrainUtils.hasMemory(stoneTalus, MemoryModuleInit.DIG_COOLDOWN.get());
+    }
+
+    private static boolean canStartDigging(StoneTalus talus, BlockPos nearestBurrow) {
+        boolean canDig = talus.blockPosition().distManhattan(nearestBurrow) <= 1;
+        COTWCommon.debug(Constants.DEBUG_STONE_TALUS_DIG, "{} can start digging? {}", talus, canDig);
+        return canDig;
     }
 
     private static double getTargetingRange(StoneTalus talus) {
@@ -975,9 +1021,9 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
                                                 if (talus.hasPose(Pose.EMERGING)) {
                                                     talus.setPose(Pose.STANDING);
                                                     resetDigCooldown(talus);
-                                                    COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "Reset dig cooldown for {}!", this);
+                                                    COTWCommon.debug(Constants.DEBUG_STONE_TALUS_DIG, "Reset dig cooldown for {}!", this);
                                                 } else{
-                                                    COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "{} was not in emerging pose! Actually in {} pose!", this, talus.getPose().name());
+                                                    COTWCommon.debug(Constants.DEBUG_STONE_TALUS_DIG, "{} was not in emerging pose! Actually in {} pose!", this, talus.getPose().name());
                                                 }
                                             })
                             )
@@ -986,19 +1032,20 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
             map.put(Activity.DIG,
                     new BrainActivityGroup<StoneTalus>(Activity.DIG)
                             .behaviours(
-                                    new Digging<>(DIG_TICKS)
+                                    new Digging<StoneTalus>(DIG_TICKS)
+                                            .canDig(talus -> BrainUtils.hasMemory(talus, MemoryModuleInit.IS_DIGGING.get()))
                                             .finishDigging(talus -> {
                                                 if(talus.hasPose(Pose.DIGGING)){
                                                     talus.setPose(Pose.SLEEPING);
                                                     BrainUtils.setMemory(talus, MemoryModuleInit.IS_SLEEPING.get(), true);
-                                                    COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "Set {} to sleeping after digging!", talus);
+                                                    COTWCommon.debug(Constants.DEBUG_STONE_TALUS_DIG, "Set {} to sleeping after digging!", talus);
                                                 } else{
-                                                    COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "{} was not in digging pose! Actually in {} pose!", this, talus.getPose().name());
+                                                    COTWCommon.debug(Constants.DEBUG_STONE_TALUS_DIG, "{} was not in digging pose! Actually in {} pose!", this, talus.getPose().name());
                                                 }
                                             })
-                                            .whenStarting(talus -> COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "{} started digging!", talus))
+                                            .whenStarting(talus -> COTWCommon.debug(Constants.DEBUG_STONE_TALUS_DIG, "{} started digging!", talus))
                             )
-                            .onlyStartWithMemoryStatus(MemoryModuleInit.DIG_COOLDOWN.get(), MemoryStatus.VALUE_ABSENT)
+                            .requireAndWipeMemoriesOnUse(MemoryModuleInit.IS_DIGGING.get())
             );
             map.put(Activity.REST,
                     new BrainActivityGroup<StoneTalus>(Activity.REST)
