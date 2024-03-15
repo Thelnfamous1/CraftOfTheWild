@@ -26,6 +26,7 @@ public class COTWCommon {
         DamageTypeInit.loadClass();
         AttributeInit.loadClass();
         SoundInit.loadClass();
+        WorldGenInit.loadClass();
     }
 
     public static void registerSpawnEggs() {

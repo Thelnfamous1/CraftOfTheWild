@@ -1,0 +1,23 @@
+{
+  "feature": "craft_of_the_wild:stone_talus",
+  "placement": [
+    {
+      "type": "minecraft:rarity_filter",
+      "chance": 45
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:heightmap",
+      "heightmap": "MOTION_BLOCKING"
+    },
+    {
+      "type": "craft_of_the_wild:burrow",
+      "entity": "craft_of_the_wild:stone_talus"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

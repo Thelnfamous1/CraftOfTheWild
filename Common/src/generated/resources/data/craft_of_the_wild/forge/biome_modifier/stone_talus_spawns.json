@@ -1,10 +1,6 @@
 {
-  "type": "forge:add_spawns",
+  "type": "forge:add_features",
   "biomes": "#craft_of_the_wild:spawns_stone_talus",
-  "spawners": {
-    "type": "craft_of_the_wild:stone_talus",
-    "maxCount": 1,
-    "minCount": 1,
-    "weight": 30
-  }
+  "features": "craft_of_the_wild:stone_talus",
+  "step": "surface_structures"
 }

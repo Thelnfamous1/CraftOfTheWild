@@ -152,7 +152,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
     }
 
     public static <T extends StoneTalus> boolean checkStoneTalusSpawnRules(EntityType<T> entityType, ServerLevelAccessor serverLevelAccessor, MobSpawnType mobSpawnType, BlockPos blockPos, RandomSource randomSource) {
-        if(mobSpawnType == MobSpawnType.NATURAL && NearestBurrowSensor.canBurrowInto(serverLevelAccessor, blockPos.below(), entityType.getWidth(), entityType.getHeight())){
+        if(mobSpawnType == MobSpawnType.STRUCTURE && NearestBurrowSensor.canBurrowInto(serverLevelAccessor, blockPos.below(), entityType.getWidth(), entityType.getHeight())){
             return true;
         }
         return Mob.checkMobSpawnRules(entityType, serverLevelAccessor, mobSpawnType, blockPos, randomSource);
@@ -267,7 +267,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
         resetDigCooldown(this);
-        if (pReason == MobSpawnType.NATURAL) {
+        if (pReason == MobSpawnType.STRUCTURE) {
             this.setPose(Pose.SLEEPING);
             BrainUtils.setMemory(this, MemoryModuleInit.IS_SLEEPING.get(), true);
         }

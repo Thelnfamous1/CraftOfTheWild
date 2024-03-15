@@ -7,10 +7,12 @@ import com.Thelnfamous1.craft_of_the_wild.platform.services.IPlatformHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 
 public class FabricPlatformHelper implements IPlatformHelper {
 
@@ -44,5 +46,10 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public <T extends ParticleOptions> void sendCircleParticlesPacket(T particle, double x, double y, double z, double xZRadius, int count) {
         ClientPlayNetworking.send(new S2CCircleParticlesPacket(particle, x, y, z, xZRadius, count));
+    }
+
+    @Override
+    public void onFinalizeSpawn(Mob mob, ServerLevelAccessor level, DifficultyInstance currentDifficultyAt, MobSpawnType spawnType, SpawnGroupData spawnGroupData, CompoundTag saveData) {
+        mob.finalizeSpawn(level, currentDifficultyAt, spawnType, spawnGroupData, saveData);
     }
 }

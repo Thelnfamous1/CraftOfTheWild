@@ -1,0 +1,6 @@
+{
+  "type": "craft_of_the_wild:spawn_entity",
+  "config": {
+    "entity": "craft_of_the_wild:stone_talus"
+  }
+}
