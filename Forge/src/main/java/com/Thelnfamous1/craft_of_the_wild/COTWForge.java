@@ -58,7 +58,7 @@ public class COTWForge {
         generator.addProvider(includeClient, new ModItemModelProvider(packOutput, existingFileHelper));
         generator.addProvider(includeClient, new ModBlockStateProvider(packOutput, existingFileHelper));
         generator.addProvider(includeClient, new ModLangProvider(packOutput));
-        generator.addProvider(includeServer, new ModTagProvider.BiomeTags(packOutput, event.getLookupProvider(), existingFileHelper));
+        generator.addProvider(includeServer, new ModTagProvider.COTWBiomeTags(packOutput, event.getLookupProvider(), existingFileHelper));
         RegistrySetBuilder builder = createRegistrySetBuilder();
         CompletableFuture<HolderLookup.Provider> registries = getRegistries(builder);
         generator.addProvider(includeServer, new DatapackBuiltinEntriesProvider(packOutput, event.getLookupProvider(), builder, Set.of(Constants.MODID)));
@@ -90,6 +90,8 @@ public class COTWForge {
                                     GenerationStep.Decoration.SURFACE_STRUCTURES
                                     ));
                 });
+                //.add(Registries.STRUCTURE, WorldGenInit::structures)
+                //.add(Registries.STRUCTURE_SET, WorldGenInit::structureSets);
         return builder;
     }
 

@@ -79,15 +79,15 @@ public class ModTagProvider {
         }
     }
 
-    public static class BiomeTags extends BiomeTagsProvider {
+    public static class COTWBiomeTags extends BiomeTagsProvider {
 
-        public BiomeTags(PackOutput pGenerator, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
+        public COTWBiomeTags(PackOutput pGenerator, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
             super(pGenerator, lookupProvider, Constants.MODID, existingFileHelper);
         }
 
         @Override
         protected void addTags(HolderLookup.Provider pProvider) {
-            this.tag(COTWTags.SPAWNS_STONE_TALUS).add(Biomes.PLAINS, Biomes.WINDSWEPT_HILLS, Biomes.WINDSWEPT_GRAVELLY_HILLS);
+            this.tag(COTWTags.SPAWNS_STONE_TALUS).add(Biomes.PLAINS, Biomes.MEADOW);
         }
         public void populateTag(TagKey<Biome> tag, ResourceKey<Biome>... damageTypes){
             for (ResourceKey<Biome> damageType : damageTypes) {

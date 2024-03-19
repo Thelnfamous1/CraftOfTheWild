@@ -264,7 +264,9 @@ public abstract class COTWMonster<T extends AnimatedAttacker.AttackType> extends
 
     @Override
     public boolean isAlliedTo(Entity other) {
-        if (super.isAlliedTo(other)) {
+        if(other == null){
+            return false;
+        } else if (super.isAlliedTo(other)) {
             return true;
         } else if (this.isAlliedToDefault(other)) {
             return this.getTeam() == null && other.getTeam() == null;

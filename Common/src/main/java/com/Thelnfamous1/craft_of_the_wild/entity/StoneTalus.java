@@ -542,7 +542,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
 
     @Override
     protected StoneTalusAttackType selectAttackTypeForTarget(Entity target) {
-        if(this.isTargetOnTopOfMe(target)){
+        if(this.isTargetOrOtherPlayerOnTopOfMe(target)){
             COTWCommon.debug(Constants.DEBUG_STONE_TALUS_SHAKE, "{} is now trying to shake off {}", this, target);
             return StoneTalusAttackType.SHAKE;
         }
@@ -551,6 +551,18 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
             return StoneTalusAttackType.THROW;
         }
         return this.selectMeleeAttackType();
+    }
+
+    private boolean isTargetOrOtherPlayerOnTopOfMe(Entity target){
+        if(!this.isTargetOnTopOfMe(target)){
+            for(Player player : BrainUtils.getMemory(this, MemoryModuleType.NEAREST_PLAYERS)){
+                if(COTWSharedAi.isEntityAttackable(this, player, getTargetingRange(this)) && this.isTargetOnTopOfMe(player)){
+                    return true;
+                }
+            }
+            return false;
+        }
+        return true;
     }
 
     private boolean isTargetOnTopOfMe(Entity target) {
@@ -580,7 +592,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
 
     @Override
     protected void adjustCurrentAttackTypeForTarget(StoneTalusAttackType currentAttackType, LivingEntity target) {
-        boolean shouldShake = this.isTargetOnTopOfMe(target);
+        boolean shouldShake = this.isTargetOrOtherPlayerOnTopOfMe(target);
         if(currentAttackType != StoneTalusAttackType.SHAKE && shouldShake){
             COTWCommon.debug(Constants.DEBUG_STONE_TALUS_SHAKE, "{} is now trying to shake off {}", this, target);
             this.setCurrentAttackType(StoneTalusAttackType.SHAKE, false);
