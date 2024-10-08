@@ -4,7 +4,6 @@ import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.COTWSharedAi;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.behavior.*;
-import com.Thelnfamous1.craft_of_the_wild.entity.ai.navigation.COTWGroundPathNavigation;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor.COTWNearbyPlayersSensor;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor.NearestBurrowSensor;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor.SleepSensor;
@@ -50,7 +49,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
@@ -129,11 +127,6 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
         this.partEntities = this.partEntityController.collectParts().toArray(Entity[]::new);
         // Forge: Fix MC-158205: Make sure part ids are successors of parent mob id
         this.setId(EntityAccessor.craft_of_the_wild$getENTITY_COUNTER().getAndAdd(this.partEntities.length + 1) + 1);
-    }
-
-    @Override
-    protected PathNavigation createNavigation(Level level) {
-        return new COTWGroundPathNavigation(this, level);
     }
 
     public static boolean canDestroy(BlockState blockState) {

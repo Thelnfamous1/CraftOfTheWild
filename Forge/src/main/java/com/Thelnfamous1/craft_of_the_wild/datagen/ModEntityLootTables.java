@@ -29,6 +29,15 @@ public class ModEntityLootTables extends EntityLootSubProvider {
                 new LootEntry(Items.GOLD_INGOT, ConstantValue.exactly(10)),
                 new LootEntry(Items.LAPIS_LAZULI, ConstantValue.exactly(5)),
                 new LootEntry(Items.DIAMOND, ConstantValue.exactly(3)));
+        this.dropSingle(EntityInit.BEEDLE.get(), Items.EMERALD);
+    }
+
+    @Override
+    protected boolean canHaveLootTable(EntityType<?> pEntityType) {
+        if(pEntityType == EntityInit.BEEDLE.get()){
+            return true;
+        }
+        return super.canHaveLootTable(pEntityType);
     }
 
     private void multiDrops(EntityType<?> type, LootEntry... entries) {

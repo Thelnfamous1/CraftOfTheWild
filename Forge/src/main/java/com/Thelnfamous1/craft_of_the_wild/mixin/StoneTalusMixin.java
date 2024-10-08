@@ -1,9 +1,10 @@
 package com.Thelnfamous1.craft_of_the_wild.mixin;
 
+import com.Thelnfamous1.craft_of_the_wild.entity.COTWMonster;
 import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalus;
+import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalusAttackType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.entity.PartEntity;
 import org.jetbrains.annotations.Nullable;
@@ -12,14 +13,14 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(value = StoneTalus.class, remap = false)
-public abstract class StoneTalusMixin extends Monster {
+public abstract class StoneTalusMixin extends COTWMonster<StoneTalusAttackType> {
     @Shadow(remap = false)
     public abstract Entity[] shadow$getPartEntities();
 
     @Unique
     private PartEntity<?>[] craft_of_the_wild$forgeParts;
 
-    protected StoneTalusMixin(EntityType<? extends Monster> pEntityType, Level pLevel) {
+    protected StoneTalusMixin(EntityType<? extends COTWMonster> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 

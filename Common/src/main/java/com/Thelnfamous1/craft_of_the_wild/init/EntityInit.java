@@ -1,6 +1,7 @@
 package com.Thelnfamous1.craft_of_the_wild.init;
 
 import com.Thelnfamous1.craft_of_the_wild.Constants;
+import com.Thelnfamous1.craft_of_the_wild.entity.Beedle;
 import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalus;
 import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalusArm;
 import com.nyfaria.craft_of_the_wild.registration.RegistrationProvider;
@@ -38,11 +39,25 @@ public class EntityInit {
                             .clientTrackingRange(4)
                             .updateInterval(10));
 
+    // Beedle height is 36/16
+    // Beedle width is 14/16
+    // Beedle with backpack height is 47/16
+    // Beedle with backpack width is 44/16
+    public static final RegistryObject<EntityType<Beedle>> BEEDLE = registerEntity("beedle", () ->
+                    EntityType.Builder.of(Beedle::new, MobCategory.MISC)
+                            .sized(pixelsToBlocks(44.0F), pixelsToBlocks(47.0F))
+                            .clientTrackingRange(10),
+            Beedle::createAttributes);
+
     private static <T extends LivingEntity> RegistryObject<EntityType<T>> registerEntity(String name, Supplier<EntityType.Builder<T>> supplier,
                                                                                          Supplier<AttributeSupplier.Builder> attributeSupplier) {
         RegistryObject<EntityType<T>> entityTypeSupplier = registerEntity(name, supplier);
         attributeSuppliers.add(new AttributesRegister<>(entityTypeSupplier, attributeSupplier));
         return entityTypeSupplier;
+    }
+
+    private static float pixelsToBlocks(float pixels){
+        return pixels / 16.0F;
     }
 
     public static void loadClass() {

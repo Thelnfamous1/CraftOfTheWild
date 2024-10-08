@@ -25,6 +25,9 @@ public class ItemInit {
     public static final RegistryObject<Item> STONE_TALUS_SPAWN_EGG = ITEMS.register("stone_talus_spawn_egg", () ->
             new COTWSpawnEggItem(EntityInit.STONE_TALUS, 14405058, 7643954, getItemProperties()));
 
+    public static final RegistryObject<Item> BEEDLE_SPAWN_EGG = ITEMS.register("beedle_spawn_egg", () ->
+            new COTWSpawnEggItem(EntityInit.BEEDLE, 14405058, 7643954, getItemProperties()));
+
     public static Item.Properties getItemProperties() {
         return new Item.Properties();
     }

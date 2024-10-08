@@ -1,5 +1,6 @@
 package com.Thelnfamous1.craft_of_the_wild.entity.animation;
 
+import com.Thelnfamous1.craft_of_the_wild.entity.Beedle;
 import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalus;
 import net.minecraft.world.entity.Pose;
 import software.bernie.geckolib.core.animation.AnimationController;
@@ -24,6 +25,8 @@ public class COTWAnimations {
     public static RawAnimation STONE_TALUS_PUNCH = RawAnimation.begin().thenPlay("punch"); // one-shot animation
     public static RawAnimation STONE_TALUS_STUN = RawAnimation.begin().thenPlay("Move 3"); // one-shot animation
     public static RawAnimation STONE_TALUS_SHAKE = RawAnimation.begin().thenPlay("Move 5"); // one-shot animation
+
+    public static RawAnimation BEEDLE_SHOP = RawAnimation.begin().thenPlayAndHold("shop"); // non-looping continuous animation
 
     public static AnimationController<StoneTalus> moveController(StoneTalus talus) {
         return new AnimationController<>(talus, "Move", 10, state -> {
@@ -83,6 +86,39 @@ public class COTWAnimations {
 
             state.resetCurrentAnimation();
 
+            return PlayState.STOP;
+        });
+    }
+
+    public static AnimationController<Beedle> moveController(Beedle beedle) {
+        return new AnimationController<>(beedle, "Move", 10, state -> {
+            if(!beedle.refuseToMove()){
+                if (beedle.isWalking()) {
+                    return state.setAndContinue(WALK);
+                } else{
+                    return state.setAndContinue(IDLE);
+                }
+            }
+            return PlayState.STOP;
+        });
+    }
+
+    public static AnimationController<Beedle> poseController(Beedle beedle) {
+        return new AnimationController<>(beedle, "Pose", 0, state -> {
+            if (beedle.hasPose(Pose.SLEEPING)) {
+                return state.setAndContinue(SLEEP);
+            } else if(beedle.hasPose(Pose.DYING)){
+                return state.setAndContinue(DEATH);
+            }
+            return PlayState.STOP;
+        });
+    }
+
+    public static AnimationController<Beedle> shopController(Beedle beedle) {
+        return new AnimationController<>(beedle, "Shop", 0, state -> {
+            if (beedle.isTrading()) {
+                return state.setAndContinue(BEEDLE_SHOP);
+            }
             return PlayState.STOP;
         });
     }
