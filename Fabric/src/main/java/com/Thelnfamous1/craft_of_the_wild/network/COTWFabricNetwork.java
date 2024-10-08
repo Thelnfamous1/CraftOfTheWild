@@ -9,7 +9,7 @@ public class COTWFabricNetwork {
     public static final ResourceLocation CIRCLE_PARTICLES = COTWCommon.getResourceLocation("circle_particles");
 
     public static void registerClientPackets(){
-        ClientPlayNetworking.registerReceiver(S2CCircleParticlesPacket.PACKET_TYPE, S2CCircleParticlesPacket::receive);
+        ClientPlayNetworking.registerGlobalReceiver(S2CCircleParticlesPacket.PACKET_TYPE, S2CCircleParticlesPacket::receive);
     }
 
 }
