@@ -37,6 +37,14 @@ public class SoundInit {
 
     public static final RegistryObject<SoundEvent> STONE_TALUS_BREAK_ROCKS = registerSoundEvent("stone_talus_break_rocks");
 
+    public static final RegistryObject<SoundEvent> BEEDLE_ANGRY = registerSoundEvent("beedle_angry");
+
+    public static final RegistryObject<SoundEvent> BEEDLE_SLEEP = registerSoundEvent("beedle_sleep");
+
+    public static final RegistryObject<SoundEvent> BEEDLE_SURPRISE = registerSoundEvent("beedle_surprise");
+
+    public static final RegistryObject<SoundEvent> BEEDLE_URGE = registerSoundEvent("beedle_urge");
+
     private static RegistryObject<SoundEvent> registerSoundEvent(String path) {
         return SOUND_EVENTS.register(path, () -> SoundEvent.createVariableRangeEvent(COTWCommon.getResourceLocation(path)));
     }

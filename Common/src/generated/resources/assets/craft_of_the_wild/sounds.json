@@ -1,4 +1,28 @@
 {
+  "beedle_angry": {
+    "sounds": [
+      "craft_of_the_wild:beedle_angry_0",
+      "craft_of_the_wild:beedle_angry_1"
+    ]
+  },
+  "beedle_sleep": {
+    "sounds": [
+      "craft_of_the_wild:beedle_sleep_0",
+      "craft_of_the_wild:beedle_sleep_1"
+    ]
+  },
+  "beedle_surprise": {
+    "sounds": [
+      "craft_of_the_wild:beedle_surprise_0",
+      "craft_of_the_wild:beedle_surprise_1"
+    ]
+  },
+  "beedle_urge": {
+    "sounds": [
+      "craft_of_the_wild:beedle_urge_0",
+      "craft_of_the_wild:beedle_urge_1"
+    ]
+  },
   "stone_talus_boss_music": {
     "sounds": [
       "craft_of_the_wild:stone_talus_boss_music"
