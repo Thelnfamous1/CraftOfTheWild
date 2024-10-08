@@ -1,5 +1,4 @@
 plugins {
-    id  "org.jetbrains.gradle.plugin.idea-ext"  version "1.1.8"
     id 'com.matyrobbrt.mc.registrationutils' version "$regutils_version" // The plugin is located at the Gradle plugin portal
 }
 registrationUtils {
