@@ -1,12 +1,14 @@
 package com.Thelnfamous1.craft_of_the_wild.entity.ai;
 
+import com.Thelnfamous1.craft_of_the_wild.entity.ai.behavior.COTWSetEntityLookTarget;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.util.BrainUtils;
 
 import java.util.HashMap;
@@ -45,5 +47,21 @@ public class COTWSharedAi {
         return attacker.getBrain().isMemoryValue(MemoryModuleType.ATTACK_TARGET, target) ?
                 ATTACK_TARGET_CONDITIONS_IGNORE_INVISIBILITY_AND_LINE_OF_SIGHT.computeIfAbsent(distance, k -> TargetingConditions.forCombat().range(distance).ignoreLineOfSight()).test(attacker, target) :
                 ATTACK_TARGET_CONDITIONS_IGNORE_LINE_OF_SIGHT.computeIfAbsent(distance, k -> TargetingConditions.forCombat().range(distance).ignoreLineOfSight().ignoreInvisibilityTesting()).test(attacker, target);
+    }
+
+    public static COTWSetEntityLookTarget<LivingEntity> lookAtEntity(LivingEntity mob, EntityType<?> type, float distance) {
+        return new COTWSetEntityLookTarget<>().predicate(e -> e.getType().equals(type) && e.distanceToSqr(mob) <= Mth.square(distance) && !mob.hasPassenger(e));
+    }
+
+    public static COTWSetEntityLookTarget<LivingEntity> lookAtAnyEntity(LivingEntity mob, float distance) {
+        return new COTWSetEntityLookTarget<>().predicate(e -> e.distanceToSqr(mob) <= Mth.square(distance) && !mob.hasPassenger(e));
+    }
+
+    public static COTWSetEntityLookTarget<LivingEntity> lookAtEntity(LivingEntity mob, MobCategory category, float distance) {
+        return new COTWSetEntityLookTarget<>().predicate(e -> e.getType().getCategory().equals(category) && e.distanceToSqr(mob) <= Mth.square(distance) && !mob.hasPassenger(e));
+    }
+
+    public static ExtendedBehaviour<LivingEntity> doNothing() {
+        return new Idle<>().runFor(e -> e.getRandom().nextIntBetweenInclusive(30, 60));
     }
 }
