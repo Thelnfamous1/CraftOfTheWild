@@ -29,6 +29,8 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -41,6 +43,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.Merchant;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
@@ -277,6 +280,36 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
 
     @Override
     public void die(DamageSource pCause) {
+        if (this.level() instanceof ServerLevel) {
+            Entity killer = pCause.getEntity();
+
+            Player playerKiller = null;
+            if (killer instanceof Player) {
+                playerKiller = (Player)killer;
+            } else if (killer instanceof OwnableEntity ownable) {
+                LivingEntity owner = ownable.getOwner();
+                if (owner instanceof Player) {
+                    playerKiller = (Player) owner;
+                }
+            }
+
+            if (playerKiller != null) {
+                MobEffectInstance activeBadOmen = playerKiller.getEffect(MobEffects.BAD_OMEN);
+                int badOmenAmplifier = 2;
+                if (activeBadOmen != null) {
+                    badOmenAmplifier += activeBadOmen.getAmplifier();
+                    playerKiller.removeEffectNoUpdate(MobEffects.BAD_OMEN);
+                } else {
+                    --badOmenAmplifier;
+                }
+
+                badOmenAmplifier = Mth.clamp(badOmenAmplifier, 0, 4);
+                MobEffectInstance freshBadOmen = new MobEffectInstance(MobEffects.BAD_OMEN, 120000, badOmenAmplifier, false, false, true);
+                if (!this.level().getGameRules().getBoolean(GameRules.RULE_DISABLE_RAIDS)) {
+                    playerKiller.addEffect(freshBadOmen);
+                }
+            }
+        }
         super.die(pCause);
         this.stopTrading();
     }
@@ -520,5 +553,10 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
 
     public void setLightOn(boolean lightOn){
         this.entityData.set(DATA_LIGHT_ON, lightOn);
+    }
+
+    @Override
+    public boolean canBeLeashed(Player player) {
+        return false;
     }
 }
