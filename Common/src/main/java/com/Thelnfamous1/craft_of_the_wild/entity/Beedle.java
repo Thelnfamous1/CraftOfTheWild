@@ -12,7 +12,10 @@ import com.Thelnfamous1.craft_of_the_wild.init.SoundInit;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Pair;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -24,6 +27,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.Stats;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
@@ -46,6 +50,8 @@ import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrain;
@@ -63,6 +69,7 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Beedle> {
@@ -81,6 +88,7 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
     private long lastRestockGameTime;
     private int numberOfRestocksToday;
     private long lastRestockCheckDayTime;
+    private SmartBrainSchedule schedule;
 
     public Beedle(EntityType<? extends Beedle> $$0, Level $$1) {
         super($$0, $$1);
@@ -96,6 +104,14 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
         super.defineSynchedData();
         this.entityData.define(DATA_TRADING, false);
         this.entityData.define(DATA_LIGHT_ON, false);
+    }
+
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> dataAccessor) {
+        super.onSyncedDataUpdated(dataAccessor);
+        if(dataAccessor.equals(COTWMob.DATA_WALKING)){
+            this.refreshDimensions();
+        }
     }
 
     @Override
@@ -469,7 +485,10 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
     @Override
     public BrainActivityGroup<? extends Beedle> getCoreTasks() {
         return BrainActivityGroup.coreTasks(
-                new AdditionalMemories<>(MemoryModuleType.HOME),
+                new AdditionalMemories<>(MemoryModuleType.HOME, MemoryModuleType.LAST_SLEPT),
+                new COTWVillagerPanicTrigger<Beedle>()
+                        .whenPanicking(beedle -> beedle.getBrain().setSchedule(null)),
+                new COTWWakeUp<>(),
                 new COTWSwim<>(),
                 new COTWInteractWithDoor<>(),
                 COTWSharedAi.createVanillaStyleLookAtTarget(),
@@ -492,7 +511,7 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
         return new OneRandomBehaviour<>(
                 Pair.of(COTWSharedAi.lookAtEntity(beedle, EntityType.PLAYER, 8.0F), 1),
                 Pair.of(COTWSharedAi.lookAtEntity(beedle, EntityInit.BEEDLE.get(), 8.0F), 1),
-                Pair.of(COTWSharedAi.lookAtAnyEntity(beedle, .0F), 1),
+                Pair.of(COTWSharedAi.lookAtAnyEntity(beedle, 8.0F), 1),
                 Pair.of(COTWSharedAi.doNothing(), 1)
         );
     }
@@ -512,6 +531,63 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
                         .speedModifier(0.5F), 2),
                 Pair.of(COTWSharedAi.doNothing(), 1)
         );
+    }
+
+    @Override
+    public Map<Activity, BrainActivityGroup<? extends Beedle>> getAdditionalTasks() {
+        return Util.make(new Object2ObjectOpenHashMap<>(), map -> {
+            map.put(Activity.REST, new BrainActivityGroup<Beedle>(Activity.REST).behaviours(
+                    new COTWSetWalkTargetToPoi<>(1, 150).speedModifier(0.5F),
+                    new COTWSleepAtHome<>()
+                            .canStart((beedle, home) -> {
+                                BlockState stateAtHome = beedle.level().getBlockState(home.pos());
+                                return home.pos().closerToCenterThan(beedle.position(), 2.0D)
+                                        && (!stateAtHome.is(BlockTags.BEDS) || !stateAtHome.getValue(BedBlock.OCCUPIED));
+                            })
+                            .canContinue((beedle, home) ->
+                                    beedle.getBrain().isActive(Activity.REST)
+                                            && home.pos().closerToCenterThan(beedle.position(), 1.14D)),
+                    new OneRandomBehaviour<>(
+                            //Pair.of(SetClosestHomeAsWalkTarget.create(pSpeedModifier), 1),
+                            Pair.of(new COTWInsideBrownianWalk<>().speedModifier(0.5F), 4),
+                            //Pair.of(GoToClosestVillage.create(pSpeedModifier, 4), 2),
+                            Pair.of(COTWSharedAi.doNothing(20, 40), 2))
+                            .startCondition(beedle -> !BrainUtils.hasMemory(beedle, MemoryModuleType.HOME)),
+                    getMinimalLookBehavior(this)
+                            .startCondition(beedle -> !beedle.isSleeping())
+            ));
+            map.put(Activity.PANIC, new BrainActivityGroup<Beedle>(Activity.PANIC).behaviours(
+                    new COTWVillagerCalmDown<Beedle>()
+                            .whenCalmingDown(entity -> {
+                                if(entity.getBrain().getSchedule() == null){
+                                    entity.getBrain().setSchedule(this.getSchedule());
+                                }
+                                //entity.getBrain().updateActivityFromSchedule(entity.level().getDayTime(), entity.level().getGameTime());
+                            }),
+                    //SetWalkTargetAwayFrom.entity(MemoryModuleType.NEAREST_HOSTILE, 0.75F, 6, false))
+                    COTWSetWalkTargetAwayFrom.entity(MemoryModuleType.HURT_BY_ENTITY, 0.75F, 6, false),
+                    //VillageBoundRandomStroll.create(0.75F, 2, 2)),
+                    new COTWStrollAroundPoi<>(0).speedModifier(0.75F),
+                    getMinimalLookBehavior(this)
+            ));
+        });
+    }
+
+    @Override
+    public EntityDimensions getDimensions(Pose pose) {
+        if(pose == Pose.DYING){
+            return EntityInit.BEEDLE_DYING;
+        } else if(pose == Pose.SLEEPING || !this.isWalking()){
+            return EntityInit.BEEDLE_SITTING;
+        }
+        return super.getDimensions(pose);
+    }
+
+    private static OneRandomBehaviour<Beedle> getMinimalLookBehavior(Beedle beedle) {
+        return new OneRandomBehaviour<>(
+                Pair.of(COTWSharedAi.lookAtEntity(beedle, EntityType.PLAYER, 8.0F), 2),
+                Pair.of(COTWSharedAi.lookAtEntity(beedle, EntityInit.BEEDLE.get(), 8.0F), 2),
+                Pair.of(COTWSharedAi.doNothing(), 8));
     }
 
     @Override
@@ -539,12 +615,15 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
 
     @Override
     public @Nullable SmartBrainSchedule getSchedule() {
-        return new SmartBrainSchedule().activityAt(12000, Activity.REST);
+        if(this.schedule == null){
+            this.schedule = new SmartBrainSchedule().activityAt(10, Activity.IDLE).activityAt(12000, Activity.REST);
+        }
+        return this.schedule;
     }
 
     @Override
     public List<Activity> getActivityPriorities() {
-        return ObjectArrayList.of(Activity.IDLE);
+        return ObjectArrayList.of();
     }
 
     public boolean isLightOn() {
@@ -558,5 +637,25 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
     @Override
     public boolean canBeLeashed(Player player) {
         return false;
+    }
+
+    @Override
+    public void startSleeping(BlockPos blockPos) {
+        super.startSleeping(blockPos);
+        BrainUtils.setMemory(this, MemoryModuleType.LAST_SLEPT, this.level().getGameTime());
+        BrainUtils.clearMemory(this, MemoryModuleType.WALK_TARGET);
+        BrainUtils.clearMemory(this, MemoryModuleType.LOOK_TARGET);
+        BrainUtils.clearMemory(this, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
+    }
+
+    @Override
+    public void stopSleeping() {
+        super.stopSleeping();
+        BrainUtils.setMemory(this, MemoryModuleType.LAST_WOKEN, this.level().getGameTime());
+    }
+
+    @Override
+    protected float getStandingEyeHeight(Pose $$0, EntityDimensions $$1) {
+        return super.getStandingEyeHeight($$0, $$1);
     }
 }

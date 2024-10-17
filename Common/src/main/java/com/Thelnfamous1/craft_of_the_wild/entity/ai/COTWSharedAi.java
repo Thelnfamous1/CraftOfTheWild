@@ -62,6 +62,10 @@ public class COTWSharedAi {
     }
 
     public static ExtendedBehaviour<LivingEntity> doNothing() {
-        return new Idle<>().runFor(e -> e.getRandom().nextIntBetweenInclusive(30, 60));
+        return doNothing(30, 60);
+    }
+
+    public static ExtendedBehaviour<LivingEntity> doNothing(int min, int max) {
+        return new Idle<>().runFor(e -> e.getRandom().nextIntBetweenInclusive(min, max));
     }
 }

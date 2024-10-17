@@ -7,10 +7,7 @@ import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalusArm;
 import com.nyfaria.craft_of_the_wild.registration.RegistrationProvider;
 import com.nyfaria.craft_of_the_wild.registration.RegistryObject;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 
 import java.util.ArrayList;
@@ -49,6 +46,10 @@ public class EntityInit {
                             .clientTrackingRange(10),
             Beedle::createAttributes);
 
+    public static final EntityDimensions BEEDLE_SITTING = EntityDimensions.scalable(pixelsToBlocks(44.0F), pixelsToBlocks(29.0F));
+
+    public static final EntityDimensions BEEDLE_DYING = EntityDimensions.scalable(pixelsToBlocks(44.0F), pixelsToBlocks(27.0F));
+
     private static <T extends LivingEntity> RegistryObject<EntityType<T>> registerEntity(String name, Supplier<EntityType.Builder<T>> supplier,
                                                                                          Supplier<AttributeSupplier.Builder> attributeSupplier) {
         RegistryObject<EntityType<T>> entityTypeSupplier = registerEntity(name, supplier);
@@ -56,7 +57,7 @@ public class EntityInit {
         return entityTypeSupplier;
     }
 
-    private static float pixelsToBlocks(float pixels){
+    public static float pixelsToBlocks(float pixels){
         return pixels / 16.0F;
     }
 

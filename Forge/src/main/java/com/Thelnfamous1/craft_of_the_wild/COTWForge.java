@@ -2,6 +2,7 @@ package com.Thelnfamous1.craft_of_the_wild;
 
 import com.Thelnfamous1.craft_of_the_wild.client.COTWForgeClient;
 import com.Thelnfamous1.craft_of_the_wild.datagen.*;
+import com.Thelnfamous1.craft_of_the_wild.entity.Beedle;
 import com.Thelnfamous1.craft_of_the_wild.init.DamageTypeInit;
 import com.Thelnfamous1.craft_of_the_wild.init.WorldGenInit;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWTags;
@@ -16,10 +17,13 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.world.ForgeBiomeModifiers;
 import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -41,6 +45,11 @@ public class COTWForge {
         if(FMLEnvironment.dist == Dist.CLIENT){
             COTWForgeClient.init();
         }
+        MinecraftForge.EVENT_BUS.addListener((SleepingLocationCheckEvent event) -> {
+            if(event.getEntity() instanceof Beedle){
+                event.setResult(Event.Result.ALLOW);
+            }
+        });
     }
 
     @SubscribeEvent
