@@ -48,6 +48,7 @@ import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrain;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.CustomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
 import net.tslat.smartbrainlib.api.core.schedule.SmartBrainSchedule;
@@ -65,6 +66,7 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
     private static final int DEATH_TIME = COTWUtil.secondsToTicks(2.0F);
     public static final int NUMBER_OF_TRADE_SLOTS = 7;
     private static final EntityDataAccessor<Boolean> DATA_TRADING = SynchedEntityData.defineId(Beedle.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_LIGHT_ON = SynchedEntityData.defineId(Beedle.class, EntityDataSerializers.BOOLEAN);
     public static final long RESTOCK_INTERVAL = 12000L;
     public static final long DAY_LENGTH = 24000L;
     public static final int MAX_RESTOCKS = 2;
@@ -90,6 +92,7 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_TRADING, false);
+        this.entityData.define(DATA_LIGHT_ON, false);
     }
 
     @Override
@@ -438,7 +441,8 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
                 new COTWInteractWithDoor<>(),
                 COTWSharedAi.createVanillaStyleLookAtTarget(),
                 new MoveToWalkTarget<>(),
-                new COTWLookAndFollowTradingPlayerSink<>());
+                new COTWLookAndFollowTradingPlayerSink<>(),
+                new CustomBehaviour<Beedle>(beedle -> beedle.setLightOn(beedle.level().isNight())));
     }
 
     @Override
@@ -508,5 +512,13 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
     @Override
     public List<Activity> getActivityPriorities() {
         return ObjectArrayList.of(Activity.IDLE);
+    }
+
+    public boolean isLightOn() {
+        return this.entityData.get(DATA_LIGHT_ON);
+    }
+
+    public void setLightOn(boolean lightOn){
+        this.entityData.set(DATA_LIGHT_ON, lightOn);
     }
 }

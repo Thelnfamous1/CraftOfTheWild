@@ -37,6 +37,7 @@ dependencies {
     compileOnly "net.tslat.smartbrainlib:SmartBrainLib-common-${project.minecraft_version}:${project.sbl_version_common}"
     compileOnly "software.bernie.geckolib:geckolib-forge-${project.minecraft_version}:${project.geckolib_version_forge}"
     implementation "curse.maven:jade-324717:${project.jade_version_forge}"
+    implementation "curse.maven:dynamiclights-reforged-551736:${project.dynamiclights_version_forge}"
 }
 sourceSets.main.resources.srcDir './src/generated/resources'
 processResources {

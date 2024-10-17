@@ -12,5 +12,6 @@ public class COTWFabricClient implements ClientModInitializer {
         COTWCommonClient.init();
         COTWCommonClient.registerRenderers(EntityRendererRegistry::register);
         COTWFabricNetwork.registerClientPackets();
+        COTWCommonClient.setup();
     }
 }

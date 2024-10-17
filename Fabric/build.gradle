@@ -22,6 +22,11 @@ dependencies {
     modImplementation "software.bernie.geckolib:geckolib-fabric-${project.minecraft_version}:${project.geckolib_version_fabric}"
     modRuntimeOnly "io.github.flemmli97:debugutils:${project.minecraft_version}-${project.debugutils_version_fabric}-fabric"
     modImplementation "curse.maven:jade-324717:${project.jade_version_fabric}"
+    modImplementation "curse.maven:dynamiclights-reforged-551736:${project.dynamiclights_version_fabric}"
+    modImplementation("maven.modrinth:sodium:mc1.20.1-0.5.11") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
+    modImplementation "curse.maven:sodium-options-api-1103431:5807574"
 }
 
 loom {
