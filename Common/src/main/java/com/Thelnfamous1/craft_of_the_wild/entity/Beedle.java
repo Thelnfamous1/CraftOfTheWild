@@ -25,6 +25,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.BlockTags;
@@ -71,6 +72,7 @@ import software.bernie.geckolib.core.animation.AnimatableManager;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Beedle> {
     private static final int DEATH_TIME = COTWUtil.secondsToTicks(2.0F);
@@ -122,7 +124,7 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
     }
 
     public boolean refuseToMove() {
-        return this.hasPose(Pose.DYING) || this.hasPose(Pose.SLEEPING) || this.isTrading();
+        return this.hasPose(Pose.DYING) || this.hasPose(Pose.SLEEPING);
     }
 
     @Override
@@ -172,8 +174,8 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
         if (tradingPlayer instanceof ServerPlayer serverTradingPlayer) {
             //CriteriaTriggers.TRADE.trigger(serverTradingPlayer, this, merchantOffer.getResult());
         }
-        if (!this.level().isClientSide && this.ambientSoundTime > -this.getAmbientSoundInterval() + 20) {
-            this.ambientSoundTime = -this.getAmbientSoundInterval();
+        if (!this.level().isClientSide /*&& this.ambientSoundTime > -this.getAmbientSoundInterval() + 20*/) {
+            //this.ambientSoundTime = -this.getAmbientSoundInterval();
             this.playSound(this.getNotifyTradeSound(), this.getSoundVolume(), this.getVoicePitch());
         }
     }
@@ -493,17 +495,25 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
                 new COTWInteractWithDoor<>(),
                 COTWSharedAi.createVanillaStyleLookAtTarget(),
                 new MoveToWalkTarget<>(),
-                new COTWLookAndFollowTradingPlayerSink<>(),
+                new COTWLookAndFollowTradingPlayerSink<Beedle>().startCondition(Predicate.not(Beedle::isCloseEnoughToTradingPlayer)).stopIf(Beedle::isCloseEnoughToTradingPlayer),
                 new CustomBehaviour<Beedle>(beedle -> beedle.setLightOn(beedle.level().isNight())));
+    }
+
+    private boolean isCloseEnoughToTradingPlayer(){
+        Player tradingPlayer = this.getTradingPlayer();
+        return tradingPlayer != null && this.closerThan(tradingPlayer, ServerGamePacketListenerImpl.MAX_INTERACTION_DISTANCE);
     }
 
     @Override
     public BrainActivityGroup<? extends Beedle> getIdleTasks() {
         return BrainActivityGroup.idleTasks(
                 createIdleLookBehaviors(this),
-                createIdleMoveBehaviors(this),
+                createIdleMoveBehaviors(this)
+                        .cooldownFor(e -> e.getRandom().nextIntBetweenInclusive(100, 200))
+                /*
                 new COTWSetLookAndInteract<>()
                         .predicate(le -> le.distanceToSqr(this) <= Mth.square(4) && le.getType().equals(EntityType.PLAYER))
+                 */
         );
     }
 
@@ -516,6 +526,21 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
         );
     }
 
+    /*
+    pBrain.addActivity(Activity.IDLE, ImmutableList.of(
+    Pair.of(0, SetEntityLookTargetSometimes.create(EntityType.PLAYER, 6.0F, UniformInt.of(30, 60))),
+    Pair.of(1, new AnimalMakeLove(EntityType.CAMEL, 1.0F)),
+    Pair.of(2, new FollowTemptation((p_250812_) -> {return 2.5F;})),
+    Pair.of(3, BehaviorBuilder.triggerIf(Predicate.not(Camel::refuseToMove),
+    BabyFollowAdult.create(ADULT_FOLLOW_RANGE, 2.5F))),
+    Pair.of(4, new RandomLookAround(UniformInt.of(150, 250), 30.0F, 0.0F, 0.0F)),
+    Pair.of(5, new RunOne<>(ImmutableMap.of(MemoryModuleType.WALK_TARGET, MemoryStatus.VALUE_ABSENT),
+    ImmutableList.of(
+        Pair.of(BehaviorBuilder.triggerIf(Predicate.not(Camel::refuseToMove), RandomStroll.stroll(2.0F)), 1),
+        Pair.of(BehaviorBuilder.triggerIf(Predicate.not(Camel::refuseToMove), SetWalkTargetFromLookTarget.create(2.0F, 3)), 1),
+        Pair.of(new CamelAi.RandomSitting(20), 1),
+        Pair.of(new DoNothing(30, 60), 1))))));
+     */
     private static OneRandomBehaviour<Beedle> createIdleMoveBehaviors(Beedle beedle) {
         return new OneRandomBehaviour<>(
                 Pair.of(new SetRandomWalkTarget<>()
@@ -529,7 +554,7 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
                         .speedModifier(0.5F), 2),
                 Pair.of(new COTWStrollAroundPoi<>(5)
                         .speedModifier(0.5F), 2),
-                Pair.of(COTWSharedAi.doNothing(), 1)
+                Pair.of(COTWSharedAi.doNothing(), 10)
         );
     }
 
@@ -538,7 +563,7 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
         return Util.make(new Object2ObjectOpenHashMap<>(), map -> {
             map.put(Activity.REST, new BrainActivityGroup<Beedle>(Activity.REST).behaviours(
                     new COTWSetWalkTargetToPoi<>(1, 150).speedModifier(0.5F),
-                    new COTWSleepAtHome<>()
+                    new COTWSleepAtHome<Beedle>()
                             .canStart((beedle, home) -> {
                                 BlockState stateAtHome = beedle.level().getBlockState(home.pos());
                                 return home.pos().closerToCenterThan(beedle.position(), 2.0D)
@@ -546,7 +571,12 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
                             })
                             .canContinue((beedle, home) ->
                                     beedle.getBrain().isActive(Activity.REST)
-                                            && home.pos().closerToCenterThan(beedle.position(), 1.14D)),
+                                            && home.pos().closerToCenterThan(beedle.position(), 1.14D))
+                            .whenStarting(beedle -> {
+                                if(beedle.shouldRestock()){
+                                    beedle.restock();
+                                }
+                            }),
                     new OneRandomBehaviour<>(
                             //Pair.of(SetClosestHomeAsWalkTarget.create(pSpeedModifier), 1),
                             Pair.of(new COTWInsideBrownianWalk<>().speedModifier(0.5F), 4),

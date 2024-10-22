@@ -93,7 +93,7 @@ public class COTWAnimations {
     public static AnimationController<Beedle> moveController(Beedle beedle) {
         return new AnimationController<>(beedle, "Move", 10, state -> {
             if(!beedle.refuseToMove()){
-                if (beedle.isWalking()) {
+                if (beedle.isWalking() && state.isMoving()) {
                     return state.setAndContinue(WALK);
                 } else{
                     return state.setAndContinue(IDLE);

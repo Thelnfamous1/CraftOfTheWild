@@ -30,10 +30,10 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
         this.addSound(SoundInit.STONE_TALUS_PUNCH, 2);
         this.addSound(SoundInit.STONE_TALUS_SHAKE, 2);
         this.addSound(SoundInit.STONE_TALUS_BREAK_ROCKS, 2);
-        this.addSoundWithVariants(SoundInit.BEEDLE_ANGRY, 2);
-        this.addSoundWithVariants(SoundInit.BEEDLE_SLEEP, 2);
-        this.addSoundWithVariants(SoundInit.BEEDLE_SURPRISE, 2);
-        this.addSoundWithVariants(SoundInit.BEEDLE_URGE, 2);
+        this.addSoundWithVariants(SoundInit.BEEDLE_ANGRY, 2, 0.5F);
+        this.addSoundWithVariants(SoundInit.BEEDLE_SLEEP, 2, 0.5F);
+        this.addSoundWithVariants(SoundInit.BEEDLE_SURPRISE, 2, 0.5F);
+        this.addSoundWithVariants(SoundInit.BEEDLE_URGE, 2, 0.5F);
     }
 
     public void addSound(RegistryObject<SoundEvent> entry, float volume) {
@@ -44,10 +44,10 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
         add(entry, SoundDefinition.definition().with(sound(entry.getId())));
     }
 
-    public void addSoundWithVariants(RegistryObject<SoundEvent> entry, int amount) {
+    public void addSoundWithVariants(RegistryObject<SoundEvent> entry, int amount, float volume) {
         SoundDefinition definition = SoundDefinition.definition();
         for(int i = 0; i < amount; i++){
-            definition.with(sound(entry.getId().withSuffix("_" + i)));
+            definition.with(sound(entry.getId().withSuffix("_" + i)).volume(volume));
         }
         add(entry, definition);
     }
