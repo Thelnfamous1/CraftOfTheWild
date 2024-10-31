@@ -1,5 +1,6 @@
 package com.Thelnfamous1.craft_of_the_wild.entity;
 
+import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.COTWSharedAi;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.behavior.*;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor.COTWNearbyPlayersSensor;
@@ -381,6 +382,8 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
 
     // Restock
     public void restock() {
+        if(Constants.DEBUG_BEEDLE_RESTOCK)
+            Constants.LOG.info("{} is restocking their trades!", this);
         this.updateDemand();
 
         for(MerchantOffer merchantoffer : this.getOffers()) {
@@ -412,7 +415,9 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
     }
 
     private boolean allowedToRestock() {
-        return this.numberOfRestocksToday == 0 || this.numberOfRestocksToday < 2 && this.level().getGameTime() > this.lastRestockGameTime + 2400L;
+        return this.numberOfRestocksToday == 0 ||
+                this.numberOfRestocksToday < 2
+                        && this.level().getGameTime() > this.lastRestockGameTime + DAY_LENGTH;
     }
 
     public boolean shouldRestock() {
@@ -558,6 +563,22 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
         );
     }
 
+    /*
+          return ImmutableList.of(getMinimalLookBehavior(),
+          Pair.of(5, new RunOne<>(ImmutableList.of(
+                Pair.of(workatpoi, 7),
+                Pair.of(StrollAroundPoi.create(MemoryModuleType.JOB_SITE, 0.4F, 4), 2),
+                Pair.of(StrollToPoi.create(MemoryModuleType.JOB_SITE, 0.4F, 1, 10), 5),
+                Pair.of(StrollToPoiList.create(MemoryModuleType.SECONDARY_JOB_SITE, pSpeedModifier, 1, 6, MemoryModuleType.JOB_SITE), 5),
+                Pair.of(new HarvestFarmland(), pProfession == VillagerProfession.FARMER ? 2 : 5),
+                Pair.of(new UseBonemeal(), pProfession == VillagerProfession.FARMER ? 4 : 7)))),
+            Pair.of(10, new ShowTradesToPlayer(400, 1600)),
+            Pair.of(10, SetLookAndInteract.create(EntityType.PLAYER, 4)),
+            Pair.of(2, SetWalkTargetFromBlockMemory.create(MemoryModuleType.JOB_SITE, pSpeedModifier, 9, 100, 1200)),
+            Pair.of(3, new GiveGiftToHero(100)),
+            Pair.of(99, UpdateActivityFromSchedule.create()));
+     */
+
     @Override
     public Map<Activity, BrainActivityGroup<? extends Beedle>> getAdditionalTasks() {
         return Util.make(new Object2ObjectOpenHashMap<>(), map -> {
@@ -571,12 +592,7 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
                             })
                             .canContinue((beedle, home) ->
                                     beedle.getBrain().isActive(Activity.REST)
-                                            && home.pos().closerToCenterThan(beedle.position(), 1.14D))
-                            .whenStarting(beedle -> {
-                                if(beedle.shouldRestock()){
-                                    beedle.restock();
-                                }
-                            }),
+                                            && home.pos().closerToCenterThan(beedle.position(), 1.14D)),
                     new OneRandomBehaviour<>(
                             //Pair.of(SetClosestHomeAsWalkTarget.create(pSpeedModifier), 1),
                             Pair.of(new COTWInsideBrownianWalk<>().speedModifier(0.5F), 4),
@@ -646,7 +662,16 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
     @Override
     public @Nullable SmartBrainSchedule getSchedule() {
         if(this.schedule == null){
-            this.schedule = new SmartBrainSchedule().activityAt(10, Activity.IDLE).activityAt(12000, Activity.REST);
+            this.schedule = new SmartBrainSchedule()
+                    .activityAt(10, Activity.IDLE)
+                    .doAt(10, e -> {
+                        if(e instanceof Beedle beedle){
+                            if(beedle.shouldRestock()){
+                                beedle.restock();
+                            }
+                        }
+                    })
+                    .activityAt(12000, Activity.REST);
         }
         return this.schedule;
     }
