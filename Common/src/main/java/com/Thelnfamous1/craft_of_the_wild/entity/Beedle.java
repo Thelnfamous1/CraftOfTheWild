@@ -73,7 +73,6 @@ import software.bernie.geckolib.core.animation.AnimatableManager;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 
 public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Beedle> {
     private static final int DEATH_TIME = COTWUtil.secondsToTicks(2.0F);
@@ -175,8 +174,8 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
         if (tradingPlayer instanceof ServerPlayer serverTradingPlayer) {
             //CriteriaTriggers.TRADE.trigger(serverTradingPlayer, this, merchantOffer.getResult());
         }
-        if (!this.level().isClientSide /*&& this.ambientSoundTime > -this.getAmbientSoundInterval() + 20*/) {
-            //this.ambientSoundTime = -this.getAmbientSoundInterval();
+        if (!this.level().isClientSide && this.ambientSoundTime > -this.getAmbientSoundInterval() + 20) {
+            this.ambientSoundTime = -this.getAmbientSoundInterval();
             this.playSound(this.getNotifyTradeSound(), this.getSoundVolume(), this.getVoicePitch());
         }
     }
@@ -500,7 +499,7 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
                 new COTWInteractWithDoor<>(),
                 COTWSharedAi.createVanillaStyleLookAtTarget(),
                 new MoveToWalkTarget<>(),
-                new COTWLookAndFollowTradingPlayerSink<Beedle>().startCondition(Predicate.not(Beedle::isCloseEnoughToTradingPlayer)).stopIf(Beedle::isCloseEnoughToTradingPlayer),
+                new COTWLookAndFollowTradingPlayerSink<Beedle>(),
                 new CustomBehaviour<Beedle>(beedle -> beedle.setLightOn(beedle.level().isNight())));
     }
 

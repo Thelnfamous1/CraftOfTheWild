@@ -42,13 +42,13 @@ public class EntityInit {
     // Beedle with backpack width is 44/16
     public static final RegistryObject<EntityType<Beedle>> BEEDLE = registerEntity("beedle", () ->
                     EntityType.Builder.of(Beedle::new, MobCategory.MISC)
-                            .sized(pixelsToBlocks(14.0F), pixelsToBlocks(36.0F))
+                            .sized(0.6F, 1.95F) // same dimensions as Villager
                             .clientTrackingRange(10),
             Beedle::createAttributes);
 
-    public static final EntityDimensions BEEDLE_SITTING = EntityDimensions.scalable(pixelsToBlocks(14.0F), pixelsToBlocks(26.0F));
+    public static final EntityDimensions BEEDLE_SITTING = EntityDimensions.scalable(0.6F, 1.4F);
 
-    public static final EntityDimensions BEEDLE_DYING = EntityDimensions.scalable(pixelsToBlocks(44.0F), pixelsToBlocks(27.0F));
+    public static final EntityDimensions BEEDLE_DYING = EntityDimensions.scalable(1.95F, 0.6F);
 
     private static <T extends LivingEntity> RegistryObject<EntityType<T>> registerEntity(String name, Supplier<EntityType.Builder<T>> supplier,
                                                                                          Supplier<AttributeSupplier.Builder> attributeSupplier) {

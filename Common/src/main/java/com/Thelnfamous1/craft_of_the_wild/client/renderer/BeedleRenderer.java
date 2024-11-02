@@ -11,9 +11,11 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.layer.AutoGlowingGeoLayer;
 
 public class BeedleRenderer extends COTWMobRenderer<Beedle> {
+    private static final float RENDER_SCALE = 13F / 15F;
 
     public BeedleRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new BeedleModel());
+        this.withScale(RENDER_SCALE);
         this.addRenderLayer(new AutoGlowingGeoLayer<>(this){
             @Override
             public void render(PoseStack poseStack, Beedle animatable, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
