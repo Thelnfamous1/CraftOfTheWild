@@ -40,6 +40,8 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.npc.Npc;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerTrades;
@@ -125,6 +127,13 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
 
     public boolean refuseToMove() {
         return this.hasPose(Pose.DYING) || this.hasPose(Pose.SLEEPING);
+    }
+
+    @Override
+    protected PathNavigation createNavigation(Level level) {
+        GroundPathNavigation navigation = (GroundPathNavigation) super.createNavigation(level);
+        navigation.setCanOpenDoors(true);
+        return navigation;
     }
 
     @Override

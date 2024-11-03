@@ -11,7 +11,8 @@
     "WalkNodeEvaluatorAccess"
   ],
   "client": [
-    "LocalPlayerMixin"
+    "LocalPlayerMixin",
+    "compat.AutoGlowingTextureAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
