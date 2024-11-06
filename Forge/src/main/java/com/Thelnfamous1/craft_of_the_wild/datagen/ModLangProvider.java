@@ -5,6 +5,7 @@ import com.Thelnfamous1.craft_of_the_wild.compat.jade.AttackTypeComponentProvide
 import com.Thelnfamous1.craft_of_the_wild.compat.jade.COTWJadePlugin;
 import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalusAttackType;
 import com.Thelnfamous1.craft_of_the_wild.init.*;
+import com.Thelnfamous1.craft_of_the_wild.item.COTWRecordItem;
 import com.google.common.collect.ImmutableMap;
 import com.nyfaria.craft_of_the_wild.registration.RegistryObject;
 import net.minecraft.data.PackOutput;
@@ -19,7 +20,6 @@ import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.LanguageProvider;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -29,8 +29,6 @@ import java.util.stream.Stream;
 
 public class ModLangProvider extends LanguageProvider {
     protected static final Map<String, String> REPLACE_LIST = ImmutableMap.of(
-            "tnt", "TNT",
-            "sus", ""
     );
 
     public ModLangProvider(PackOutput gen) {
@@ -72,7 +70,15 @@ public class ModLangProvider extends LanguageProvider {
 
     protected void itemLang(RegistryObject<Item> entry) {
         if (!(entry.get() instanceof BlockItem) || entry.get() instanceof ItemNameBlockItem) {
-            addItem(entry, checkReplace(entry));
+            if(entry.get() instanceof COTWRecordItem recordItem){
+                // "music_disc" = 10 characters
+                String name = entry.getId().getPath().substring(0, 10);
+                String desc = entry.getId().getPath().substring(11);
+                addItem(entry, checkReplace(Arrays.stream(name.split("_"))));
+                add(entry.get().getDescriptionId() + ".desc", recordItem.getAuthor() + " - " + checkReplace(Arrays.stream(desc.split("_"))));
+            } else{
+                addItem(entry, checkReplace(entry));
+            }
         }
     }
 

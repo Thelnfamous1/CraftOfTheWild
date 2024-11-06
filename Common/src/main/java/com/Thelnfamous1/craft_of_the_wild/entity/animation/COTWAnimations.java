@@ -1,6 +1,7 @@
 package com.Thelnfamous1.craft_of_the_wild.entity.animation;
 
 import com.Thelnfamous1.craft_of_the_wild.entity.Beedle;
+import com.Thelnfamous1.craft_of_the_wild.entity.Kass;
 import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalus;
 import net.minecraft.world.entity.Pose;
 import software.bernie.geckolib.core.animation.AnimationController;
@@ -27,6 +28,8 @@ public class COTWAnimations {
     public static RawAnimation STONE_TALUS_SHAKE = RawAnimation.begin().thenPlay("Move 5"); // one-shot animation
 
     public static RawAnimation BEEDLE_SHOP = RawAnimation.begin().thenPlayAndHold("shop"); // non-looping continuous animation
+    public static RawAnimation KASS_MUSIC = RawAnimation.begin().thenLoop("music"); // continuous animation
+
 
     public static AnimationController<StoneTalus> moveController(StoneTalus talus) {
         return new AnimationController<>(talus, "Move", 10, state -> {
@@ -120,6 +123,28 @@ public class COTWAnimations {
                 return state.setAndContinue(BEEDLE_SHOP);
             }
             return PlayState.STOP;
+        });
+    }
+
+    public static AnimationController<Kass> moveController(Kass kass){
+        return new AnimationController<>(kass, "Move", 0, state -> {
+            if (kass.isWalking() && state.isMoving()) {
+                return state.setAndContinue(WALK);
+            } else if(!kass.isPlayingMusic()){
+                return state.setAndContinue(IDLE);
+            } else{
+                return PlayState.STOP;
+            }
+        });
+    }
+
+    public static AnimationController<Kass> musicController(Kass kass){
+        return new AnimationController<>(kass, "Music", 0, state -> {
+            if (kass.isPlayingMusic()) {
+                return state.setAndContinue(KASS_MUSIC);
+            } else{
+                return PlayState.STOP;
+            }
         });
     }
 

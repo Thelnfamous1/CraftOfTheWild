@@ -2,6 +2,7 @@ package com.Thelnfamous1.craft_of_the_wild.client;
 
 import com.Thelnfamous1.craft_of_the_wild.client.network.COTWClientPacketHandler;
 import com.Thelnfamous1.craft_of_the_wild.client.renderer.BeedleRenderer;
+import com.Thelnfamous1.craft_of_the_wild.client.renderer.KassRenderer;
 import com.Thelnfamous1.craft_of_the_wild.client.renderer.StoneTalusArmRenderer;
 import com.Thelnfamous1.craft_of_the_wild.client.renderer.StoneTalusRenderer;
 import com.Thelnfamous1.craft_of_the_wild.compat.dynamiclights.COTWDynamicLightHandlers;
@@ -33,6 +34,7 @@ public class COTWCommonClient {
         registerRendererTyped(EntityInit.STONE_TALUS.get(), StoneTalusRenderer::new, register);
         registerRendererTyped(EntityInit.STONE_TALUS_ARM.get(), StoneTalusArmRenderer::new, register);
         registerRendererTyped(EntityInit.BEEDLE.get(), BeedleRenderer::new, register);
+        registerRendererTyped(EntityInit.KASS.get(), KassRenderer::new, register);
     }
 
     private static <T extends Entity> void registerRendererTyped(EntityType<T> type, EntityRendererProvider<T> provider, BiConsumer<EntityType, EntityRendererProvider> register) {

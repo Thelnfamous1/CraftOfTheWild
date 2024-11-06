@@ -2,6 +2,7 @@ package com.Thelnfamous1.craft_of_the_wild.init;
 
 import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.entity.Beedle;
+import com.Thelnfamous1.craft_of_the_wild.entity.Kass;
 import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalus;
 import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalusArm;
 import com.nyfaria.craft_of_the_wild.registration.RegistrationProvider;
@@ -49,6 +50,12 @@ public class EntityInit {
     public static final EntityDimensions BEEDLE_SITTING = EntityDimensions.scalable(0.6F, 1.4F);
 
     public static final EntityDimensions BEEDLE_DYING = EntityDimensions.scalable(1.95F, 0.6F);
+
+    public static final RegistryObject<EntityType<Kass>> KASS = registerEntity("kass", () ->
+                    EntityType.Builder.of(Kass::new, MobCategory.MISC)
+                            .sized(0.6F, 1.95F) // same dimensions as Villager
+                            .clientTrackingRange(10),
+            Kass::createAttributes);
 
     private static <T extends LivingEntity> RegistryObject<EntityType<T>> registerEntity(String name, Supplier<EntityType.Builder<T>> supplier,
                                                                                          Supplier<AttributeSupplier.Builder> attributeSupplier) {

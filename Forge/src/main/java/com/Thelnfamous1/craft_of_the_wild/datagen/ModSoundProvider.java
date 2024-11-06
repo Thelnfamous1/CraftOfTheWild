@@ -34,6 +34,10 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
         this.addSoundWithVariants(SoundInit.BEEDLE_SLEEP, 2, 0.5F);
         this.addSoundWithVariants(SoundInit.BEEDLE_SURPRISE, 2, 0.5F);
         this.addSoundWithVariants(SoundInit.BEEDLE_URGE, 2, 0.5F);
+        this.addSound(SoundInit.MUSIC_LOST_CITY);
+        this.addSound(SoundInit.MUSIC_STABLES);
+        this.addSound(SoundInit.MUSIC_OF_THE_WILD);
+        this.addSound(SoundInit.KASS_THEME);
     }
 
     public void addSound(RegistryObject<SoundEvent> entry, float volume) {

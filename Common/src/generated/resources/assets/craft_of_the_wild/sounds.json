@@ -47,6 +47,26 @@
       }
     ]
   },
+  "kass_theme": {
+    "sounds": [
+      "craft_of_the_wild:kass_theme"
+    ]
+  },
+  "music_lost_city": {
+    "sounds": [
+      "craft_of_the_wild:music_lost_city"
+    ]
+  },
+  "music_of_the_wild": {
+    "sounds": [
+      "craft_of_the_wild:music_of_the_wild"
+    ]
+  },
+  "music_stables": {
+    "sounds": [
+      "craft_of_the_wild:music_stables"
+    ]
+  },
   "stone_talus_boss_music": {
     "sounds": [
       "craft_of_the_wild:stone_talus_boss_music"

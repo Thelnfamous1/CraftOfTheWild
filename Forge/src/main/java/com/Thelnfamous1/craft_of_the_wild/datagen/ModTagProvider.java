@@ -2,6 +2,7 @@ package com.Thelnfamous1.craft_of_the_wild.datagen;
 
 import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.init.DamageTypeInit;
+import com.Thelnfamous1.craft_of_the_wild.init.ItemInit;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -11,6 +12,7 @@ import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.item.Item;
@@ -34,7 +36,11 @@ public class ModTagProvider {
 
         @Override
         protected void addTags(HolderLookup.Provider pProvider) {
-
+            this.tag(ItemTags.MUSIC_DISCS).add(
+                    ItemInit.MUSIC_DISC_A_ROCKY_BALLAD.getResourceKey(),
+                    ItemInit.MUSIC_DISC_LOST_CITY.getResourceKey(),
+                    ItemInit.MUSIC_DISC_OF_THE_WILD.getResourceKey(),
+                    ItemInit.MUSIC_DISC_STABLES.getResourceKey());
         }
 
         public void populateTag(TagKey<Item> tag, Supplier<Item>... items){

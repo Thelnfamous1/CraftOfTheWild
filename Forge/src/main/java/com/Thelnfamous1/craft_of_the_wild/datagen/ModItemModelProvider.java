@@ -1,6 +1,7 @@
 package com.Thelnfamous1.craft_of_the_wild.datagen;
 
 import com.Thelnfamous1.craft_of_the_wild.Constants;
+import com.Thelnfamous1.craft_of_the_wild.init.ItemInit;
 import com.Thelnfamous1.craft_of_the_wild.item.COTWSpawnEggItem;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -30,6 +31,10 @@ public class ModItemModelProvider extends ItemModelProvider {
         //         .map(Supplier::get)
         //         .forEach(this::simpleBlockItemModel);
         COTWSpawnEggItem.getEggs().forEach(this::spawnEgg);
+        this.simpleGeneratedModel(ItemInit.MUSIC_DISC_A_ROCKY_BALLAD.get());
+        this.simpleGeneratedModel(ItemInit.MUSIC_DISC_LOST_CITY.get());
+        this.simpleGeneratedModel(ItemInit.MUSIC_DISC_OF_THE_WILD.get());
+        this.simpleGeneratedModel(ItemInit.MUSIC_DISC_STABLES.get());
     }
 
     protected ItemModelBuilder spawnEgg(Item item) {

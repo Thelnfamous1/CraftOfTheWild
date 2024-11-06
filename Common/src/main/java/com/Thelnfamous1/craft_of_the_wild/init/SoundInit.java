@@ -45,6 +45,14 @@ public class SoundInit {
 
     public static final RegistryObject<SoundEvent> BEEDLE_URGE = registerSoundEvent("beedle_urge");
 
+    public static final RegistryObject<SoundEvent> MUSIC_LOST_CITY = registerSoundEvent("music_lost_city");
+
+    public static final RegistryObject<SoundEvent> MUSIC_STABLES = registerSoundEvent("music_stables");
+
+    public static final RegistryObject<SoundEvent> MUSIC_OF_THE_WILD = registerSoundEvent("music_of_the_wild");
+
+    public static final RegistryObject<SoundEvent> KASS_THEME = registerSoundEvent("kass_theme");
+
     private static RegistryObject<SoundEvent> registerSoundEvent(String path) {
         return SOUND_EVENTS.register(path, () -> SoundEvent.createVariableRangeEvent(COTWCommon.getResourceLocation(path)));
     }
