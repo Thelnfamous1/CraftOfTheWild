@@ -43,8 +43,8 @@ public class COTWVillagerTrades {
                             new EmeraldForItems(Items.ROTTEN_FLESH, 32, 1, 16, 1)
                     },
                     6, new VillagerTrades.ItemListing[]{
-                            new EmeraldForItems(Items.LEATHER, 6, 1, 12, 1),
-                            new EmeraldForItems(Items.RABBIT_HIDE, 2, 4, 16, 1)
+                            new EmeraldForItems(Items.LEATHER, 6, 1, 16, 1),
+                            new EmeraldForItems(Items.RABBIT_HIDE, 2, 4, 12, 1)
                     },
                     7, new VillagerTrades.ItemListing[]{
                             new ItemsForEmeralds(Items.BEEF, 1, 10, 12, 1),
