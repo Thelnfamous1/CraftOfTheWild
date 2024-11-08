@@ -309,4 +309,8 @@ public class COTWUtil {
         }
     }
 
+    public static void stopWalking(Mob mob) {
+        BrainUtils.clearMemory(mob, MemoryModuleType.WALK_TARGET);
+        mob.getNavigation().stop();
+    }
 }

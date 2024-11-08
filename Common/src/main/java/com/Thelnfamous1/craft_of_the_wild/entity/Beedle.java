@@ -721,4 +721,9 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
     protected float getStandingEyeHeight(Pose $$0, EntityDimensions $$1) {
         return super.getStandingEyeHeight($$0, $$1);
     }
+
+    @Override
+    public boolean canBeSeenAsEnemy() {
+        return false;
+    }
 }

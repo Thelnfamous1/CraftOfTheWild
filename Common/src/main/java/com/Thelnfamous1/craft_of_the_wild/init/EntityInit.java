@@ -53,7 +53,7 @@ public class EntityInit {
 
     public static final RegistryObject<EntityType<Kass>> KASS = registerEntity("kass", () ->
                     EntityType.Builder.of(Kass::new, MobCategory.MISC)
-                            .sized(0.6F, 1.95F) // same dimensions as Villager
+                            .sized(pixelsToBlocks(16.0F), pixelsToBlocks(51.0F)) // same dimensions as Villager
                             .clientTrackingRange(10),
             Kass::createAttributes);
 

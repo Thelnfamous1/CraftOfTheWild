@@ -11,6 +11,7 @@ import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.DebugPackets;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -51,10 +52,12 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass>, CustomMusicPlayer, InventoryCarrier, ContainerListener {
     private static final EntityDataAccessor<Boolean> DATA_PLAYING_MUSIC = SynchedEntityData.defineId(Kass.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<ItemStack> DATA_MUSIC_DISC = SynchedEntityData.defineId(Kass.class, EntityDataSerializers.ITEM_STACK);
+    public static final String PLAYING_MUSIC_TAG_KEY = "PlayingMusic";
     private final SimpleContainer inventory = new SimpleContainer(1);
 
     public Kass(EntityType<? extends Kass> $$0, Level $$1) {
@@ -97,6 +100,7 @@ public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass>, CustomM
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         this.writeInventoryToTag(tag);
+        tag.putBoolean(PLAYING_MUSIC_TAG_KEY, this.isPlayingMusic());
     }
 
     @Override
@@ -106,6 +110,9 @@ public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass>, CustomM
         COTWUtil.readBrainFromTag(tag, this);
         this.readInventoryFromTag(tag);
         this.updateContainerEquipment();
+        if(tag.contains(PLAYING_MUSIC_TAG_KEY, Tag.TAG_ANY_NUMERIC)){
+            this.setPlayingMusic(tag.getBoolean(PLAYING_MUSIC_TAG_KEY));
+        }
     }
 
     @Nullable
@@ -160,6 +167,8 @@ public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass>, CustomM
         return BrainActivityGroup.idleTasks(
                 createIdleLookBehaviors(this),
                 createIdleMoveBehaviors()
+                        .startCondition(Predicate.not(Kass::isPlayingMusic))
+                        .stopIf(Kass::isPlayingMusic)
         );
     }
 
@@ -198,6 +207,9 @@ public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass>, CustomM
         if(player.isSecondaryUseActive()){
             if(!this.level().isClientSide){
                 this.setPlayingMusic(!this.isPlayingMusic());
+                if(this.isPlayingMusic()){
+                    COTWUtil.stopWalking(this);
+                }
             }
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
@@ -296,5 +308,10 @@ public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass>, CustomM
         if (!this.level().isClientSide) {
             this.setMusicDisc(this.getInventory().getItem(0));
         }
+    }
+
+    @Override
+    public boolean canBeSeenAsEnemy() {
+        return false;
     }
 }
