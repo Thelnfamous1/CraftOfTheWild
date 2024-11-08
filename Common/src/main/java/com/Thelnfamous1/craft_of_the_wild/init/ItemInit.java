@@ -45,7 +45,7 @@ public class ItemInit {
 
     private static RegistryObject<Item> registerMusicDisc(String path, int analogSignal, RegistryObject<SoundEvent> soundSupplier, int durationInSeconds, String author) {
         return ITEMS.register(path, () ->
-                new COTWRecordItem(analogSignal, soundSupplier.get(), getItemProperties(), durationInSeconds, author));
+                new COTWRecordItem(analogSignal, soundSupplier.get(), getItemProperties().stacksTo(1).rarity(Rarity.RARE), durationInSeconds, author));
     }
 
     public static Item.Properties getItemProperties() {

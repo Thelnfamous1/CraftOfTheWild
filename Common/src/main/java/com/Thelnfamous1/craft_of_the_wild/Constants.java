@@ -18,7 +18,7 @@ public class Constants {
 	public static final boolean DEBUG_BRAIN_DESERIALIZATION = false;
 	public static final boolean DEBUG_STONE_TALUS_HEADBUTT = false;
 	public static final boolean DEBUG_STONE_TALUS_FACEPLANT = false;
-	public static final boolean DEBUG_BOSS_MUSIC = false;
+	public static final boolean DEBUG_CUSTOM_MUSIC = DEBUG_IDE;
 	public static final boolean DEBUG_STONE_TALUS_ARM = false;
 	public static final boolean DEBUG_STONE_TALUS_SHAKE = DEBUG_IDE;
 	public static final boolean DEBUG_STONE_TALUS_ARM_PARTICLES = DEBUG_IDE;

@@ -30,6 +30,7 @@ public class ModEntityLootTables extends EntityLootSubProvider {
                 new LootEntry(Items.LAPIS_LAZULI, ConstantValue.exactly(5)),
                 new LootEntry(Items.DIAMOND, ConstantValue.exactly(3)));
         this.dropSingle(EntityInit.BEEDLE.get(), Items.EMERALD);
+        this.dropSingle(EntityInit.KASS.get(), Items.FEATHER);
     }
 
     @Override

@@ -89,7 +89,7 @@ import java.util.Map;
 import java.util.OptionalInt;
 import java.util.function.Predicate;
 
-public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements BossMusicPlayer, SmartBrainOwner<StoneTalus>, COTWMultipartEntity, StoneTalusBase, RangedAttackMob {
+public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements CustomMusicPlayer, SmartBrainOwner<StoneTalus>, COTWMultipartEntity, StoneTalusBase, RangedAttackMob {
     public static final float LOGICAL_SCALE = 7F/3F; // desired target is 7
     public static final float VISUAL_SCALE = 7F/6F; // desired target is 7
     public static final float FACEPLANT_ROTATION = 85.0F;
@@ -380,7 +380,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
             this.clampHeadRotationToBody(this);
         }
         if (!this.level().isClientSide) {
-            if (this.canPlayBossMusic()) {
+            if (this.canPlayCustomMusic()) {
                 this.level().broadcastEntityEvent(this, MUSIC_PLAY_ID);
             }
             else {
@@ -396,23 +396,23 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Bos
     }
 
     @Override
-    public boolean canPlayBossMusic() {
+    public boolean canPlayCustomMusic() {
         return !this.isSilent() && this.getTarget() instanceof Player;
     }
 
     @Override
-    public SoundEvent getBossMusic() {
+    public boolean canCustomMusicBeHeardBy(Player player) {
+        return this.canAttack(player) && this.distanceToSqr(player) <= Mth.square(64);
+    }
+
+    @Override
+    public SoundEvent getCustomMusic() {
         return SoundInit.STONE_TALUS_BOSS_MUSIC.get();
     }
 
     @Override
     public void handleEntityEvent(byte eventId) {
-        if (eventId == BossMusicPlayer.MUSIC_PLAY_ID) {
-            COTWCommon.playBossMusicFor(this);
-        }
-        if (eventId == BossMusicPlayer.MUSIC_STOP_ID) {
-            COTWCommon.stopBossMusicFor(this);
-        }
+        CustomMusicPlayer.handleCustomMusicEvent(this, eventId);
         super.handleEntityEvent(eventId);
     }
 

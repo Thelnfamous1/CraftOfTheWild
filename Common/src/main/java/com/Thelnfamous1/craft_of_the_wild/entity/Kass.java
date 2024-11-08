@@ -5,6 +5,7 @@ import com.Thelnfamous1.craft_of_the_wild.entity.ai.behavior.*;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor.COTWNearbyPlayersSensor;
 import com.Thelnfamous1.craft_of_the_wild.entity.animation.COTWAnimations;
 import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
+import com.Thelnfamous1.craft_of_the_wild.init.SoundInit;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -14,15 +15,26 @@ import net.minecraft.network.protocol.game.DebugPackets;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.world.DifficultyInstance;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.util.Mth;
+import net.minecraft.world.*;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.npc.InventoryCarrier;
 import net.minecraft.world.entity.npc.Npc;
 import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.RecordItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
@@ -40,11 +52,15 @@ import software.bernie.geckolib.core.animation.AnimatableManager;
 
 import java.util.List;
 
-public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass> {
+public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass>, CustomMusicPlayer, InventoryCarrier, ContainerListener {
     private static final EntityDataAccessor<Boolean> DATA_PLAYING_MUSIC = SynchedEntityData.defineId(Kass.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<ItemStack> DATA_MUSIC_DISC = SynchedEntityData.defineId(Kass.class, EntityDataSerializers.ITEM_STACK);
+    private final SimpleContainer inventory = new SimpleContainer(1);
 
     public Kass(EntityType<? extends Kass> $$0, Level $$1) {
         super($$0, $$1);
+        this.getInventory().addListener(this);
+        this.updateContainerEquipment();
     }
 
     @Override
@@ -54,8 +70,8 @@ public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass> {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(COTWAnimations.moveController(this));
         controllers.add(COTWAnimations.musicController(this));
+        controllers.add(COTWAnimations.moveController(this));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -66,6 +82,7 @@ public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass> {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_PLAYING_MUSIC, false);
+        this.entityData.define(DATA_MUSIC_DISC, ItemStack.EMPTY);
     }
 
     public boolean isPlayingMusic() {
@@ -79,6 +96,7 @@ public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass> {
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
+        this.writeInventoryToTag(tag);
     }
 
     @Override
@@ -86,6 +104,8 @@ public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass> {
         super.readAdditionalSaveData(tag);
         // Doing this here since SBL does not deserialize Brain NBT
         COTWUtil.readBrainFromTag(tag, this);
+        this.readInventoryFromTag(tag);
+        this.updateContainerEquipment();
     }
 
     @Nullable
@@ -171,5 +191,110 @@ public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass> {
     @Override
     public List<Activity> getActivityPriorities() {
         return ObjectArrayList.of(Activity.IDLE);
+    }
+
+    @Override
+    protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if(player.isSecondaryUseActive()){
+            if(!this.level().isClientSide){
+                this.setPlayingMusic(!this.isPlayingMusic());
+            }
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
+        ItemStack itemInHand = player.getItemInHand(hand);
+        ItemStack storedMusicDisc = this.getInventory().getItem(0);
+        if (storedMusicDisc.isEmpty() && !itemInHand.isEmpty() && itemInHand.is(ItemTags.MUSIC_DISCS)) {
+            ItemStack musicDiscToStore = itemInHand.copyWithCount(1);
+            this.getInventory().addItem(musicDiscToStore);
+            this.removeInteractionItem(player, itemInHand);
+            this.level().playSound(player, this, SoundEvents.ALLAY_ITEM_GIVEN, SoundSource.NEUTRAL, 2.0F, 1.0F);
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        } else if (!storedMusicDisc.isEmpty() && hand == InteractionHand.MAIN_HAND && itemInHand.isEmpty()) {
+            this.level().playSound(player, this, SoundEvents.ALLAY_ITEM_TAKEN, SoundSource.NEUTRAL, 2.0F, 1.0F);
+            this.swing(InteractionHand.MAIN_HAND);
+            for (ItemStack inventoryStack : this.getInventory().removeAllItems()) {
+                if(!player.addItem(inventoryStack)){
+                    BehaviorUtils.throwItem(this, inventoryStack, this.position());
+                }
+            }
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
+        return super.mobInteract(player, hand);
+    }
+
+    private void removeInteractionItem(Player player, ItemStack stack) {
+        if (!player.getAbilities().instabuild) {
+            stack.shrink(1);
+        }
+    }
+
+    public void setMusicDisc(ItemStack musicDisc){
+        this.entityData.set(DATA_MUSIC_DISC, musicDisc);
+    }
+
+    public ItemStack getMusicDisc(){
+        return this.entityData.get(DATA_MUSIC_DISC);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (!this.level().isClientSide) {
+            if (this.canPlayCustomMusic()) {
+                this.level().broadcastEntityEvent(this, CustomMusicPlayer.MUSIC_PLAY_ID);
+            }
+            else {
+                this.level().broadcastEntityEvent(this, CustomMusicPlayer.MUSIC_STOP_ID);
+            }
+        }
+    }
+
+    @Override
+    public void handleEntityEvent(byte eventId) {
+        CustomMusicPlayer.handleCustomMusicEvent(this, eventId);
+        super.handleEntityEvent(eventId);
+    }
+
+    @Override
+    public SoundEvent getCustomMusic() {
+        Item item = this.getMusicDisc().getItem();
+        if(item instanceof RecordItem recordItem){
+            return recordItem.getSound();
+        }
+        return SoundInit.KASS_THEME.get();
+    }
+
+    @Override
+    public boolean canPlayCustomMusic() {
+        return !this.isSilent() && this.isPlayingMusic();
+    }
+
+    @Override
+    public boolean canCustomMusicBeHeardBy(Player player) {
+        return this.distanceToSqr(player) <= Mth.square(64);
+    }
+
+    @Override
+    public SimpleContainer getInventory() {
+        return this.inventory;
+    }
+
+    @Override
+    protected void dropEquipment() {
+        super.dropEquipment();
+        this.inventory.removeAllItems().forEach(this::spawnAtLocation);
+    }
+
+    @Override
+    public void containerChanged(Container container) {
+        this.updateContainerEquipment();
+    }
+
+    private void updateContainerEquipment() {
+        if (!this.level().isClientSide) {
+            this.setMusicDisc(this.getInventory().getItem(0));
+        }
     }
 }

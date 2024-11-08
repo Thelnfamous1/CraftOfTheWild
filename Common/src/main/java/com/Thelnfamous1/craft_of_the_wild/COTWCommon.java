@@ -1,7 +1,7 @@
 package com.Thelnfamous1.craft_of_the_wild;
 
 import com.Thelnfamous1.craft_of_the_wild.client.COTWCommonClient;
-import com.Thelnfamous1.craft_of_the_wild.entity.BossMusicPlayer;
+import com.Thelnfamous1.craft_of_the_wild.entity.CustomMusicPlayer;
 import com.Thelnfamous1.craft_of_the_wild.init.*;
 import com.Thelnfamous1.craft_of_the_wild.item.COTWSpawnEggItem;
 import com.Thelnfamous1.craft_of_the_wild.mixin.SpawnEggItemAccessor;
@@ -42,15 +42,15 @@ public class COTWCommon {
         if(debugFlag) Constants.LOG.info(format, args);
     }
 
-    public static <T extends LivingEntity & BossMusicPlayer> void playBossMusicFor(T boss) {
+    public static <T extends LivingEntity & CustomMusicPlayer> void playCustomMusicFor(T boss) {
         if(boss.level().isClientSide){
-            COTWCommonClient.playBossMusicFor(boss);
+            COTWCommonClient.playCustomMusicFor(boss);
         }
     }
 
-    public static <T extends LivingEntity & BossMusicPlayer> void stopBossMusicFor(T boss) {
+    public static <T extends LivingEntity & CustomMusicPlayer> void stopCustomMusicFor(T boss) {
         if(boss.level().isClientSide){
-            COTWCommonClient.stopBossMusicFor(boss);
+            COTWCommonClient.stopCustomMusicFor(boss);
         }
     }
 }

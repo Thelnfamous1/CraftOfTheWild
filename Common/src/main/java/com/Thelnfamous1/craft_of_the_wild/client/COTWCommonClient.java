@@ -6,8 +6,8 @@ import com.Thelnfamous1.craft_of_the_wild.client.renderer.KassRenderer;
 import com.Thelnfamous1.craft_of_the_wild.client.renderer.StoneTalusArmRenderer;
 import com.Thelnfamous1.craft_of_the_wild.client.renderer.StoneTalusRenderer;
 import com.Thelnfamous1.craft_of_the_wild.compat.dynamiclights.COTWDynamicLightHandlers;
-import com.Thelnfamous1.craft_of_the_wild.duck.BossMusicListener;
-import com.Thelnfamous1.craft_of_the_wild.entity.BossMusicPlayer;
+import com.Thelnfamous1.craft_of_the_wild.duck.CustomMusicListener;
+import com.Thelnfamous1.craft_of_the_wild.entity.CustomMusicPlayer;
 import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
 import com.Thelnfamous1.craft_of_the_wild.item.COTWSpawnEggItem;
 import com.Thelnfamous1.craft_of_the_wild.platform.Services;
@@ -45,15 +45,15 @@ public class COTWCommonClient {
         COTWSpawnEggItem.getEggs().forEach(egg -> register.accept((stack, layer) -> egg.getColor(layer), egg));
     }
 
-    public static <T extends LivingEntity & BossMusicPlayer> void playBossMusicFor(T boss) {
+    public static <T extends LivingEntity & CustomMusicPlayer> void playCustomMusicFor(T boss) {
         if (Minecraft.getInstance().player != null) {
-            ((BossMusicListener)Minecraft.getInstance().player).craft_of_the_wild$getBossMusicSoundHandler().playBossMusicFor(boss, boss.getBossMusic());
+            ((CustomMusicListener)Minecraft.getInstance().player).craft_of_the_wild$getCustomMusicSoundHandler().playCustomMusicFor(boss);
         }
     }
 
-    public static <T extends LivingEntity & BossMusicPlayer> void stopBossMusicFor(T boss) {
+    public static <T extends LivingEntity & CustomMusicPlayer> void stopCustomMusicFor(T boss) {
         if (Minecraft.getInstance().player != null) {
-            ((BossMusicListener)Minecraft.getInstance().player).craft_of_the_wild$getBossMusicSoundHandler().stopBossMusicFor(boss);
+            ((CustomMusicListener)Minecraft.getInstance().player).craft_of_the_wild$getCustomMusicSoundHandler().stopCustomMusicFor(boss);
         }
     }
 
