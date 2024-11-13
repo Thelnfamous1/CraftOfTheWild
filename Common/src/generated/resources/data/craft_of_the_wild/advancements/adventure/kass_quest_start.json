@@ -1,0 +1,43 @@
+{
+  "parent": "craft_of_the_wild:adventure/root",
+  "criteria": {
+    "kass_play": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "craft_of_the_wild:kass"
+            }
+          }
+        ],
+        "item": {
+          "tag": "minecraft:music_discs"
+        }
+      },
+      "trigger": "minecraft:player_interacted_with_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.craft_of_the_wild.adventure.kass_quest_start.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "craft_of_the_wild:music_disc_stables"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.craft_of_the_wild.adventure.kass_quest_start.title"
+    }
+  },
+  "requirements": [
+    [
+      "kass_play"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

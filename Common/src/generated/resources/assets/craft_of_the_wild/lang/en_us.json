@@ -1,4 +1,10 @@
 {
+  "advancements.craft_of_the_wild.adventure.kass_quest_finish.description": "Give Kass all Music Discs in a Meadows biome",
+  "advancements.craft_of_the_wild.adventure.kass_quest_finish.title": "Bard Of The Wild",
+  "advancements.craft_of_the_wild.adventure.kass_quest_start.description": "Give a Music Disc to Kass",
+  "advancements.craft_of_the_wild.adventure.kass_quest_start.title": "A Feathery Bard",
+  "advancements.craft_of_the_wild.adventure.root.description": "Adventure, exploration and combat",
+  "advancements.craft_of_the_wild.adventure.root.title": "Craft of the Wild",
   "attribute.name.craft_of_the_wild.generic.projectile_resistance": "Projectile Resistance",
   "config.jade.plugin_craft_of_the_wild.attack_type": "Attack Type",
   "death.attack.craft_of_the_wild.stone_talus_arm": "%1$s was shot by a stony arm from %2$s",

@@ -5,6 +5,7 @@ import com.Thelnfamous1.craft_of_the_wild.entity.CustomMusicPlayer;
 import com.Thelnfamous1.craft_of_the_wild.init.*;
 import com.Thelnfamous1.craft_of_the_wild.item.COTWSpawnEggItem;
 import com.Thelnfamous1.craft_of_the_wild.mixin.SpawnEggItemAccessor;
+import net.minecraft.Util;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -36,6 +37,10 @@ public class COTWCommon {
 
     public static ResourceLocation getResourceLocation(String path) {
         return new ResourceLocation(Constants.MODID, path);
+    }
+
+    public static String makeDescriptionId(String prefix, String path) {
+        return Util.makeDescriptionId(prefix, getResourceLocation(path));
     }
 
     public static void debug(boolean debugFlag, String format, Object... args){

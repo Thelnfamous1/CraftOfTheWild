@@ -1,0 +1,201 @@
+{
+  "parent": "craft_of_the_wild:adventure/kass_quest_start",
+  "criteria": {
+    "kass_play_5": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "craft_of_the_wild:kass",
+              "location": {
+                "biome": "minecraft:meadow"
+              }
+            }
+          }
+        ],
+        "item": {
+          "items": [
+            "minecraft:music_disc_5"
+          ]
+        }
+      },
+      "trigger": "minecraft:player_interacted_with_entity"
+    },
+    "kass_play_a_rocky_ballad": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "craft_of_the_wild:kass",
+              "location": {
+                "biome": "minecraft:meadow"
+              }
+            }
+          }
+        ],
+        "item": {
+          "items": [
+            "craft_of_the_wild:music_disc_a_rocky_ballad"
+          ]
+        }
+      },
+      "trigger": "minecraft:player_interacted_with_entity"
+    },
+    "kass_play_c418": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "craft_of_the_wild:kass",
+              "location": {
+                "biome": "minecraft:meadow"
+              }
+            }
+          }
+        ],
+        "item": {
+          "tag": "craft_of_the_wild:c418_music_discs"
+        }
+      },
+      "trigger": "minecraft:player_interacted_with_entity"
+    },
+    "kass_play_lost_city": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "craft_of_the_wild:kass",
+              "location": {
+                "biome": "minecraft:meadow"
+              }
+            }
+          }
+        ],
+        "item": {
+          "items": [
+            "craft_of_the_wild:music_disc_lost_city"
+          ]
+        }
+      },
+      "trigger": "minecraft:player_interacted_with_entity"
+    },
+    "kass_play_otherside": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "craft_of_the_wild:kass",
+              "location": {
+                "biome": "minecraft:meadow"
+              }
+            }
+          }
+        ],
+        "item": {
+          "items": [
+            "minecraft:music_disc_otherside"
+          ]
+        }
+      },
+      "trigger": "minecraft:player_interacted_with_entity"
+    },
+    "kass_play_pigstep": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "craft_of_the_wild:kass",
+              "location": {
+                "biome": "minecraft:meadow"
+              }
+            }
+          }
+        ],
+        "item": {
+          "items": [
+            "minecraft:music_disc_pigstep"
+          ]
+        }
+      },
+      "trigger": "minecraft:player_interacted_with_entity"
+    },
+    "kass_play_stables": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "craft_of_the_wild:kass",
+              "location": {
+                "biome": "minecraft:meadow"
+              }
+            }
+          }
+        ],
+        "item": {
+          "items": [
+            "craft_of_the_wild:music_disc_stables"
+          ]
+        }
+      },
+      "trigger": "minecraft:player_interacted_with_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.craft_of_the_wild.adventure.kass_quest_finish.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "craft_of_the_wild:music_disc_of_the_wild"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.craft_of_the_wild.adventure.kass_quest_finish.title"
+    }
+  },
+  "requirements": [
+    [
+      "kass_play_c418"
+    ],
+    [
+      "kass_play_otherside"
+    ],
+    [
+      "kass_play_pigstep"
+    ],
+    [
+      "kass_play_5"
+    ],
+    [
+      "kass_play_stables"
+    ],
+    [
+      "kass_play_lost_city"
+    ],
+    [
+      "kass_play_a_rocky_ballad"
+    ]
+  ],
+  "rewards": {
+    "loot": [
+      "craft_of_the_wild:advancement_reward/kass_quest_finish"
+    ]
+  },
+  "sends_telemetry_event": true
+}

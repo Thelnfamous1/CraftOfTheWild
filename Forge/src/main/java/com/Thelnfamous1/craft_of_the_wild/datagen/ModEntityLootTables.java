@@ -35,7 +35,7 @@ public class ModEntityLootTables extends EntityLootSubProvider {
 
     @Override
     protected boolean canHaveLootTable(EntityType<?> pEntityType) {
-        if(pEntityType == EntityInit.BEEDLE.get()){
+        if(pEntityType == EntityInit.BEEDLE.get() || pEntityType == EntityInit.KASS.get()){
             return true;
         }
         return super.canHaveLootTable(pEntityType);

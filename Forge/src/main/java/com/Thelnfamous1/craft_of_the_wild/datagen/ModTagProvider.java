@@ -12,10 +12,10 @@ import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
@@ -28,19 +28,32 @@ import java.util.function.Supplier;
 
 public class ModTagProvider {
 
-    public static class Items extends TagsProvider<Item>{
+    public static class ItemTags extends TagsProvider<Item>{
 
-        public Items(PackOutput pGenerator, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
+        public ItemTags(PackOutput pGenerator, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
             super(pGenerator, Registries.ITEM, lookupProvider, Constants.MODID, existingFileHelper);
         }
 
         @Override
         protected void addTags(HolderLookup.Provider pProvider) {
-            this.tag(ItemTags.MUSIC_DISCS).add(
+            this.tag(net.minecraft.tags.ItemTags.MUSIC_DISCS).add(
                     ItemInit.MUSIC_DISC_A_ROCKY_BALLAD.getResourceKey(),
                     ItemInit.MUSIC_DISC_LOST_CITY.getResourceKey(),
                     ItemInit.MUSIC_DISC_OF_THE_WILD.getResourceKey(),
                     ItemInit.MUSIC_DISC_STABLES.getResourceKey());
+            this.populateTag(COTWTags.C418_MUSIC_DISCS,
+                    () -> Items.MUSIC_DISC_13,
+                    () -> Items.MUSIC_DISC_CAT,
+                    () -> Items.MUSIC_DISC_BLOCKS,
+                    () -> Items.MUSIC_DISC_CHIRP,
+                    () -> Items.MUSIC_DISC_FAR,
+                    () -> Items.MUSIC_DISC_MALL,
+                    () -> Items.MUSIC_DISC_MELLOHI,
+                    () -> Items.MUSIC_DISC_STAL,
+                    () -> Items.MUSIC_DISC_STRAD,
+                    () -> Items.MUSIC_DISC_WARD,
+                    () -> Items.MUSIC_DISC_11,
+                    () -> Items.MUSIC_DISC_WAIT);
         }
 
         public void populateTag(TagKey<Item> tag, Supplier<Item>... items){
