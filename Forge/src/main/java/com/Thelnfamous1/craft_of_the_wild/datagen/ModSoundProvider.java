@@ -17,7 +17,7 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
     @Override
     public void registerSounds() {
         // SoundInit.SOUNDS.getEntries().forEach(this::addSound);
-        this.addSound(SoundInit.STONE_TALUS_BOSS_MUSIC);
+        this.addSound(SoundInit.STONE_TALUS_BOSS_MUSIC, 2);
         this.addSound(SoundInit.STONE_TALUS_DEATH, 2);
         this.addSound(SoundInit.STONE_TALUS_HEADBUTT, 2);
         this.addSound(SoundInit.STONE_TALUS_HURT, 2);

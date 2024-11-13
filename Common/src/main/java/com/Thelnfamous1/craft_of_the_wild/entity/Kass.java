@@ -7,6 +7,7 @@ import com.Thelnfamous1.craft_of_the_wild.entity.animation.COTWAnimations;
 import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
 import com.Thelnfamous1.craft_of_the_wild.init.SoundInit;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
+import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.GlobalPos;
@@ -16,7 +17,6 @@ import net.minecraft.network.protocol.game.DebugPackets;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
@@ -38,6 +38,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.RecordItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
@@ -52,12 +53,14 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass>, CustomMusicPlayer, InventoryCarrier, ContainerListener {
     private static final EntityDataAccessor<Boolean> DATA_PLAYING_MUSIC = SynchedEntityData.defineId(Kass.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<ItemStack> DATA_MUSIC_DISC = SynchedEntityData.defineId(Kass.class, EntityDataSerializers.ITEM_STACK);
     public static final String PLAYING_MUSIC_TAG_KEY = "PlayingMusic";
+    private static final Map<RecordItem, CustomMusicData> KASS_MUSIC = Maps.newHashMap();
     private final SimpleContainer inventory = new SimpleContainer(1);
 
     public Kass(EntityType<? extends Kass> $$0, Level $$1) {
@@ -270,12 +273,13 @@ public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass>, CustomM
     }
 
     @Override
-    public SoundEvent getCustomMusic() {
+    public CustomMusicData getCustomMusic() {
         Item item = this.getMusicDisc().getItem();
         if(item instanceof RecordItem recordItem){
-            return recordItem.getSound();
+            return KASS_MUSIC.computeIfAbsent(recordItem,
+                    k -> CustomMusicData.forRecord(recordItem.getSound(), Vec3.ZERO, true));
         }
-        return SoundInit.KASS_THEME.get();
+        return KASS_MUSIC.computeIfAbsent(null, k -> CustomMusicData.forRecord(SoundInit.KASS_THEME.get(), Vec3.ZERO, true));
     }
 
     @Override
@@ -312,6 +316,11 @@ public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass>, CustomM
 
     @Override
     public boolean canBeSeenAsEnemy() {
+        return false;
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double $$0) {
         return false;
     }
 }

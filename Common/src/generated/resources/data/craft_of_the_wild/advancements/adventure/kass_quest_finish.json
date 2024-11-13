@@ -131,6 +131,28 @@
       },
       "trigger": "minecraft:player_interacted_with_entity"
     },
+    "kass_play_relic": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "craft_of_the_wild:kass",
+              "location": {
+                "biome": "minecraft:meadow"
+              }
+            }
+          }
+        ],
+        "item": {
+          "items": [
+            "minecraft:music_disc_relic"
+          ]
+        }
+      },
+      "trigger": "minecraft:player_interacted_with_entity"
+    },
     "kass_play_stables": {
       "conditions": {
         "entity": [
@@ -159,7 +181,7 @@
     "description": {
       "translate": "advancements.craft_of_the_wild.adventure.kass_quest_finish.description"
     },
-    "frame": "task",
+    "frame": "challenge",
     "hidden": false,
     "icon": {
       "item": "craft_of_the_wild:music_disc_of_the_wild"
@@ -172,6 +194,9 @@
   "requirements": [
     [
       "kass_play_c418"
+    ],
+    [
+      "kass_play_relic"
     ],
     [
       "kass_play_otherside"

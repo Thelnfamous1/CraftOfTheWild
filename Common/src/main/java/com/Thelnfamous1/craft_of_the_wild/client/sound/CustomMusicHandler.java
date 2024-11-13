@@ -6,10 +6,7 @@ import com.Thelnfamous1.craft_of_the_wild.entity.CustomMusicPlayer;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
-import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.sounds.SoundManager;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 
@@ -19,15 +16,15 @@ public class CustomMusicHandler<T extends Entity & CustomMusicPlayer> {
     private static final int LOOP_SOUND_CROSS_FADE_TIME = 40;
     private final LocalPlayer player;
     private final SoundManager soundManager;
-    private final Object2ObjectArrayMap<SoundEvent, CustomMusicSoundInstance<?>> customMusicInstances = new Object2ObjectArrayMap<>();
+    private final Object2ObjectArrayMap<CustomMusicPlayer.CustomMusicData, CustomMusicSoundInstance<?>> customMusicInstances = new Object2ObjectArrayMap<>();
     @Nullable
     private T previousMusicPlayer;
     @Nullable
     private T currentMusicPlayer;
     @Nullable
-    private SoundEvent previousMusic;
+    private CustomMusicPlayer.CustomMusicData previousMusic;
     @Nullable
-    private SoundEvent currentMusic;
+    private CustomMusicPlayer.CustomMusicData currentMusic;
 
     public CustomMusicHandler(LocalPlayer player, SoundManager soundManager) {
         this.player = player;
@@ -67,7 +64,7 @@ public class CustomMusicHandler<T extends Entity & CustomMusicPlayer> {
             this.previousMusicPlayer = this.currentMusicPlayer;
             this.previousMusic = this.currentMusic;
             this.customMusicInstances.forEach((customMusic, instance) -> {
-                COTWCommon.debug(Constants.DEBUG_CUSTOM_MUSIC, "Fading out custom music {}", customMusic.getLocation());
+                COTWCommon.debug(Constants.DEBUG_CUSTOM_MUSIC, "Fading out custom music {}", customMusic.music().getLocation());
                 instance.fadeOut();
             });
             if(this.currentMusicPlayer != null && this.currentMusic != null){
@@ -76,7 +73,7 @@ public class CustomMusicHandler<T extends Entity & CustomMusicPlayer> {
                         soundInstance = new CustomMusicSoundInstance<>(this.currentMusicPlayer, customMusic);
                         this.soundManager.play(soundInstance);
                     }
-                    COTWCommon.debug(Constants.DEBUG_CUSTOM_MUSIC, "Fading in custom music {}", this.currentMusic.getLocation());
+                    COTWCommon.debug(Constants.DEBUG_CUSTOM_MUSIC, "Fading in custom music {}", this.currentMusic.music().getLocation());
                     soundInstance.fadeIn();
                     return soundInstance;
                 });
@@ -89,14 +86,17 @@ public class CustomMusicHandler<T extends Entity & CustomMusicPlayer> {
         private int fadeDirection;
         private int fade;
 
-        public CustomMusicSoundInstance(T musicPlayer, SoundEvent customMusic) {
-            super(customMusic, SoundSource.MUSIC, SoundInstance.createUnseededRandom());
+        public CustomMusicSoundInstance(T musicPlayer, CustomMusicPlayer.CustomMusicData customMusic) {
+            super(customMusic.music(), customMusic.source(), customMusic.random());
             this.musicPlayer = musicPlayer;
-            this.looping = true;
-            this.delay = 0;
-            this.volume = 1.0F;
-            this.attenuation = Attenuation.NONE; // If left linear, the music played by Kass wouldn't be audible at all
-            this.relative = true;
+            this.looping = customMusic.looping();
+            this.delay = customMusic.delay();
+            this.volume = customMusic.volume();
+            this.attenuation = customMusic.attenuation();
+            this.relative = customMusic.relative();
+            this.x = musicPlayer.getX();
+            this.y = musicPlayer.getY();
+            this.z = musicPlayer.getZ();
         }
 
         @Override

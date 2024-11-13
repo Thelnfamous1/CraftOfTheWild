@@ -61,9 +61,10 @@ public class ModAdventureAdvancements implements ForgeAdvancementProvider.Advanc
                         ItemInit.MUSIC_DISC_OF_THE_WILD.get(),
                         Component.translatable(KASS_QUEST_FINISH_TITLE),
                         Component.translatable(KASS_QUEST_FINISH_DESCRIPTION),
-                        (ResourceLocation)null, FrameType.TASK, true, true, false)
+                        (ResourceLocation)null, FrameType.CHALLENGE, true, true, false)
                 .requirements(RequirementsStrategy.AND)
                 .addCriterion("kass_play_c418", kassMusicTriggerInBiome(COTWTags.C418_MUSIC_DISCS))
+                .addCriterion("kass_play_relic", kassMusicTriggerInBiome(Items.MUSIC_DISC_RELIC))
                 .addCriterion("kass_play_otherside", kassMusicTriggerInBiome(Items.MUSIC_DISC_OTHERSIDE))
                 .addCriterion("kass_play_pigstep", kassMusicTriggerInBiome(Items.MUSIC_DISC_PIGSTEP))
                 .addCriterion("kass_play_5", kassMusicTriggerInBiome(Items.MUSIC_DISC_5))

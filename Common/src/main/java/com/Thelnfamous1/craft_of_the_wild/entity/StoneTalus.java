@@ -101,6 +101,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Cus
     public static final int DIG_TICKS = COTWUtil.secondsToTicks(6.2083F);
     public static final int DEATH_TICKS = COTWUtil.secondsToTicks(2.5F);
     public static final int WITHER_SHOOT_EVENT_ID = 1024;
+    public static final CustomMusicData STONE_TALUS_BOSS_MUSIC = CustomMusicData.forMusic(SoundInit.STONE_TALUS_BOSS_MUSIC.get(), true);
     private final Entity[] partEntities;
     private final PartEntityController<StoneTalus, ? extends Entity> partEntityController;
     private final ServerBossEvent bossEvent = (ServerBossEvent)(new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS)).setDarkenScreen(true);
@@ -405,9 +406,10 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Cus
         return this.canAttack(player) && this.distanceToSqr(player) <= Mth.square(64);
     }
 
+
     @Override
-    public SoundEvent getCustomMusic() {
-        return SoundInit.STONE_TALUS_BOSS_MUSIC.get();
+    public CustomMusicData getCustomMusic() {
+        return STONE_TALUS_BOSS_MUSIC;
     }
 
     @Override

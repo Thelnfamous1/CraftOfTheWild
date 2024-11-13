@@ -69,7 +69,10 @@
   },
   "stone_talus_boss_music": {
     "sounds": [
-      "craft_of_the_wild:stone_talus_boss_music"
+      {
+        "name": "craft_of_the_wild:stone_talus_boss_music",
+        "volume": 2.0
+      }
     ]
   },
   "stone_talus_break_rocks": {
