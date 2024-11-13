@@ -548,7 +548,9 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Cus
 
     private boolean isTargetOrOtherPlayerOnTopOfMe(Entity target){
         if(!this.isTargetOnTopOfMe(target)){
-            for(Player player : BrainUtils.getMemory(this, MemoryModuleType.NEAREST_PLAYERS)){
+            List<Player> nearestPlayers = BrainUtils.getMemory(this, MemoryModuleType.NEAREST_PLAYERS);
+            if(nearestPlayers == null) return false;
+            for(Player player : nearestPlayers){
                 if(COTWSharedAi.isEntityAttackable(this, player, getTargetingRange(this)) && this.isTargetOnTopOfMe(player)){
                     return true;
                 }
