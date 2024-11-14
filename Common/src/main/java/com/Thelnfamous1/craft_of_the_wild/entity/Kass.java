@@ -227,10 +227,10 @@ public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass>, CustomM
             ItemStack musicDiscToStore = itemInHand.copyWithCount(1);
             this.getInventory().addItem(musicDiscToStore);
             this.removeInteractionItem(player, itemInHand);
-            this.level().playSound(player, this, SoundEvents.ALLAY_ITEM_GIVEN, SoundSource.NEUTRAL, 2.0F, 1.0F);
+            //this.level().playSound(player, this, SoundEvents.ALLAY_ITEM_GIVEN, SoundSource.NEUTRAL, 2.0F, 1.0F);
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         } else if (!storedMusicDisc.isEmpty() && hand == InteractionHand.MAIN_HAND && itemInHand.isEmpty()) {
-            this.level().playSound(player, this, SoundEvents.ALLAY_ITEM_TAKEN, SoundSource.NEUTRAL, 2.0F, 1.0F);
+            //this.level().playSound(player, this, SoundEvents.ALLAY_ITEM_TAKEN, SoundSource.NEUTRAL, 2.0F, 1.0F);
             this.swing(InteractionHand.MAIN_HAND);
             for (ItemStack inventoryStack : this.getInventory().removeAllItems()) {
                 if(!player.addItem(inventoryStack)){
