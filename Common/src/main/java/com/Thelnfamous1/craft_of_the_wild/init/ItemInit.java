@@ -35,7 +35,7 @@ public class ItemInit {
             new COTWSpawnEggItem(EntityInit.KASS, 14405058, 7643954, getItemProperties()));
 
     public static final RegistryObject<Item> MUSIC_DISC_A_ROCKY_BALLAD = registerMusicDisc(
-            "music_disc_a_rocky_ballad", 14, SoundInit.STONE_TALUS_BOSS_MUSIC, 168, "Firel");
+            "music_disc_a_rocky_ballad", 14, SoundInit.MUSIC_A_ROCKY_BALLAD, 168, "Firel");
     public static final RegistryObject<Item> MUSIC_DISC_LOST_CITY = registerMusicDisc(
             "music_disc_lost_city", 14, SoundInit.MUSIC_LOST_CITY, 97, "Sophie Song");
     public static final RegistryObject<Item> MUSIC_DISC_OF_THE_WILD = registerMusicDisc(

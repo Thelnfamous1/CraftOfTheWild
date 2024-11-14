@@ -38,6 +38,7 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
         this.addSound(SoundInit.MUSIC_STABLES);
         this.addSound(SoundInit.MUSIC_OF_THE_WILD);
         this.addSound(SoundInit.KASS_THEME);
+        this.addSound(SoundInit.MUSIC_A_ROCKY_BALLAD, 2);
     }
 
     public void addSound(RegistryObject<SoundEvent> entry, float volume) {

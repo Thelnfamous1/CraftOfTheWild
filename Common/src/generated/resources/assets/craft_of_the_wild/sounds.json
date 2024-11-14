@@ -52,6 +52,14 @@
       "craft_of_the_wild:kass_theme"
     ]
   },
+  "music_a_rocky_ballad": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:music_a_rocky_ballad",
+        "volume": 2.0
+      }
+    ]
+  },
   "music_lost_city": {
     "sounds": [
       "craft_of_the_wild:music_lost_city"

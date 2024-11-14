@@ -53,6 +53,8 @@ public class SoundInit {
 
     public static final RegistryObject<SoundEvent> KASS_THEME = registerSoundEvent("kass_theme");
 
+    public static final RegistryObject<SoundEvent> MUSIC_A_ROCKY_BALLAD = registerSoundEvent("music_a_rocky_ballad");
+
     private static RegistryObject<SoundEvent> registerSoundEvent(String path) {
         return SOUND_EVENTS.register(path, () -> SoundEvent.createVariableRangeEvent(COTWCommon.getResourceLocation(path)));
     }
