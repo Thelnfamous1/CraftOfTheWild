@@ -11,12 +11,14 @@ import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.GlobalPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.DebugPackets;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
@@ -38,6 +40,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.RecordItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
@@ -62,6 +65,7 @@ public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass>, CustomM
     public static final String PLAYING_MUSIC_TAG_KEY = "PlayingMusic";
     private static final Map<RecordItem, CustomMusicData> KASS_MUSIC = Maps.newHashMap();
     private final SimpleContainer inventory = new SimpleContainer(1);
+    private int ticksSinceLastEvent;
 
     public Kass(EntityType<? extends Kass> $$0, Level $$1) {
         super($$0, $$1);
@@ -256,6 +260,14 @@ public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass>, CustomM
     @Override
     public void tick() {
         super.tick();
+        ++this.ticksSinceLastEvent;
+        if (this.isPlayingMusic()) {
+            if (this.shouldSendJukeboxPlayingEvent()) {
+                this.ticksSinceLastEvent = 0;
+                this.gameEvent(GameEvent.JUKEBOX_PLAY);
+                this.spawnMusicParticles();
+            }
+        }
         if (!this.level().isClientSide) {
             if (this.canPlayCustomMusic()) {
                 this.level().broadcastEntityEvent(this, CustomMusicPlayer.MUSIC_PLAY_ID);
@@ -264,6 +276,26 @@ public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass>, CustomM
                 this.level().broadcastEntityEvent(this, CustomMusicPlayer.MUSIC_STOP_ID);
             }
         }
+    }
+
+    private boolean shouldSendJukeboxPlayingEvent() {
+        return this.ticksSinceLastEvent >= 20;
+    }
+
+    private void spawnMusicParticles() {
+        if (this.level() instanceof ServerLevel serverlevel) {
+            Vec3 position = this.getEyePosition()
+                    .add(new Vec3(0, 0, 1)
+                            .yRot(-this.yBodyRot * Mth.DEG_TO_RAD));
+            Vec3 offset = new Vec3(serverlevel.getRandom().nextInt(4) / 24.0F, 0, 0)
+                    .yRot(-this.yBodyRot * Mth.DEG_TO_RAD);
+            serverlevel.sendParticles(ParticleTypes.NOTE,
+                    position.x(), position.y(), position.z(),
+                    0,
+                    offset.x(), offset.y(), offset.z(),
+                    1.0D);
+        }
+
     }
 
     @Override
