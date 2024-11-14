@@ -287,8 +287,8 @@ public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass>, CustomM
             Vec3 position = this.getEyePosition()
                     .add(new Vec3(0, 0, 1)
                             .yRot(-this.yBodyRot * Mth.DEG_TO_RAD));
-            Vec3 offset = new Vec3(serverlevel.getRandom().nextInt(4) / 24.0F, 0, 0)
-                    .yRot(-this.yBodyRot * Mth.DEG_TO_RAD);
+            float color = serverlevel.getRandom().nextInt(4) / 24.0F;
+            Vec3 offset = new Vec3(color, 0, 0);
             serverlevel.sendParticles(ParticleTypes.NOTE,
                     position.x(), position.y(), position.z(),
                     0,
