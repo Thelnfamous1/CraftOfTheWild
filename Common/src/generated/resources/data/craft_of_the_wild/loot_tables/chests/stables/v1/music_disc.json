@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "craft_of_the_wild:music_disc_stables"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "craft_of_the_wild:chests/stables/v1/music_disc"
+}
