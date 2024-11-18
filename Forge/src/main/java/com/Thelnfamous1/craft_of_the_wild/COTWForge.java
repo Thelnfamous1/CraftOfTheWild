@@ -99,9 +99,10 @@ public class COTWForge {
                                     HolderSet.direct(placedFeatureLookup.getOrThrow(WorldGenInit.STONE_TALUS_PF)),
                                     GenerationStep.Decoration.SURFACE_STRUCTURES
                                     ));
-                });
-                //.add(Registries.STRUCTURE, WorldGenInit::structures)
-                //.add(Registries.STRUCTURE_SET, WorldGenInit::structureSets);
+                })
+                .add(Registries.STRUCTURE, WorldGenInit::structures)
+                .add(Registries.STRUCTURE_SET, WorldGenInit::structureSets)
+                .add(Registries.TEMPLATE_POOL, WorldGenInit::templatePools);
         return builder;
     }
 

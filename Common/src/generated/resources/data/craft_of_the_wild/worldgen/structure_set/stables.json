@@ -1,0 +1,18 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 10387312,
+    "separation": 8,
+    "spacing": 34
+  },
+  "structures": [
+    {
+      "structure": "craft_of_the_wild:stables",
+      "weight": 1
+    },
+    {
+      "structure": "craft_of_the_wild:stables_snowy",
+      "weight": 1
+    }
+  ]
+}

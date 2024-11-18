@@ -107,6 +107,8 @@ public class ModTagProvider {
         @Override
         protected void addTags(HolderLookup.Provider pProvider) {
             this.tag(COTWTags.SPAWNS_STONE_TALUS).add(Biomes.PLAINS, Biomes.MEADOW);
+            this.tag(COTWTags.HAS_STABLES).add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.SAVANNA, Biomes.SPARSE_JUNGLE);
+            this.tag(COTWTags.HAS_STABLES_SNOWY).add(Biomes.SNOWY_PLAINS);
         }
         public void populateTag(TagKey<Biome> tag, ResourceKey<Biome>... damageTypes){
             for (ResourceKey<Biome> damageType : damageTypes) {

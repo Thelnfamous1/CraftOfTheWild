@@ -11,6 +11,8 @@ public class COTWTags {
     public final static TagKey<Block> STONE_TALUS_CAN_DESTROY = createBlockTag("stone_talus_can_destroy");
     public final static TagKey<Biome> SPAWNS_STONE_TALUS = createBiomeTag("spawns_stone_talus");
     public final static TagKey<Item> C418_MUSIC_DISCS = createItemTag("c418_music_discs");
+    public static final TagKey<Biome> HAS_STABLES = createBiomeTag("has_stables");
+    public static final TagKey<Biome> HAS_STABLES_SNOWY = createBiomeTag("has_stables_snowy");
 
     private static TagKey<Block> createBlockTag(String path) {
         return TagKey.create(Registries.BLOCK, COTWCommon.getResourceLocation(path));
