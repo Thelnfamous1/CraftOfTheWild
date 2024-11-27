@@ -84,10 +84,10 @@ public class ModChestLootTables implements LootTableSubProvider {
     }
 
     private LootTable.Builder stablesBoxLoot() {
-        return this.multiPool(
-                new LootEntry(Items.ARROW, UniformGenerator.between(2.0F, 4.0F), 1.0F),
-                new LootEntry(Items.APPLE, UniformGenerator.between(1.0F, 3.0F), 1.0F),
-                new LootEntry(Items.EMERALD, UniformGenerator.between(1.0F, 2.0F), 1.0F));
+        return this.chanceToDrop(
+                new LootEntry(Items.ARROW, UniformGenerator.between(2.0F, 4.0F), 0.5F),
+                new LootEntry(Items.APPLE, UniformGenerator.between(1.0F, 3.0F), 0.3F),
+                new LootEntry(Items.EMERALD, UniformGenerator.between(1.0F, 2.0F), 0.2F));
     }
 
     private LootTable.Builder multiPool(LootEntry... entries) {

@@ -19,6 +19,7 @@ import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.data.worldgen.Pools;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.GenerationStep;
@@ -53,6 +54,17 @@ public class WorldGenInit {
     public static final ResourceKey<PlacedFeature> STONE_TALUS_PF = ResourceKey.create(Registries.PLACED_FEATURE, COTWCommon.getResourceLocation("stone_talus"));
     public static final ResourceKey<ConfiguredFeature<?,?>> STONE_TALUS_CF = ResourceKey.create(Registries.CONFIGURED_FEATURE, COTWCommon.getResourceLocation("stone_talus"));
 
+    public static final ResourceKey<PlacedFeature> VILLAGER_PF = ResourceKey.create(Registries.PLACED_FEATURE, COTWCommon.getResourceLocation("villager"));
+    public static final ResourceKey<ConfiguredFeature<?,?>> VILLAGER_CF = ResourceKey.create(Registries.CONFIGURED_FEATURE, COTWCommon.getResourceLocation("villager"));
+    public static final ResourceKey<PlacedFeature> BEEDLE_PF = ResourceKey.create(Registries.PLACED_FEATURE, COTWCommon.getResourceLocation("beedle"));
+    public static final ResourceKey<ConfiguredFeature<?,?>> BEEDLE_CF = ResourceKey.create(Registries.CONFIGURED_FEATURE, COTWCommon.getResourceLocation("beedle"));
+    public static final ResourceKey<PlacedFeature> KASS_PF = ResourceKey.create(Registries.PLACED_FEATURE, COTWCommon.getResourceLocation("kass"));
+    public static final ResourceKey<ConfiguredFeature<?,?>> KASS_CF = ResourceKey.create(Registries.CONFIGURED_FEATURE, COTWCommon.getResourceLocation("kass"));
+    public static final ResourceKey<PlacedFeature> HORSE_PF = ResourceKey.create(Registries.PLACED_FEATURE, COTWCommon.getResourceLocation("horse"));
+    public static final ResourceKey<ConfiguredFeature<?,?>> HORSE_CF = ResourceKey.create(Registries.CONFIGURED_FEATURE, COTWCommon.getResourceLocation("horse"));
+    public static final ResourceKey<PlacedFeature> DONKEY_PF = ResourceKey.create(Registries.PLACED_FEATURE, COTWCommon.getResourceLocation("donkey"));
+    public static final ResourceKey<ConfiguredFeature<?,?>> DONKEY_CF = ResourceKey.create(Registries.CONFIGURED_FEATURE, COTWCommon.getResourceLocation("donkey"));
+
     // structure types
 
     public static final RegistrationProvider<StructureType<?>> STRUCTURE_TYPES = RegistrationProvider.get(Registries.STRUCTURE_TYPE, Constants.MODID);
@@ -76,14 +88,26 @@ public class WorldGenInit {
     // structure template pools
     public static final ResourceKey<StructureTemplatePool> STABLES_STP = ResourceKey.create(Registries.TEMPLATE_POOL, COTWCommon.getResourceLocation("stables"));
     public static final ResourceKey<StructureTemplatePool> STABLES_SNOWY_STP = ResourceKey.create(Registries.TEMPLATE_POOL, COTWCommon.getResourceLocation("stables_snowy"));
+    public static final ResourceKey<StructureTemplatePool> VILLAGER_STP = ResourceKey.create(Registries.TEMPLATE_POOL, COTWCommon.getResourceLocation("villager"));
+    public static final ResourceKey<StructureTemplatePool> BEEDLE_STP = ResourceKey.create(Registries.TEMPLATE_POOL, COTWCommon.getResourceLocation("beedle"));
+    public static final ResourceKey<StructureTemplatePool> KASS_RARE_STP = ResourceKey.create(Registries.TEMPLATE_POOL, COTWCommon.getResourceLocation("kass_rare"));
+    public static final ResourceKey<StructureTemplatePool> KASS_COMMON_STP = ResourceKey.create(Registries.TEMPLATE_POOL, COTWCommon.getResourceLocation("kass_common"));
+    public static final ResourceKey<StructureTemplatePool> HORSE_STP = ResourceKey.create(Registries.TEMPLATE_POOL, COTWCommon.getResourceLocation("horse"));
+    public static final ResourceKey<StructureTemplatePool> DONKEY_STP = ResourceKey.create(Registries.TEMPLATE_POOL, COTWCommon.getResourceLocation("donkey"));
 
 
     public static void placedFeatures(BootstapContext<PlacedFeature> context) {
-        stoneTalus(context, WorldGenInit.STONE_TALUS_PF, WorldGenInit.STONE_TALUS_CF);
+        HolderGetter<ConfiguredFeature<?, ?>> cfLookup = context.lookup(Registries.CONFIGURED_FEATURE);
+        stoneTalus(context, cfLookup.get(WorldGenInit.STONE_TALUS_CF).get());
+        context.register(VILLAGER_PF, new PlacedFeature(cfLookup.get(VILLAGER_CF).get(), List.of()));
+        context.register(BEEDLE_PF, new PlacedFeature(cfLookup.get(BEEDLE_CF).get(), List.of()));
+        context.register(KASS_PF, new PlacedFeature(cfLookup.get(KASS_CF).get(), List.of()));
+        context.register(HORSE_PF, new PlacedFeature(cfLookup.get(HORSE_CF).get(), List.of()));
+        context.register(DONKEY_PF, new PlacedFeature(cfLookup.get(DONKEY_CF).get(), List.of()));
     }
 
-    private static void stoneTalus(BootstapContext<PlacedFeature> context, ResourceKey<PlacedFeature> feature, ResourceKey<ConfiguredFeature<?, ?>> configured) {
-        context.register(feature, new PlacedFeature(context.lookup(Registries.CONFIGURED_FEATURE).get(configured).get(),
+    private static void stoneTalus(BootstapContext<PlacedFeature> context, Holder.Reference<ConfiguredFeature<?, ?>> holder) {
+        context.register(WorldGenInit.STONE_TALUS_PF, new PlacedFeature(holder,
                         List.of(
                                 RarityFilter.onAverageOnceEvery(200),
                                 InSquarePlacement.spread(),
@@ -96,13 +120,18 @@ public class WorldGenInit {
     }
 
     public static void configuredFeature(BootstapContext<ConfiguredFeature<?, ?>> context) {
-        stoneTalus(context, WorldGenInit.STONE_TALUS_CF);
+        spawnEntity(context, WorldGenInit.STONE_TALUS_CF, EntityInit.STONE_TALUS.get());
+        spawnEntity(context, WorldGenInit.VILLAGER_CF, EntityType.VILLAGER);
+        spawnEntity(context, WorldGenInit.BEEDLE_CF, EntityInit.BEEDLE.get());
+        spawnEntity(context, WorldGenInit.KASS_CF, EntityInit.KASS.get());
+        spawnEntity(context, WorldGenInit.HORSE_CF, EntityType.HORSE);
+        spawnEntity(context, WorldGenInit.DONKEY_CF, EntityType.DONKEY);
     }
 
-    private static void stoneTalus(BootstapContext<ConfiguredFeature<?, ?>> context, ResourceKey<ConfiguredFeature<?, ?>> key) {
+    private static void spawnEntity(BootstapContext<ConfiguredFeature<?, ?>> context, ResourceKey<ConfiguredFeature<?, ?>> key, EntityType<?> entityType) {
         context.register(key, new ConfiguredFeature<>(
                 SPAWN_ENTITY.get(),
-                new SpawnEntityFeature.EntityConfig(EntityInit.STONE_TALUS.get(), Optional.empty())
+                new SpawnEntityFeature.EntityConfig(entityType, Optional.empty())
                 )
         );
     }
@@ -168,6 +197,7 @@ public class WorldGenInit {
 
     public static void templatePools(BootstapContext<StructureTemplatePool> context){
         HolderGetter<StructureTemplatePool> templatePoolLookup = context.lookup(Registries.TEMPLATE_POOL);
+        HolderGetter<PlacedFeature> pfLookup = context.lookup(Registries.PLACED_FEATURE);
         Holder<StructureTemplatePool> emptyPool = templatePoolLookup.getOrThrow(Pools.EMPTY);
         context.register(STABLES_STP,
                 new StructureTemplatePool(
@@ -187,7 +217,30 @@ public class WorldGenInit {
                                 Pair.of(StructurePoolElement.legacy(COTWCommon.getResourceLocation("stables/v3_snowy").toString()), 1),
                                 Pair.of(StructurePoolElement.legacy(COTWCommon.getResourceLocation("stables/v4_snowy").toString()), 1)),
                         StructureTemplatePool.Projection.RIGID));
+        context.register(VILLAGER_STP, singleFeaturePool(emptyPool, pfLookup.get(VILLAGER_PF).get()));
+        context.register(BEEDLE_STP, singleFeaturePool(emptyPool, pfLookup.get(BEEDLE_PF).get()));
+        context.register(KASS_COMMON_STP, singleFeaturePoolWithChance(emptyPool, pfLookup.get(KASS_PF).get(), 3, 4));
+        context.register(KASS_RARE_STP, singleFeaturePoolWithChance(emptyPool, pfLookup.get(KASS_PF).get(), 1, 4));
+        context.register(HORSE_STP, singleFeaturePool(emptyPool, pfLookup.get(HORSE_PF).get()));
+        context.register(DONKEY_STP, singleFeaturePool(emptyPool, pfLookup.get(DONKEY_PF).get()));
 
+    }
+
+    private static StructureTemplatePool singleFeaturePool(Holder<StructureTemplatePool> fallback, Holder<PlacedFeature> holder) {
+        return new StructureTemplatePool(
+                fallback,
+                ImmutableList.of(
+                        Pair.of(StructurePoolElement.feature(holder), 1)),
+                StructureTemplatePool.Projection.RIGID);
+    }
+
+    private static StructureTemplatePool singleFeaturePoolWithChance(Holder<StructureTemplatePool> fallback, Holder<PlacedFeature> holder, int weight, int total) {
+        return new StructureTemplatePool(
+                fallback,
+                ImmutableList.of(
+                        Pair.of(StructurePoolElement.feature(holder), weight),
+                        Pair.of(StructurePoolElement.empty(), total - weight)),
+                StructureTemplatePool.Projection.RIGID);
     }
 
     public static void loadClass() {

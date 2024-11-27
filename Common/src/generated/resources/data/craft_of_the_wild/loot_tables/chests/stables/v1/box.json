@@ -17,7 +17,12 @@
               "function": "minecraft:set_count"
             }
           ],
-          "name": "minecraft:arrow"
+          "name": "minecraft:arrow",
+          "weight": 500
+        },
+        {
+          "type": "minecraft:empty",
+          "weight": 500
         }
       ],
       "rolls": 1.0
@@ -38,7 +43,12 @@
               "function": "minecraft:set_count"
             }
           ],
-          "name": "minecraft:apple"
+          "name": "minecraft:apple",
+          "weight": 300
+        },
+        {
+          "type": "minecraft:empty",
+          "weight": 700
         }
       ],
       "rolls": 1.0
@@ -59,7 +69,12 @@
               "function": "minecraft:set_count"
             }
           ],
-          "name": "minecraft:emerald"
+          "name": "minecraft:emerald",
+          "weight": 200
+        },
+        {
+          "type": "minecraft:empty",
+          "weight": 800
         }
       ],
       "rolls": 1.0

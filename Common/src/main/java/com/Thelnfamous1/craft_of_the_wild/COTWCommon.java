@@ -28,6 +28,7 @@ public class COTWCommon {
         AttributeInit.loadClass();
         SoundInit.loadClass();
         WorldGenInit.loadClass();
+        PaintingVariantInit.loadClass();
     }
 
     public static void registerSpawnEggs() {
