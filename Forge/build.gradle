@@ -94,7 +94,7 @@ dependencies {
     implementation fg.deobf("curse.maven:embeddium-908741:5681725")
     implementation fg.deobf("curse.maven:sodium-options-api-1103431:5807572")
     // to load Pipo's save file for the stables
-    runtimeOnly "curse.maven:terralith-513688:5512076"
+    //runtimeOnly "curse.maven:terralith-513688:5512076"
 }
 
 tasks.withType(JavaCompile) {

@@ -8,7 +8,7 @@ import software.bernie.geckolib.cache.texture.AutoGlowingTexture;
 
 import java.util.function.Function;
 
-@Mixin(AutoGlowingTexture.class)
+@Mixin(value = AutoGlowingTexture.class, remap = false)
 public interface AutoGlowingTextureAccessor {
 
     @Accessor("RENDER_TYPE_FUNCTION")
