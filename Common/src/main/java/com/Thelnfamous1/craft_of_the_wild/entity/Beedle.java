@@ -17,7 +17,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.DebugPackets;
@@ -657,8 +656,7 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
     }
 
     protected void initMemories() {
-        GlobalPos currentGlobalPos = GlobalPos.of(this.level().dimension(), this.blockPosition());
-        BrainUtils.setMemory(this, MemoryModuleType.HOME, currentGlobalPos);
+        COTWSharedAi.setHomeOnSolidGroundBelowSelf(this);
     }
 
     @Override

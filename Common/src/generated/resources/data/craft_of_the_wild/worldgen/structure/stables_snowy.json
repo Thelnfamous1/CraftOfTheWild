@@ -11,5 +11,5 @@
   "start_pool": "craft_of_the_wild:stables_snowy",
   "step": "surface_structures",
   "terrain_adaptation": "beard_thin",
-  "use_expansion_hack": true
+  "use_expansion_hack": false
 }

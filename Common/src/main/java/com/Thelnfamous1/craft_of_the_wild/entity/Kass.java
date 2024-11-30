@@ -10,7 +10,6 @@ import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.core.GlobalPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -19,8 +18,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.*;
@@ -51,7 +48,6 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarge
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
-import net.tslat.smartbrainlib.util.BrainUtils;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 
@@ -130,8 +126,7 @@ public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass>, CustomM
     }
 
     protected void initMemories() {
-        GlobalPos currentGlobalPos = GlobalPos.of(this.level().dimension(), this.blockPosition());
-        BrainUtils.setMemory(this, MemoryModuleType.HOME, currentGlobalPos);
+        COTWSharedAi.setHomeOnSolidGroundBelowSelf(this);
     }
 
     @Override

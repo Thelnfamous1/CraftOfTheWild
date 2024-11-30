@@ -6,6 +6,7 @@
   "refmap": "${mod_id}.refmap.json",
   "mixins": [
     "EntityAccessor",
+    "FeaturePoolElementAccessor",
     "PathAccessor",
     "SpawnEggItemAccessor",
     "WalkNodeEvaluatorAccess"

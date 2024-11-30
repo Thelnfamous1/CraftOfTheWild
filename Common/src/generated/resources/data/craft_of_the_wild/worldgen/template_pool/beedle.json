@@ -2,7 +2,7 @@
   "elements": [
     {
       "element": {
-        "element_type": "minecraft:feature_pool_element",
+        "element_type": "craft_of_the_wild:custom_feature_pool_element",
         "feature": "craft_of_the_wild:beedle",
         "projection": "rigid"
       },

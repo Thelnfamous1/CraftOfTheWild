@@ -3,6 +3,7 @@ package com.Thelnfamous1.craft_of_the_wild.init;
 import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.feature.BurrowPlacement;
+import com.Thelnfamous1.craft_of_the_wild.feature.CustomFeaturePoolElement;
 import com.Thelnfamous1.craft_of_the_wild.feature.SpawnEntityFeature;
 import com.Thelnfamous1.craft_of_the_wild.structure.StoneTalusPiece;
 import com.Thelnfamous1.craft_of_the_wild.structure.StoneTalusStructure;
@@ -40,6 +41,7 @@ import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class WorldGenInit {
 
@@ -155,7 +157,7 @@ public class WorldGenInit {
                 templatePoolLookup.getOrThrow(STABLES_STP),
                 1,
                 ConstantHeight.of(VerticalAnchor.absolute(0)),
-                true,
+                false,
                 Heightmap.Types.WORLD_SURFACE_WG));
         context.register(STABLES_SNOWY_STRUCTURE, new JigsawStructure(
                 structure(biomeLookup.getOrThrow(COTWTags.HAS_STABLES_SNOWY),
@@ -163,7 +165,7 @@ public class WorldGenInit {
                 templatePoolLookup.getOrThrow(STABLES_SNOWY_STP),
                 1,
                 ConstantHeight.of(VerticalAnchor.absolute(0)),
-                true,
+                false,
                 Heightmap.Types.WORLD_SURFACE_WG));
 
     }
@@ -192,7 +194,7 @@ public class WorldGenInit {
                         StructureSet.entry(structureLookup.getOrThrow(STABLES_SNOWY_STRUCTURE))),
                         new RandomSpreadStructurePlacement(
                                 34, 8,
-                                RandomSpreadType.LINEAR, 10387312)));
+                                RandomSpreadType.LINEAR, 49016397)));
     }
 
     public static void templatePools(BootstapContext<StructureTemplatePool> context){
@@ -203,19 +205,19 @@ public class WorldGenInit {
                 new StructureTemplatePool(
                         emptyPool,
                         ImmutableList.of(
-                                Pair.of(StructurePoolElement.legacy(COTWCommon.getResourceLocation("stables/v1").toString()), 1),
-                                Pair.of(StructurePoolElement.legacy(COTWCommon.getResourceLocation("stables/v2").toString()), 1),
-                                Pair.of(StructurePoolElement.legacy(COTWCommon.getResourceLocation("stables/v3").toString()), 1),
-                                Pair.of(StructurePoolElement.legacy(COTWCommon.getResourceLocation("stables/v4").toString()), 1)),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("stables/v1").toString()), 1),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("stables/v2").toString()), 1),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("stables/v3").toString()), 1),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("stables/v4").toString()), 1)),
                         StructureTemplatePool.Projection.RIGID));
         context.register(STABLES_SNOWY_STP,
                 new StructureTemplatePool(
                         emptyPool,
                         ImmutableList.of(
-                                Pair.of(StructurePoolElement.legacy(COTWCommon.getResourceLocation("stables/v1_snowy").toString()), 1),
-                                Pair.of(StructurePoolElement.legacy(COTWCommon.getResourceLocation("stables/v2_snowy").toString()), 1),
-                                Pair.of(StructurePoolElement.legacy(COTWCommon.getResourceLocation("stables/v3_snowy").toString()), 1),
-                                Pair.of(StructurePoolElement.legacy(COTWCommon.getResourceLocation("stables/v4_snowy").toString()), 1)),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("stables/v1_snowy").toString()), 1),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("stables/v2_snowy").toString()), 1),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("stables/v3_snowy").toString()), 1),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("stables/v4_snowy").toString()), 1)),
                         StructureTemplatePool.Projection.RIGID));
         context.register(VILLAGER_STP, singleFeaturePool(emptyPool, pfLookup.get(VILLAGER_PF).get()));
         context.register(BEEDLE_STP, singleFeaturePool(emptyPool, pfLookup.get(BEEDLE_PF).get()));
@@ -230,7 +232,7 @@ public class WorldGenInit {
         return new StructureTemplatePool(
                 fallback,
                 ImmutableList.of(
-                        Pair.of(StructurePoolElement.feature(holder), 1)),
+                        Pair.of(customFeature(holder), 1)),
                 StructureTemplatePool.Projection.RIGID);
     }
 
@@ -238,9 +240,13 @@ public class WorldGenInit {
         return new StructureTemplatePool(
                 fallback,
                 ImmutableList.of(
-                        Pair.of(StructurePoolElement.feature(holder), weight),
+                        Pair.of(customFeature(holder), weight),
                         Pair.of(StructurePoolElement.empty(), total - weight)),
                 StructureTemplatePool.Projection.RIGID);
+    }
+
+    public static Function<StructureTemplatePool.Projection, CustomFeaturePoolElement> customFeature(Holder<PlacedFeature> feature) {
+        return (projection) -> new CustomFeaturePoolElement(feature, projection);
     }
 
     public static void loadClass() {

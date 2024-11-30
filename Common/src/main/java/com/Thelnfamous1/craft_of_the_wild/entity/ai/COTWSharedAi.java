@@ -2,6 +2,9 @@ package com.Thelnfamous1.craft_of_the_wild.entity.ai;
 
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.behavior.COTWSetEntityLookTarget;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -67,5 +70,17 @@ public class COTWSharedAi {
 
     public static ExtendedBehaviour<LivingEntity> doNothing(int min, int max) {
         return new Idle<>().runFor(e -> e.getRandom().nextIntBetweenInclusive(min, max));
+    }
+
+    public static void setHomeOnSolidGroundBelowSelf(LivingEntity mob) {
+        BlockPos.MutableBlockPos groundPos = mob.blockPosition().below().mutable();
+        while(groundPos.getY() >= mob.level().getMinBuildHeight()
+                && !mob.level().getBlockState(groundPos).entityCanStandOn(mob.level(), groundPos, mob)){
+            groundPos.move(Direction.DOWN);
+        }
+        if(mob.level().getBlockState(groundPos).entityCanStandOn(mob.level(), groundPos, mob)){
+            GlobalPos onSolidGroundPos = GlobalPos.of(mob.level().dimension(), groundPos.above().immutable());
+            BrainUtils.setMemory(mob, MemoryModuleType.HOME, onSolidGroundPos);
+        }
     }
 }

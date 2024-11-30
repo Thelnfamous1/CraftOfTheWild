@@ -29,6 +29,7 @@ public class COTWCommon {
         SoundInit.loadClass();
         WorldGenInit.loadClass();
         PaintingVariantInit.loadClass();
+        StructurePoolElementTypeInit.loadClass();
     }
 
     public static void registerSpawnEggs() {
