@@ -9,6 +9,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
@@ -72,14 +73,14 @@ public class COTWSharedAi {
         return new Idle<>().runFor(e -> e.getRandom().nextIntBetweenInclusive(min, max));
     }
 
-    public static void setHomeOnSolidGroundBelowSelf(LivingEntity mob) {
+    public static void setHomeOnSolidGroundBelowSelf(LivingEntity mob, ServerLevelAccessor pLevel) {
         BlockPos.MutableBlockPos groundPos = mob.blockPosition().below().mutable();
-        while(groundPos.getY() >= mob.level().getMinBuildHeight()
-                && !mob.level().getBlockState(groundPos).entityCanStandOn(mob.level(), groundPos, mob)){
+        while(groundPos.getY() >= pLevel.getMinBuildHeight()
+                && !pLevel.getBlockState(groundPos).entityCanStandOn(pLevel, groundPos, mob)){
             groundPos.move(Direction.DOWN);
         }
-        if(mob.level().getBlockState(groundPos).entityCanStandOn(mob.level(), groundPos, mob)){
-            GlobalPos onSolidGroundPos = GlobalPos.of(mob.level().dimension(), groundPos.above().immutable());
+        if(pLevel.getBlockState(groundPos).entityCanStandOn(pLevel, groundPos, mob)){
+            GlobalPos onSolidGroundPos = GlobalPos.of(pLevel.getLevel().dimension(), groundPos.above().immutable());
             BrainUtils.setMemory(mob, MemoryModuleType.HOME, onSolidGroundPos);
         }
     }

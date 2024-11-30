@@ -121,12 +121,12 @@ public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass>, CustomM
     @Nullable
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor $$0, DifficultyInstance $$1, MobSpawnType $$2, @Nullable SpawnGroupData $$3, @Nullable CompoundTag $$4) {
-        this.initMemories();
+        this.initMemories($$0);
         return super.finalizeSpawn($$0, $$1, $$2, $$3, $$4);
     }
 
-    protected void initMemories() {
-        COTWSharedAi.setHomeOnSolidGroundBelowSelf(this);
+    protected void initMemories(ServerLevelAccessor pLevel) {
+        COTWSharedAi.setHomeOnSolidGroundBelowSelf(this, pLevel);
     }
 
     @Override

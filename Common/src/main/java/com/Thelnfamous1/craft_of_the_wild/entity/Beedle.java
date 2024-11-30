@@ -651,12 +651,12 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
 
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
-        this.initMemories();
+        this.initMemories(pLevel);
         return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
     }
 
-    protected void initMemories() {
-        COTWSharedAi.setHomeOnSolidGroundBelowSelf(this);
+    protected void initMemories(ServerLevelAccessor pLevel) {
+        COTWSharedAi.setHomeOnSolidGroundBelowSelf(this, pLevel);
     }
 
     @Override
