@@ -87,7 +87,7 @@ public class Kass extends COTWMob implements Npc, SmartBrainOwner<Kass>, CustomM
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(DATA_PLAYING_MUSIC, false);
+        this.entityData.define(DATA_PLAYING_MUSIC, true);
         this.entityData.define(DATA_MUSIC_DISC, ItemStack.EMPTY);
     }
 
