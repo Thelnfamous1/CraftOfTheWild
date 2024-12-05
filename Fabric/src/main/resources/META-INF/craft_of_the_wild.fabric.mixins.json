@@ -1,20 +1,17 @@
 {
   "required": true,
-  "minVersion": "0.8.5",
+  "minVersion": "0.8",
   "package": "com.Thelnfamous1.craft_of_the_wild.mixin",
-  "compatibilityLevel": "JAVA_17",
   "refmap": "${mod_id}.refmap.json",
+  "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "PlayerMixin",
-    "RayTracingMixin",
-    "StoneTalusMixin",
     "StructureTemplateMixin"
   ],
   "client": [
-    "DebugRendererMixin"
+  ],
+  "server": [
   ],
   "injectors": {
     "defaultRequire": 1
   }
 }
-

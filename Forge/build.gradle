@@ -78,6 +78,11 @@ mixin {
     // Enables exporting mixin-changed classes to .mixin.out in the run folder
     debug.export = true
 }
+
+repositories {
+    maven { url 'https://maven.fabricmc.net/'}
+}
+
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":Common")
@@ -85,7 +90,8 @@ dependencies {
     implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.2.0-rc.3")) {
         jarJar.ranged(it, "[0.2.0-rc.3,)")
     }
-    annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
+    //annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
+    annotationProcessor "net.fabricmc:sponge-mixin:0.13.4+mixin.${mixin_version}"
     implementation fg.deobf("net.tslat.smartbrainlib:SmartBrainLib-forge-${project.minecraft_version}:${project.sbl_version_forge}")
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${project.minecraft_version}:${project.geckolib_version_forge}")
     runtimeOnly fg.deobf("io.github.flemmli97:debugutils:${project.minecraft_version}-${project.debugutils_version_forge}-forge")
