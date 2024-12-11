@@ -12,6 +12,7 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -61,5 +62,10 @@ public class ForgePlatformHelper implements IPlatformHelper {
     @Override
     public void onFinalizeSpawn(Mob mob, ServerLevelAccessor level, DifficultyInstance currentDifficultyAt, MobSpawnType spawnType, SpawnGroupData spawnGroupData, CompoundTag saveData) {
         ForgeEventFactory.onFinalizeSpawn(mob, level, currentDifficultyAt, spawnType, spawnGroupData, saveData);
+    }
+
+    @Override
+    public void sendSmashAttackParticlePacket(AABB attackBox, int power) {
+
     }
 }

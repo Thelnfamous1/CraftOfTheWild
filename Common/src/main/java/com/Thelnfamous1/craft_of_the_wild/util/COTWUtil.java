@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -30,6 +31,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -267,6 +269,15 @@ public class COTWUtil {
         }
     }
 
+    public static void convertGrassToDirt(AABB searchBox, Level level, @Nullable Entity destroyer, Predicate<BlockState> canTurnIntoDirt) {
+        for(BlockPos blockPos : BlockPos.betweenClosed(Mth.floor(searchBox.minX), Mth.floor(searchBox.minY), Mth.floor(searchBox.minZ), Mth.floor(searchBox.maxX), Mth.floor(searchBox.maxY), Mth.floor(searchBox.maxZ))) {
+            BlockState blockState = level.getBlockState(blockPos);
+            if (!blockState.isAir() && canTurnIntoDirt.test(blockState)) {
+                level.setBlockAndUpdate(blockPos, Blocks.DIRT.withPropertiesOf(blockState));
+            }
+        }
+    }
+
     public static <U> Optional<U> getOptionalMemory(LivingEntity entity, MemoryModuleType<U> memoryType){
         return entity.getBrain().getMemory(memoryType);
     }
@@ -312,5 +323,48 @@ public class COTWUtil {
     public static void stopWalking(Mob mob) {
         BrainUtils.clearMemory(mob, MemoryModuleType.WALK_TARGET);
         mob.getNavigation().stop();
+    }
+
+    public static void spawnSmashAttackParticles(LevelAccessor level, AABB attackBounds, int power, BlockParticleOption particleOption) {
+        Vec3 boundsBottomCenter = attackBounds.getCenter().subtract(0, attackBounds.getYsize() / 2, 0);
+        double xzSize = getXZSize(attackBounds);
+        Vec3 particleCenter = boundsBottomCenter.add(0.0, 0.5, 0.0);
+        spawnSmashAttackParticles(level, particleOption, particleCenter, xzSize, power);
+    }
+
+    public static void spawnSmashAttackParticles(LevelAccessor level, ParticleOptions particleOption, Vec3 particleCenter, double xzSize, int power) {
+        double zSpeed;
+        int index;
+        double x;
+        double y;
+        double z;
+        double xSpeed;
+        double ySpeed;
+        for(index = 0; (float)index < power / xzSize; ++index) {
+            x = particleCenter.x + level.getRandom().nextGaussian() / 2.0;
+            y = particleCenter.y;
+            z = particleCenter.z + level.getRandom().nextGaussian() / 2.0;
+            xSpeed = level.getRandom().nextGaussian() * 0.2;
+            ySpeed = level.getRandom().nextGaussian() * 0.2;
+            zSpeed = level.getRandom().nextGaussian() * 0.2;
+            level.addParticle(particleOption, x, y, z, xSpeed, ySpeed, zSpeed);
+        }
+
+        double halfRadius = xzSize * 0.5D;
+        for(index = 0; (float)index < power / halfRadius; ++index) {
+            x = particleCenter.x + xzSize * Math.cos(index) + level.getRandom().nextGaussian() / 2.0;
+            y = particleCenter.y;
+            z = particleCenter.z + xzSize * Math.sin(index) + level.getRandom().nextGaussian() / 2.0;
+            xSpeed = level.getRandom().nextGaussian() * 0.05;
+            ySpeed = level.getRandom().nextGaussian() * 0.05;
+            zSpeed = level.getRandom().nextGaussian() * 0.05;
+            level.addParticle(particleOption, x, y, z, xSpeed, ySpeed, zSpeed);
+        }
+    }
+
+    public static double getXZSize(AABB bounds){
+        double xSize = bounds.getXsize();
+        double zSize = bounds.getZsize();
+        return (xSize + zSize) / 2.0;
     }
 }

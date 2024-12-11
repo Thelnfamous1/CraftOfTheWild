@@ -4,10 +4,13 @@ import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.init.DamageTypeInit;
 import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
+import com.Thelnfamous1.craft_of_the_wild.init.ParticleInit;
 import com.Thelnfamous1.craft_of_the_wild.init.SoundInit;
 import com.Thelnfamous1.craft_of_the_wild.platform.Services;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -22,6 +25,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.*;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -140,11 +144,9 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
     protected void onHit(HitResult hitResult) {
         super.onHit(hitResult);
         if (!this.level().isClientSide) {
-            double radius = this.getRadius();
             COTWUtil.playVanillaExplosionSound(this, SoundInit.STONE_TALUS_BREAK_ROCKS.get(), 4.0F);
+            double radius = this.getRadius();
             double attackSize = radius * 2;
-
-            Vec3 location = hitResult.getLocation();
             AABB attackBox = AABB.ofSize(this.position(), attackSize, attackSize, attackSize).inflate(1.0D);
             COTWCommon.debug(Constants.DEBUG_STONE_TALUS_ARM, "Created attack box of size {} for {}", attackBox.getSize(), this);
             if(Constants.DEBUG_STONE_TALUS_ARM) COTWUtil.sendHitboxParticles(attackBox, this.level());
@@ -154,14 +156,18 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
             targets.forEach(target -> this.applyDamage(target, owner));
             if(Services.PLATFORM.canEntityGrief(this.level(), this)){
                 COTWUtil.destroyBlocksInBoundingBox(attackBox, this.level(), this, StoneTalus::canDestroy);
+                COTWUtil.convertGrassToDirt(attackBox.expandTowards(this.position().subtract(0, 1, 0)), this.level(), this, StoneTalus::canConvertToDirt);
             }
             COTWCommon.debug(Constants.DEBUG_STONE_TALUS_ARM_PARTICLES, "{} is spawning particles at {}", this, this.position());
             Vec3 particlePos = this.position();
             BlockPos blockPos = BlockPos.containing(particlePos);
             if(!level().getBlockState(blockPos.below()).canBeReplaced()){
                 particlePos = new Vec3(particlePos.x, blockPos.getY(), particlePos.z);
-                Services.PLATFORM.sendCircleParticlesPacket(ParticleTypes.CAMPFIRE_COSY_SMOKE, particlePos.x, particlePos.y, particlePos.z, this.getRadius(), 100);
+                Services.PLATFORM.sendCircleParticlesPacket(new BlockParticleOption(ParticleInit.DUST_PILLAR.get(), this.level().getBlockState(blockPos.below())), particlePos.x, particlePos.y, particlePos.z, this.getRadius(), 750);
             }
+            /*
+            Services.PLATFORM.sendSmashAttackParticlePacket(attackBox, 750);
+             */
             this.discard();
         }
     }
@@ -226,5 +232,10 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
                 COTWUtil.isInRange(this.xPower, -3.9, 3.9),
                 COTWUtil.isInRange(this.yPower, -3.9, 3.9),
                 COTWUtil.isInRange(this.zPower, -3.9, 3.9));
+    }
+
+    @Override
+    protected ParticleOptions getTrailParticle() {
+        return new BlockParticleOption(ParticleTypes.BLOCK, Blocks.STONE.defaultBlockState());
     }
 }

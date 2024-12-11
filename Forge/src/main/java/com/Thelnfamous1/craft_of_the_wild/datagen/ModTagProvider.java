@@ -19,6 +19,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
@@ -63,15 +64,16 @@ public class ModTagProvider {
         }
     }
 
-    public static class Blocks extends TagsProvider<Block>{
+    public static class BlockTagsProvider extends TagsProvider<Block>{
 
-        public Blocks(PackOutput pGenerator, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
+        public BlockTagsProvider(PackOutput pGenerator, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
             super(pGenerator, Registries.BLOCK, lookupProvider, Constants.MODID, existingFileHelper);
         }
 
         @Override
         protected void addTags(HolderLookup.Provider pProvider) {
             this.tag(COTWTags.STONE_TALUS_CAN_DESTROY).addTag(BlockTags.LEAVES).addTag(BlockTags.LOGS);
+            this.tag(COTWTags.STONE_TALUS_CAN_CONVERT_TO_DIRT).add(Blocks.GRASS_BLOCK.builtInRegistryHolder().key(), Blocks.PODZOL.builtInRegistryHolder().key(), Blocks.MYCELIUM.builtInRegistryHolder().key());
         }
         public  <T extends Block>void populateTag(TagKey<Block> tag, Supplier<?>... items){
             for (Supplier<?> item : items) {
@@ -106,7 +108,7 @@ public class ModTagProvider {
 
         @Override
         protected void addTags(HolderLookup.Provider pProvider) {
-            this.tag(COTWTags.SPAWNS_STONE_TALUS).add(Biomes.PLAINS, Biomes.MEADOW);
+            this.tag(COTWTags.SPAWNS_STONE_TALUS).add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.SNOWY_PLAINS, Biomes.SAVANNA, Biomes.SPARSE_JUNGLE, Biomes.WINDSWEPT_GRAVELLY_HILLS, Biomes.WINDSWEPT_HILLS, Biomes.MEADOW);
             this.tag(COTWTags.HAS_STABLES).add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.SAVANNA, Biomes.SPARSE_JUNGLE);
             this.tag(COTWTags.HAS_STABLES_SNOWY).add(Biomes.SNOWY_PLAINS);
         }

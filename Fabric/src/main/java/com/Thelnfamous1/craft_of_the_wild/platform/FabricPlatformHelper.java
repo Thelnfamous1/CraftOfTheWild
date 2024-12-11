@@ -13,6 +13,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.AABB;
 
 public class FabricPlatformHelper implements IPlatformHelper {
 
@@ -51,5 +52,10 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public void onFinalizeSpawn(Mob mob, ServerLevelAccessor level, DifficultyInstance currentDifficultyAt, MobSpawnType spawnType, SpawnGroupData spawnGroupData, CompoundTag saveData) {
         mob.finalizeSpawn(level, currentDifficultyAt, spawnType, spawnGroupData, saveData);
+    }
+
+    @Override
+    public void sendSmashAttackParticlePacket(AABB attackBox, int power) {
+
     }
 }

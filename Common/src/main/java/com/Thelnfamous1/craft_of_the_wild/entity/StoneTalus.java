@@ -36,6 +36,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.Unit;
@@ -701,7 +702,12 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Cus
         super.finalizeAreaOfEffectAttack(attackBox);
         if(!this.level().isClientSide && Services.PLATFORM.canEntityGrief(this.level(), this)){
             COTWUtil.destroyBlocksInBoundingBox(attackBox, this.level(), this, StoneTalus::canDestroy);
+            COTWUtil.convertGrassToDirt(attackBox.expandTowards(this.position().subtract(0, 1, 0)), this.level(), this, StoneTalus::canConvertToDirt);
         }
+    }
+
+    public static boolean canConvertToDirt(BlockState blockState) {
+        return blockState.is(COTWTags.STONE_TALUS_CAN_CONVERT_TO_DIRT);
     }
 
     @Override
@@ -774,6 +780,10 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Cus
     protected boolean reallyHurt(DamageSource pSource, float pAmount) {
         if(pSource.is(DamageTypeTags.IS_PROJECTILE)){
             pAmount -= pAmount * this.getAttributeValue(AttributeInit.PROJECTILE_RESISTANCE.get());
+        }
+        if(pSource.getDirectEntity() instanceof LivingEntity living && living.getMainHandItem().is(ItemTags.PICKAXES)){
+            COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "Hit {} with pickaxe damage from {}, {}", this, pSource.getDirectEntity(), pAmount);
+            pAmount *= 2.0F;
         }
         return super.hurt(pSource, pAmount);
     }

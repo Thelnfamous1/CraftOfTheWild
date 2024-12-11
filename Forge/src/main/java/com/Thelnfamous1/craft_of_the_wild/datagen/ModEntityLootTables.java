@@ -1,14 +1,17 @@
 package com.Thelnfamous1.craft_of_the_wild.datagen;
 
 import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
+import com.Thelnfamous1.craft_of_the_wild.init.ItemInit;
 import com.nyfaria.craft_of_the_wild.registration.RegistryObject;
 import net.minecraft.data.loot.EntityLootSubProvider;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
@@ -24,11 +27,12 @@ public class ModEntityLootTables extends EntityLootSubProvider {
 
     @Override
     public void generate() {
-        this.multiDrops(EntityInit.STONE_TALUS.get(),
-                new LootEntry(Items.IRON_INGOT, ConstantValue.exactly(20)),
-                new LootEntry(Items.GOLD_INGOT, ConstantValue.exactly(10)),
-                new LootEntry(Items.LAPIS_LAZULI, ConstantValue.exactly(5)),
-                new LootEntry(Items.DIAMOND, ConstantValue.exactly(3)));
+        this.add(EntityInit.STONE_TALUS.get(), this.chanceToDrop(
+                new LootEntry(Items.RAW_IRON, UniformGenerator.between(2, 4), 0.6F),
+                new LootEntry(Items.RAW_GOLD, UniformGenerator.between(2, 3), 0.6F),
+                new LootEntry(Items.LAPIS_LAZULI, UniformGenerator.between(1, 3), 0.4F),
+                new LootEntry(Items.DIAMOND, UniformGenerator.between(1, 2), 0.2F),
+                new LootEntry(ItemInit.MUSIC_DISC_A_ROCKY_BALLAD.get(), ConstantValue.exactly(1.0F), 0.05F)));
         this.dropSingle(EntityInit.BEEDLE.get(), Items.EMERALD);
         this.dropSingle(EntityInit.KASS.get(), Items.FEATHER);
     }
@@ -72,10 +76,28 @@ public class ModEntityLootTables extends EntityLootSubProvider {
         add(entityType, builder);
     }
 
+    private LootTable.Builder chanceToDrop(LootEntry... entries) {
+        LootTable.Builder lootTable = LootTable.lootTable();
+        for (LootEntry entry : entries) {
+            int weight = Mth.floor(entry.chance * 1000.0F);
+            LootPool.Builder pool = LootPool.lootPool();
+            pool.setRolls(ConstantValue.exactly(1));
+            pool.add(LootItem.lootTableItem(entry.item())
+                    .setWeight(weight)
+                    .apply(SetItemCountFunction.setCount(entry.numberProvider())));
+            if(weight < 1000){
+                pool.add(EmptyLootItem.emptyItem()
+                        .setWeight(1000 - weight));
+            }
+            lootTable.withPool(pool);
+        }
+        return lootTable;
+    }
+
     @Override
     protected Stream<EntityType<?>> getKnownEntityTypes() {
         return EntityInit.ENTITIES.getEntries().stream().map(RegistryObject::get);
     }
 
-    record LootEntry(Item item, NumberProvider numberProvider) {}
+    record LootEntry(Item item, NumberProvider numberProvider, float chance) {}
 }

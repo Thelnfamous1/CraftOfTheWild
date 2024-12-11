@@ -8,6 +8,7 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.AABB;
 
 public interface IPlatformHelper {
 
@@ -50,4 +51,6 @@ public interface IPlatformHelper {
     <T extends ParticleOptions> void sendCircleParticlesPacket(T particle, double x, double y, double z, double xZRadius, int count);
 
     void onFinalizeSpawn(Mob mob, ServerLevelAccessor level, DifficultyInstance currentDifficultyAt, MobSpawnType spawnType, SpawnGroupData spawnGroupData, CompoundTag saveData);
+
+    void sendSmashAttackParticlePacket(AABB attackBox, int power);
 }

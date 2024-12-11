@@ -13,6 +13,7 @@ public class COTWTags {
     public final static TagKey<Item> C418_MUSIC_DISCS = createItemTag("c418_music_discs");
     public static final TagKey<Biome> HAS_STABLES = createBiomeTag("has_stables");
     public static final TagKey<Biome> HAS_STABLES_SNOWY = createBiomeTag("has_stables_snowy");
+    public static final TagKey<Block> STONE_TALUS_CAN_CONVERT_TO_DIRT = createBlockTag("stone_talus_can_convert_to_dirt");
 
     private static TagKey<Block> createBlockTag(String path) {
         return TagKey.create(Registries.BLOCK, COTWCommon.getResourceLocation(path));

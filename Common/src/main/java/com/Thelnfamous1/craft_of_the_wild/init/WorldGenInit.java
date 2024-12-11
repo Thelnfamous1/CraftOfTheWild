@@ -153,7 +153,7 @@ public class WorldGenInit {
          */
         context.register(STABLES_STRUCTURE, new JigsawStructure(
                 structure(biomeLookup.getOrThrow(COTWTags.HAS_STABLES),
-                        TerrainAdjustment.NONE),
+                        TerrainAdjustment.BEARD_THIN),
                 templatePoolLookup.getOrThrow(STABLES_STP),
                 1,
                 ConstantHeight.of(VerticalAnchor.absolute(-1)),
@@ -161,7 +161,7 @@ public class WorldGenInit {
                 Heightmap.Types.WORLD_SURFACE_WG));
         context.register(STABLES_SNOWY_STRUCTURE, new JigsawStructure(
                 structure(biomeLookup.getOrThrow(COTWTags.HAS_STABLES_SNOWY),
-                        TerrainAdjustment.NONE),
+                        TerrainAdjustment.BEARD_THIN),
                 templatePoolLookup.getOrThrow(STABLES_SNOWY_STP),
                 1,
                 ConstantHeight.of(VerticalAnchor.absolute(-1)),

@@ -30,6 +30,7 @@ public class COTWCommon {
         WorldGenInit.loadClass();
         PaintingVariantInit.loadClass();
         StructurePoolElementTypeInit.loadClass();
+        ParticleInit.loadClass();
     }
 
     public static void registerSpawnEggs() {

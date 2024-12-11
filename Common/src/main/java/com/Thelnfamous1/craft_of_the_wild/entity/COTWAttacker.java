@@ -4,9 +4,10 @@ import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.controller.AttackingLookController;
 import com.Thelnfamous1.craft_of_the_wild.init.DamageTypeInit;
+import com.Thelnfamous1.craft_of_the_wild.init.ParticleInit;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -116,7 +117,8 @@ public abstract class COTWAttacker<T extends AnimatedAttacker.AttackType> extend
             BlockPos blockPos = BlockPos.containing(particlePos);
             if (!level().getBlockState(blockPos.below()).canBeReplaced()) {
                 particlePos = new Vec3(particlePos.x, blockPos.getY(), particlePos.z);
-                COTWUtil.spawnParticlesInCircle(this.level(), ParticleTypes.CAMPFIRE_COSY_SMOKE, particlePos.x, particlePos.y, particlePos.z, radius, 100);
+                //COTWUtil.spawnParticlesInCircle(this.level(), new BlockParticleOption(ParticleInit.DUST_PILLAR.get(), this.level().getBlockState(blockPos.below())), particlePos.x, particlePos.y, particlePos.z, radius, 100);
+                COTWUtil.spawnSmashAttackParticles(this.level(), new BlockParticleOption(ParticleInit.DUST_PILLAR.get(), this.level().getBlockState(blockPos.below())), particlePos, COTWUtil.getXZSize(attackBox), 750);
             }
         }
     }
