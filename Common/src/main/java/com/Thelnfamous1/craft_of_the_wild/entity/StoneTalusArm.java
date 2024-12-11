@@ -156,7 +156,7 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
             targets.forEach(target -> this.applyDamage(target, owner));
             if(Services.PLATFORM.canEntityGrief(this.level(), this)){
                 COTWUtil.destroyBlocksInBoundingBox(attackBox, this.level(), this, StoneTalus::canDestroy);
-                COTWUtil.convertGrassToDirt(attackBox.expandTowards(this.position().subtract(0, 1, 0)), this.level(), this, StoneTalus::canConvertToDirt);
+                COTWUtil.convertGrassToDirt(attackBox.expandTowards(0, -1, 0), this.level(), this, StoneTalus::canConvertToDirt);
             }
             COTWCommon.debug(Constants.DEBUG_STONE_TALUS_ARM_PARTICLES, "{} is spawning particles at {}", this, this.position());
             Vec3 particlePos = this.position();
