@@ -18,11 +18,7 @@
             }
           ],
           "name": "minecraft:raw_iron",
-          "weight": 600
-        },
-        {
-          "type": "minecraft:empty",
-          "weight": 400
+          "weight": 1000
         }
       ],
       "rolls": 1.0
@@ -44,11 +40,7 @@
             }
           ],
           "name": "minecraft:raw_gold",
-          "weight": 600
-        },
-        {
-          "type": "minecraft:empty",
-          "weight": 400
+          "weight": 1000
         }
       ],
       "rolls": 1.0
@@ -70,11 +62,7 @@
             }
           ],
           "name": "minecraft:lapis_lazuli",
-          "weight": 400
-        },
-        {
-          "type": "minecraft:empty",
-          "weight": 600
+          "weight": 1000
         }
       ],
       "rolls": 1.0
