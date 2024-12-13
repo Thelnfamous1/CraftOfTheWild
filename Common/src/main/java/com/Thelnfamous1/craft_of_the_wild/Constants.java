@@ -1,6 +1,5 @@
 package com.Thelnfamous1.craft_of_the_wild;
 
-import com.Thelnfamous1.craft_of_the_wild.platform.Services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,7 +9,7 @@ public class Constants {
 	public static final String MOD_NAME = "Craft Of The Wild";
 	public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
 
-	public static final boolean DEBUG_IDE = Services.PLATFORM.isDevelopmentEnvironment();
+	public static final boolean DEBUG_IDE = false;
 	public static final boolean DEBUG_STONE_TALUS = DEBUG_IDE;
 	public static final boolean DEBUG_MONSTER = DEBUG_IDE;
 	public static final boolean FIX_DEBUG_UTILS_MULTIPART_ENTITIES = DEBUG_IDE;
