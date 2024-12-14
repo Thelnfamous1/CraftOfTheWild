@@ -735,7 +735,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Cus
     public boolean isPickable() {
         // Need to return false so the regular hitbox is not used for hit detection
         // Not needed on Fabric, as this mob will not have sub-parts until a Fabric subpart API is available
-        return Services.PLATFORM.getPlatformName().equals("Forge");
+        return this.partEntities.length == 0;
     }
 
     @Override
