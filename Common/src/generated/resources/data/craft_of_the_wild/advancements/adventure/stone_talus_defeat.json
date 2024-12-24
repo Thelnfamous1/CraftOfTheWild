@@ -1,42 +1,39 @@
 {
   "parent": "craft_of_the_wild:adventure/root",
   "criteria": {
-    "kass_play": {
+    "defeat_stone_talus": {
       "conditions": {
         "entity": [
           {
             "condition": "minecraft:entity_properties",
             "entity": "this",
             "predicate": {
-              "type": "craft_of_the_wild:kass"
+              "type": "craft_of_the_wild:stone_talus"
             }
           }
-        ],
-        "item": {
-          "tag": "minecraft:music_discs"
-        }
+        ]
       },
-      "trigger": "minecraft:player_interacted_with_entity"
+      "trigger": "minecraft:player_killed_entity"
     }
   },
   "display": {
-    "announce_to_chat": false,
+    "announce_to_chat": true,
     "description": {
-      "translate": "advancements.craft_of_the_wild.adventure.kass_quest_start.description"
+      "translate": "advancements.craft_of_the_wild.adventure.defeat_stone_talus.description"
     },
     "frame": "task",
     "hidden": false,
     "icon": {
-      "item": "craft_of_the_wild:music_disc_stables"
+      "item": "minecraft:cobblestone"
     },
     "show_toast": true,
     "title": {
-      "translate": "advancements.craft_of_the_wild.adventure.kass_quest_start.title"
+      "translate": "advancements.craft_of_the_wild.adventure.defeat_stone_talus.title"
     }
   },
   "requirements": [
     [
-      "kass_play"
+      "defeat_stone_talus"
     ]
   ],
   "sends_telemetry_event": true

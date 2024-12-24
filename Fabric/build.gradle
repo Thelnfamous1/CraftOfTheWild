@@ -54,7 +54,7 @@ loom {
         defaultRefmapName = "${mod_id}.refmap.json"
     }
 }
-def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta', "${mod_id}.mixins.json".toString(), 'fabric.mod.json']
+def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta', "${mod_id}.mixins.json".toString(), "${mod_id}.fabric.mixins.json".toString(), 'fabric.mod.json']
 def intoTargets = ["$rootDir/out/production/resources/", "$rootDir/out/production/${project.name}.main/", "$rootDir/bin/main/"]
 def replaceProperties =
         [

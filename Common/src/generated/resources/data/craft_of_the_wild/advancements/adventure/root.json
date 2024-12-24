@@ -1,12 +1,36 @@
 {
   "criteria": {
-    "killed_by_something": {
-      "conditions": {},
-      "trigger": "minecraft:entity_killed_player"
+    "stables": {
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "structure": "craft_of_the_wild:stables"
+              }
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:location"
     },
-    "killed_something": {
-      "conditions": {},
-      "trigger": "minecraft:player_killed_entity"
+    "stables_snowy": {
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "structure": "craft_of_the_wild:stables_snowy"
+              }
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:location"
     }
   },
   "display": {
@@ -18,17 +42,17 @@
     "frame": "task",
     "hidden": false,
     "icon": {
-      "item": "minecraft:map"
+      "item": "minecraft:saddle"
     },
-    "show_toast": false,
+    "show_toast": true,
     "title": {
       "translate": "advancements.craft_of_the_wild.adventure.root.title"
     }
   },
   "requirements": [
     [
-      "killed_something",
-      "killed_by_something"
+      "stables",
+      "stables_snowy"
     ]
   ],
   "sends_telemetry_event": true

@@ -9,6 +9,7 @@ import com.nyfaria.craft_of_the_wild.registration.RegistryObject;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 
 import java.util.Objects;
@@ -42,6 +43,9 @@ public class ItemInit {
             "music_disc_of_the_wild", 14, SoundInit.MUSIC_OF_THE_WILD, 66, "Sophie Song");
     public static final RegistryObject<Item> MUSIC_DISC_STABLES = registerMusicDisc(
             "music_disc_stables", 14, SoundInit.MUSIC_STABLES, 68, "Sophie Song");
+
+    public static final RegistryObject<Item> EGG_PUDDING = ITEMS.register("egg_pudding", () ->
+            new BowlFoodItem(getItemProperties().stacksTo(1).food(new FoodProperties.Builder().nutrition(10).saturationMod(0.6F).build())));
 
     private static RegistryObject<Item> registerMusicDisc(String path, int analogSignal, RegistryObject<SoundEvent> soundSupplier, int durationInSeconds, String author) {
         return ITEMS.register(path, () ->

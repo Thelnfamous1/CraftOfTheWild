@@ -35,6 +35,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         this.simpleGeneratedModel(ItemInit.MUSIC_DISC_LOST_CITY.get());
         this.simpleGeneratedModel(ItemInit.MUSIC_DISC_OF_THE_WILD.get());
         this.simpleGeneratedModel(ItemInit.MUSIC_DISC_STABLES.get());
+        this.simpleGeneratedModel(ItemInit.EGG_PUDDING.get());
     }
 
     protected ItemModelBuilder spawnEgg(Item item) {

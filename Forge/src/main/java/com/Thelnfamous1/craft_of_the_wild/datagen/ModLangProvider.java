@@ -48,12 +48,14 @@ public class ModLangProvider extends LanguageProvider {
             add(AttackTypeComponentProvider.getAttackTypeDisplayName(EntityInit.STONE_TALUS.get(), attackType).getString(), checkReplace(attackType.getKey()));
         }
         this.projectileDamageTypeLang(DamageTypeInit.STONE_TALUS_ARM, "a stony arm");
-        add(ModAdventureAdvancements.ADVANCEMENTS_ROOT_TITLE, "Craft of the Wild");
-        add(ModAdventureAdvancements.ADVANCEMENTS_ROOT_DESCRIPTION, "Adventure, exploration and combat");
+        add(ModAdventureAdvancements.ADVANCEMENTS_ROOT_TITLE, "A New Adventure");
+        add(ModAdventureAdvancements.ADVANCEMENTS_ROOT_DESCRIPTION, "Discover a Stable");
         add(ModAdventureAdvancements.KASS_QUEST_START_TITLE, "A Feathery Bard");
         add(ModAdventureAdvancements.KASS_QUEST_START_DESCRIPTION, "Give a Music Disc to Kass");
-        add(ModAdventureAdvancements.KASS_QUEST_FINISH_TITLE, "Bard Of The Wild");
+        add(ModAdventureAdvancements.KASS_QUEST_FINISH_TITLE, "The Lost Song");
         add(ModAdventureAdvancements.KASS_QUEST_FINISH_DESCRIPTION, "Give Kass all Music Discs in a Meadows biome");
+        add(ModAdventureAdvancements.DEFEAT_STONE_TALUS_TITLE, "Rock Hunter");
+        add(ModAdventureAdvancements.DEFEAT_STONE_TALUS_DESCRIPTION, "Defeat a Stone Talus");
     }
 
     private void projectileDamageTypeLang(ResourceKey<DamageType> resourceKey, @Nullable String projectileDescription) {
