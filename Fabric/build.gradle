@@ -67,7 +67,9 @@ def replaceProperties =
                 forge_version_range        : forge_version_range,
                 loader_version_range       : loader_version_range,
                 fabric_loader_version_range: fabric_loader_version_range,
-                minecraft_version          : minecraft_version
+                minecraft_version          : minecraft_version,
+                geckolib_version_range_fabric: geckolib_version_range_fabric,
+                sbl_version_range_fabric: sbl_version_range_fabric
         ]
 
 processResources {
