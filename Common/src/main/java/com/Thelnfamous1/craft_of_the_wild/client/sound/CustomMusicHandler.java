@@ -92,11 +92,15 @@ public class CustomMusicHandler<T extends Entity & CustomMusicPlayer> {
             this.looping = customMusic.looping();
             this.delay = customMusic.delay();
             this.volume = customMusic.volume();
-            this.attenuation = customMusic.attenuation();
+            this.attenuation = getAttenuation(customMusic);
             this.relative = customMusic.relative();
             this.x = musicPlayer.getX();
             this.y = musicPlayer.getY();
             this.z = musicPlayer.getZ();
+        }
+
+        private static Attenuation getAttenuation(CustomMusicPlayer.CustomMusicData customMusic) {
+            return customMusic.attenuation() == CustomMusicPlayer.Attenuation.LINEAR ? Attenuation.LINEAR : Attenuation.NONE;
         }
 
         @Override

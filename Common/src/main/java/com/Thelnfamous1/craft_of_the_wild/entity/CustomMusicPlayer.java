@@ -1,7 +1,6 @@
 package com.Thelnfamous1.craft_of_the_wild.entity;
 
 import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
-import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
@@ -35,7 +34,7 @@ public interface CustomMusicPlayer {
             float volume, float pitch, 
             RandomSource random, 
             boolean looping, int delay, 
-            SoundInstance.Attenuation attenuation, 
+            Attenuation attenuation, 
             double x, double y, double z, 
             boolean relative){
 
@@ -52,19 +51,19 @@ public interface CustomMusicPlayer {
         }
 
         public static CustomMusicData forUI(SoundEvent pSound, float pPitch, float pVolume) {
-            return new CustomMusicData(pSound, SoundSource.MASTER, pVolume, pPitch, SoundInstance.createUnseededRandom(), false, 0, SoundInstance.Attenuation.NONE, 0.0D, 0.0D, 0.0D, true);
+            return new CustomMusicData(pSound, SoundSource.MASTER, pVolume, pPitch, createUnseededRandom(), false, 0, CustomMusicPlayer.Attenuation.NONE, 0.0D, 0.0D, 0.0D, true);
         }
 
         public static CustomMusicData forMusic(SoundEvent pSound, boolean looping) {
-            return new CustomMusicData(pSound, SoundSource.MUSIC, 1.0F, 1.0F, SoundInstance.createUnseededRandom(), looping, 0, SoundInstance.Attenuation.NONE, 0.0D, 0.0D, 0.0D, true);
+            return new CustomMusicData(pSound, SoundSource.MUSIC, 1.0F, 1.0F, createUnseededRandom(), looping, 0, CustomMusicPlayer.Attenuation.NONE, 0.0D, 0.0D, 0.0D, true);
         }
 
         public static CustomMusicData forRecord(SoundEvent pSound, Vec3 pPos, boolean pLooping) {
-            return new CustomMusicData(pSound, SoundSource.RECORDS, 4.0F, 1.0F, SoundInstance.createUnseededRandom(), pLooping, 0, SoundInstance.Attenuation.LINEAR, pPos.x, pPos.y, pPos.z);
+            return new CustomMusicData(pSound, SoundSource.RECORDS, 4.0F, 1.0F, createUnseededRandom(), pLooping, 0, CustomMusicPlayer.Attenuation.LINEAR, pPos.x, pPos.y, pPos.z);
         }
 
         public static CustomMusicData forLocalAmbience(SoundEvent pSound, float pVolume, float pPitch) {
-            return new CustomMusicData(pSound, SoundSource.AMBIENT, pPitch, pVolume, SoundInstance.createUnseededRandom(), false, 0, SoundInstance.Attenuation.NONE, 0.0D, 0.0D, 0.0D, true);
+            return new CustomMusicData(pSound, SoundSource.AMBIENT, pPitch, pVolume, createUnseededRandom(), false, 0, CustomMusicPlayer.Attenuation.NONE, 0.0D, 0.0D, 0.0D, true);
         }
 
         public static CustomMusicData forAmbientAddition(SoundEvent pSound) {
@@ -72,16 +71,28 @@ public interface CustomMusicPlayer {
         }
 
         public static CustomMusicData forAmbientMood(SoundEvent pSoundEvent, RandomSource pRandom, double pX, double pY, double pZ) {
-            return new CustomMusicData(pSoundEvent, SoundSource.AMBIENT, 1.0F, 1.0F, pRandom, false, 0, SoundInstance.Attenuation.LINEAR, pX, pY, pZ);
+            return new CustomMusicData(pSoundEvent, SoundSource.AMBIENT, 1.0F, 1.0F, pRandom, false, 0, CustomMusicPlayer.Attenuation.LINEAR, pX, pY, pZ);
         }
 
         public CustomMusicData(SoundEvent pSoundEvent, SoundSource pSource, float pVolume, float pPitch, RandomSource pRandom, double pX, double pY, double pZ) {
-            this(pSoundEvent, pSource, pVolume, pPitch, pRandom, false, 0, SoundInstance.Attenuation.LINEAR, pX, pY, pZ);
+            this(pSoundEvent, pSource, pVolume, pPitch, pRandom, false, 0, CustomMusicPlayer.Attenuation.LINEAR, pX, pY, pZ);
         }
 
-        private CustomMusicData(SoundEvent pSoundEvent, SoundSource pSource, float pVolume, float pPitch, RandomSource pRandom, boolean pLooping, int pDelay, SoundInstance.Attenuation pAttenuation, double pX, double pY, double pZ) {
+        private CustomMusicData(SoundEvent pSoundEvent, SoundSource pSource, float pVolume, float pPitch, RandomSource pRandom, boolean pLooping, int pDelay, CustomMusicPlayer.Attenuation pAttenuation, double pX, double pY, double pZ) {
             this(pSoundEvent, pSource, pVolume, pPitch, pRandom, pLooping, pDelay, pAttenuation, pX, pY, pZ, false);
         }
+
+        static RandomSource createUnseededRandom() {
+            return RandomSource.create();
+        }
         
+    }
+
+    enum Attenuation {
+        NONE,
+        LINEAR;
+
+        Attenuation() {
+        }
     }
 }
