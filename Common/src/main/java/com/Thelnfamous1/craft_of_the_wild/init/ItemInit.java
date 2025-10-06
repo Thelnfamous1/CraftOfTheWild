@@ -6,13 +6,21 @@ import com.Thelnfamous1.craft_of_the_wild.item.COTWRecordItem;
 import com.Thelnfamous1.craft_of_the_wild.item.COTWSpawnEggItem;
 import com.nyfaria.craft_of_the_wild.registration.RegistrationProvider;
 import com.nyfaria.craft_of_the_wild.registration.RegistryObject;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.PaintingVariantTags;
+import net.minecraft.world.entity.decoration.Painting;
+import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 
+import java.util.Comparator;
 import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class ItemInit {
     public static final RegistrationProvider<Item> ITEMS = RegistrationProvider.get(Registries.ITEM, Constants.MODID);
@@ -23,8 +31,24 @@ public class ItemInit {
             .displayItems(
                     (itemDisplayParameters, output) -> {
                         ITEMS.getEntries().forEach((registryObject) -> output.accept(new ItemStack(registryObject.get())));
+                        generatePresetPaintings(output, (holder) -> {
+                            return holder.is(PaintingVariantTags.PLACEABLE);
+                        }, PaintingVariantInit.PAINTING_VARIANTS.getEntries().stream().map(paintingVariantRegistryObject -> itemDisplayParameters.holders().lookupOrThrow(Registries.PAINTING_VARIANT).getOrThrow(paintingVariantRegistryObject.getResourceKey())));
                     }).title(Component.translatable("itemGroup." + Constants.MODID + ".tab"))
             .build());
+
+    private static final Comparator<Holder<PaintingVariant>> PAINTING_COMPARATOR = Comparator.comparing(Holder::value, Comparator.<PaintingVariant>comparingInt((p_270004_) -> {
+        return p_270004_.getHeight() * p_270004_.getWidth();
+    }).thenComparing(PaintingVariant::getWidth));
+
+    private static void generatePresetPaintings(CreativeModeTab.Output pOutput, Predicate<Holder<PaintingVariant>> pPredicate, Stream<Holder.Reference<PaintingVariant>> referenceStream) {
+        referenceStream.filter(pPredicate).sorted(PAINTING_COMPARATOR).forEach((paintingVariant) -> {
+            ItemStack itemstack = new ItemStack(Items.PAINTING);
+            CompoundTag compoundtag = itemstack.getOrCreateTagElement("EntityTag");
+            Painting.storeVariant(compoundtag, paintingVariant);
+            pOutput.accept(itemstack);
+        });
+    }
 
     public static final RegistryObject<Item> STONE_TALUS_SPAWN_EGG = ITEMS.register("stone_talus_spawn_egg", () ->
             new COTWSpawnEggItem(EntityInit.STONE_TALUS, 14405058, 7643954, getItemProperties()));
