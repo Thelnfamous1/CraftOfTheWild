@@ -50,7 +50,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
@@ -718,7 +717,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Cus
             double xZAttackSize = xZAttackRadius * 2;
             double yAttackSize = xZAttackRadius * 2;
             AABB attackBox = AABB.ofSize(this.position().add(0, this.getBbHeight(), 0).add(0, yAttackRadius, 0), xZAttackSize, yAttackSize, xZAttackSize);
-            List<LivingEntity> targets = this.level().getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT, this, attackBox);
+            List<LivingEntity> targets = this.level().getNearbyEntities(LivingEntity.class, COTWMonster.AREA_OF_EFFECT_TARGETING_CONDITIONS, this, attackBox);
             targets.forEach(target -> {
                 if(!target.level().isClientSide){
                     float yRot = this.getRandom().nextFloat() * 360F;

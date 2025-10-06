@@ -101,6 +101,10 @@ dependencies {
     implementation fg.deobf("curse.maven:sodium-options-api-1103431:5807572")
     // to load Pipo's save file for the stables
     runtimeOnly "curse.maven:terralith-513688:5512076"
+    // to fix Goety incompat
+    implementation fg.deobf("curse.maven:goety-586095:6778940")
+    // To add curios compat
+    implementation fg.deobf("curse.maven:curios-309927:6418456")
 }
 
 tasks.withType(JavaCompile) {

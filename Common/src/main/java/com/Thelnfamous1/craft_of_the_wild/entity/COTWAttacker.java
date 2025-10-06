@@ -27,6 +27,7 @@ import java.util.function.Supplier;
 
 public abstract class COTWAttacker<T extends AnimatedAttacker.AttackType> extends COTWMob implements AnimatedAttacker<T> {
     public static final EntityDataAccessor<Boolean> DATA_ATTACKING = SynchedEntityData.defineId(COTWAttacker.class, EntityDataSerializers.BOOLEAN);
+    public static final TargetingConditions AREA_OF_EFFECT_TARGETING_CONDITIONS = TargetingConditions.forCombat();
     protected int attackTicker;
     protected int attackCooldownTicks;
 
@@ -62,7 +63,7 @@ public abstract class COTWAttacker<T extends AnimatedAttacker.AttackType> extend
                 COTWCommon.debug(Constants.DEBUG_MONSTER, "Created attack box of size {} for {}", attackBox.getSize(), this);
                 if (Constants.DEBUG_MONSTER) COTWUtil.sendHitboxParticles(attackBox, this.level());
                 if (!this.level().isClientSide) {
-                    List<LivingEntity> targets = this.level().getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT, this, attackBox);
+                    List<LivingEntity> targets = this.level().getNearbyEntities(LivingEntity.class, AREA_OF_EFFECT_TARGETING_CONDITIONS, this, attackBox);
                     targets.forEach(target -> this.modifiedDoHurtTarget(target, currentAttackPoint.baseDamageModifier(), true));
                 }
                 this.finalizeAreaOfEffectAttack(attackBox);
