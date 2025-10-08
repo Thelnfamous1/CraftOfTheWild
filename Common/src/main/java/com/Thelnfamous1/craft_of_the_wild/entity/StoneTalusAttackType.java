@@ -10,8 +10,8 @@ import java.util.function.IntFunction;
 
 public enum StoneTalusAttackType implements AnimatedAttacker.AttackType, StringRepresentable {
     POUND(0, "pound", ImmutableList.of(
-            AnimatedAttacker.AttackPoint.of(0.92F, 1, AnimatedAttacker.AttackPoint.DamageMode.AREA_OF_EFFECT),
-            AnimatedAttacker.AttackPoint.of(3.08F, 1, AnimatedAttacker.AttackPoint.DamageMode.AREA_OF_EFFECT)),
+            AnimatedAttacker.AttackPoint.of(0.92F, 11D / 16D, AnimatedAttacker.AttackPoint.DamageMode.AREA_OF_EFFECT),
+            AnimatedAttacker.AttackPoint.of(3.08F, 11D / 16D, AnimatedAttacker.AttackPoint.DamageMode.AREA_OF_EFFECT)),
             COTWUtil.secondsToTicks(3.5833F)),
     THROW(1, "throw", ImmutableList.of(
             AnimatedAttacker.AttackPoint.of(0.71F, 1.5, AnimatedAttacker.AttackPoint.DamageMode.RANGED),
@@ -21,7 +21,7 @@ public enum StoneTalusAttackType implements AnimatedAttacker.AttackType, StringR
             AnimatedAttacker.AttackPoint.of(2.25F, 13D / 8D, AnimatedAttacker.AttackPoint.DamageMode.AREA_OF_EFFECT)),
             COTWUtil.secondsToTicks(5.5F)),
     PUNCH(3, "punch", ImmutableList.of(
-            AnimatedAttacker.AttackPoint.of(1.71F, 1, AnimatedAttacker.AttackPoint.DamageMode.AREA_OF_EFFECT)),
+            AnimatedAttacker.AttackPoint.of(1.71F, 11D / 16D, AnimatedAttacker.AttackPoint.DamageMode.AREA_OF_EFFECT)),
             COTWUtil.secondsToTicks(5.5417F)),
     STUN(4, "stun", ImmutableList.of(
             AnimatedAttacker.AttackPoint.of(2.71F, 13D / 8D, AnimatedAttacker.AttackPoint.DamageMode.AREA_OF_EFFECT)),
