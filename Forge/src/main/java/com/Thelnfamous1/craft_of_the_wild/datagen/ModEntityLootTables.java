@@ -28,10 +28,10 @@ public class ModEntityLootTables extends EntityLootSubProvider {
     @Override
     public void generate() {
         this.add(EntityInit.STONE_TALUS.get(), this.chanceToDrop(
-                new LootEntry(Items.RAW_IRON, UniformGenerator.between(2, 4), 1.0F),
-                new LootEntry(Items.RAW_GOLD, UniformGenerator.between(2, 3), 1.0F),
-                new LootEntry(Items.LAPIS_LAZULI, UniformGenerator.between(1, 3), 1.0F),
-                new LootEntry(Items.DIAMOND, UniformGenerator.between(1, 2), 0.2F),
+                new LootEntry(Items.RAW_IRON, UniformGenerator.between(4, 6), 1.0F),
+                new LootEntry(Items.RAW_GOLD, UniformGenerator.between(3, 6), 1.0F),
+                new LootEntry(Items.LAPIS_LAZULI, UniformGenerator.between(1, 4), 1.0F),
+                new LootEntry(Items.DIAMOND, UniformGenerator.between(1, 4), 0.2F),
                 new LootEntry(ItemInit.MUSIC_DISC_A_ROCKY_BALLAD.get(), ConstantValue.exactly(1.0F), 0.05F)));
         this.dropSingle(EntityInit.BEEDLE.get(), Items.EMERALD);
         this.dropSingle(EntityInit.KASS.get(), Items.FEATHER);
