@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "S": {
+      "item": "craft_of_the_wild:luminous_stone"
+    }
+  },
+  "pattern": [
+    "S S",
+    "LSL",
+    "LSL"
+  ],
+  "result": {
+    "item": "craft_of_the_wild:radiant_chestplate"
+  },
+  "show_notification": true
+}

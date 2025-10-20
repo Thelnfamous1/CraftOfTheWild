@@ -31,6 +31,13 @@ import java.util.stream.Stream;
 public class ModLangProvider extends LanguageProvider {
     protected static final Map<String, String> REPLACE_LIST = ImmutableMap.of(
     );
+    protected static final Map<String, String> FULL_REPLACE_LIST = ImmutableMap.of(
+            "radiant_helmet", "Radiant Mask",
+            "radiant_chestplate", "Radiant Shirt",
+            "radiant_leggings", "Radiant Tights",
+            "bokolbin_helmet", "Bokolbin Mask",
+            "medal_of_honor_talus", "Medal of Honor: Talus"
+    );
 
     public ModLangProvider(PackOutput gen) {
         super(gen, Constants.MODID, "en_us");
@@ -114,7 +121,11 @@ public class ModLangProvider extends LanguageProvider {
     }
 
     protected String checkReplace(ResourceLocation location) {
-        return checkReplace(Arrays.stream(location.getPath().split("_")));
+        String path = location.getPath();
+        if(FULL_REPLACE_LIST.containsKey(path)){
+            return FULL_REPLACE_LIST.get(path);
+        }
+        return checkReplace(Arrays.stream(path.split("_")));
     }
 
     private String checkReplace(Stream<String> stream) {

@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_luminous_stone": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "craft_of_the_wild:luminous_stone"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "craft_of_the_wild:radiant_boots"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_luminous_stone",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "craft_of_the_wild:radiant_boots"
+    ]
+  },
+  "sends_telemetry_event": false
+}

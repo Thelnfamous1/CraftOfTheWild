@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "S": {
+      "item": "craft_of_the_wild:luminous_stone"
+    }
+  },
+  "pattern": [
+    "SLS",
+    "L L",
+    "L L"
+  ],
+  "result": {
+    "item": "craft_of_the_wild:radiant_leggings"
+  },
+  "show_notification": true
+}

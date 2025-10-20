@@ -2,8 +2,7 @@ package com.Thelnfamous1.craft_of_the_wild.init;
 
 import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
-import com.Thelnfamous1.craft_of_the_wild.item.COTWRecordItem;
-import com.Thelnfamous1.craft_of_the_wild.item.COTWSpawnEggItem;
+import com.Thelnfamous1.craft_of_the_wild.item.*;
 import com.nyfaria.craft_of_the_wild.registration.RegistrationProvider;
 import com.nyfaria.craft_of_the_wild.registration.RegistryObject;
 import net.minecraft.core.Holder;
@@ -70,6 +69,30 @@ public class ItemInit {
 
     public static final RegistryObject<Item> EGG_PUDDING = ITEMS.register("egg_pudding", () ->
             new BowlFoodItem(getItemProperties().stacksTo(1).food(new FoodProperties.Builder().nutrition(10).saturationMod(0.6F).build())));
+
+    public static final RegistryObject<Item> LUMINOUS_STONE = ITEMS.register("luminous_stone", () ->
+            new Item(getItemProperties()));
+
+    public static final RegistryObject<Item> RADIANT_HELMET = ITEMS.register("radiant_helmet", () ->
+            new RadiantArmorItem(COTWArmorMaterials.RADIANT, ArmorItem.Type.HELMET, getItemProperties()));
+
+    public static final RegistryObject<Item> RADIANT_CHESTPLATE = ITEMS.register("radiant_chestplate", () ->
+            new RadiantArmorItem(COTWArmorMaterials.RADIANT, ArmorItem.Type.CHESTPLATE, getItemProperties()));
+
+    public static final RegistryObject<Item> RADIANT_LEGGINGS = ITEMS.register("radiant_leggings", () ->
+            new RadiantArmorItem(COTWArmorMaterials.RADIANT, ArmorItem.Type.LEGGINGS, getItemProperties()));
+
+    public static final RegistryObject<Item> RADIANT_BOOTS = ITEMS.register("radiant_boots", () ->
+            new RadiantArmorItem(COTWArmorMaterials.RADIANT, ArmorItem.Type.BOOTS, getItemProperties()));
+
+    public static final RegistryObject<Item> MEDAL_OF_HONOR_TALUS = ITEMS.register("medal_of_honor_talus", () ->
+            new Item(getItemProperties()));
+
+    public static final RegistryObject<Item> MON = ITEMS.register("mon", () ->
+            new Item(getItemProperties()));
+
+    public static final RegistryObject<Item> BOKOLBIN_HELMET = ITEMS.register("bokolbin_helmet", () ->
+            new BokolbinArmorItem(COTWArmorMaterials.BOKOLBIN, ArmorItem.Type.HELMET, getItemProperties()));
 
     private static RegistryObject<Item> registerMusicDisc(String path, int analogSignal, RegistryObject<SoundEvent> soundSupplier, int durationInSeconds, String author) {
         return ITEMS.register(path, () ->

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "S": {
+      "item": "craft_of_the_wild:luminous_stone"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "L L"
+  ],
+  "result": {
+    "item": "craft_of_the_wild:radiant_helmet"
+  },
+  "show_notification": true
+}

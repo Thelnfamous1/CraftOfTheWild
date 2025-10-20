@@ -36,6 +36,15 @@ public class ModItemModelProvider extends ItemModelProvider {
         this.simpleGeneratedModel(ItemInit.MUSIC_DISC_OF_THE_WILD.get());
         this.simpleGeneratedModel(ItemInit.MUSIC_DISC_STABLES.get());
         this.simpleGeneratedModel(ItemInit.EGG_PUDDING.get());
+
+
+        this.simpleGeneratedModel(ItemInit.LUMINOUS_STONE.get());
+        this.simpleGeneratedModel(ItemInit.RADIANT_HELMET.get());
+        this.simpleGeneratedModel(ItemInit.RADIANT_CHESTPLATE.get());
+        this.simpleGeneratedModel(ItemInit.RADIANT_LEGGINGS.get());
+        this.simpleGeneratedModel(ItemInit.RADIANT_BOOTS.get());
+        this.simpleGeneratedModel(ItemInit.MEDAL_OF_HONOR_TALUS.get());
+        this.simpleGeneratedModel(ItemInit.MON.get());
     }
 
     protected ItemModelBuilder spawnEgg(Item item) {
