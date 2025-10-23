@@ -367,4 +367,33 @@ public class COTWUtil {
         double zSize = bounds.getZsize();
         return (xSize + zSize) / 2.0;
     }
+
+    public static float getLocalDarknessFactor(float partialTick, Level level, BlockPos pos) {
+        float localBrightness = level.getMaxLocalRawBrightness(pos);
+
+        // Compute an ambient darkness factor based on world time
+        float timeOfDay = level.getTimeOfDay(partialTick); // 0 to 1 over a full day
+        float nightFactor = Mth.cos(timeOfDay * Mth.TWO_PI) * 0.5F + 0.5F;
+        // nightFactor is about 0 at midnight, about 1 at noon
+
+        // Darken perceived brightness at night
+        float perceivedBrightness = localBrightness * nightFactor;
+
+        return Mth.clamp(1.0F - (perceivedBrightness / 15.0F), 0.0F, 1.0F);
+    }
+
+    public static int invertPackedLightByDarkness(int packedLight, float darkness) {
+        darkness = Mth.clamp(darkness, 0f, 1f);
+
+        // Extract sky and block light
+        int sky = (packedLight >> 20) & 0xF;
+        int block = (packedLight >> 4) & 0xF;
+
+        // Invert: move towards full-bright based on darkness
+        int newSky = (int) (sky + darkness * (15 - sky));
+        int newBlock = (int) (block + darkness * (15 - block));
+
+        // Repack
+        return (newSky << 20) | (newBlock << 4);
+    }
 }

@@ -5,9 +5,11 @@ import com.Thelnfamous1.craft_of_the_wild.entity.CustomMusicPlayer;
 import com.Thelnfamous1.craft_of_the_wild.init.*;
 import com.Thelnfamous1.craft_of_the_wild.item.COTWSpawnEggItem;
 import com.Thelnfamous1.craft_of_the_wild.mixin.SpawnEggItemAccessor;
+import com.Thelnfamous1.craft_of_the_wild.util.COTWTags;
 import net.minecraft.Util;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 
 // This class is part of the common project meaning it is shared between all supported loaders. Code written here can only
 // import and access the vanilla codebase, libraries used by vanilla, and optionally third party libraries that provide
@@ -31,6 +33,7 @@ public class COTWCommon {
         PaintingVariantInit.loadClass();
         StructurePoolElementTypeInit.loadClass();
         ParticleInit.loadClass();
+        MobEffectInit.loadClass();
     }
 
     public static void registerSpawnEggs() {
@@ -60,5 +63,18 @@ public class COTWCommon {
         if(boss.level().isClientSide){
             COTWCommonClient.stopCustomMusicFor(boss);
         }
+    }
+
+    public static boolean isUnableToTarget(LivingEntity attacker, LivingEntity target){
+        // If the target attacked the attacker, allow retaliation
+        if(attacker.getLastHurtByMob() == target || attacker.getBrain().isMemoryValue(MemoryModuleType.ANGRY_AT, target.getUUID())){
+            return false;
+        }
+        if(attacker.getType().is(COTWTags.RADIANT_DISGUISE_AFFECTS) && target.hasEffect(MobEffectInit.RADIANT_DISGUISE.get())){
+            return true;
+        } else if(attacker.getType().is(COTWTags.BOKOLBIN_DISGUISE_AFFECTS) && target.hasEffect(MobEffectInit.BOKOLBIN_DISGUISE.get())){
+            return true;
+        }
+        return false;
     }
 }

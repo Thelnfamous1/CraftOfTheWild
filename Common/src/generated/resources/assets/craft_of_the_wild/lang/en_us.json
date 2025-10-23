@@ -11,6 +11,8 @@
   "config.jade.plugin_craft_of_the_wild.attack_type": "Attack Type",
   "death.attack.craft_of_the_wild.stone_talus_arm": "%1$s was shot by a stony arm from %2$s",
   "death.attack.craft_of_the_wild.stone_talus_arm.item": "%1$s was shot by a stony arm from %2$s using %3$s",
+  "effect.craft_of_the_wild.bokolbin_disguise": "Bokolbin Disguise",
+  "effect.craft_of_the_wild.radiant_disguise": "Radiant Disguise",
   "entity.craft_of_the_wild.beedle": "Beedle",
   "entity.craft_of_the_wild.kass": "Kass",
   "entity.craft_of_the_wild.stone_talus": "Stone Talus",

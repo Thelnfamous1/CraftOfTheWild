@@ -1,14 +1,24 @@
 package com.Thelnfamous1.craft_of_the_wild.item;
 
+import com.Thelnfamous1.craft_of_the_wild.init.MobEffectInit;
+import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.DyeableArmorItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class BokolbinArmorItem extends DyeableArmorItem implements GeoItem {
+    public static final int MIN_DURATION = COTWUtil.secondsToTicks(10);
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+
     public BokolbinArmorItem(ArmorMaterial $$0, Type $$1, Properties $$2) {
         super($$0, $$1, $$2);
     }
@@ -20,5 +30,25 @@ public class BokolbinArmorItem extends DyeableArmorItem implements GeoItem {
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.cache;
+    }
+
+    @Override
+    public void inventoryTick(ItemStack $$0, Level $$1, Entity $$2, int $$3, boolean $$4) {
+        super.inventoryTick($$0, $$1, $$2, $$3, $$4);
+        if($$2 instanceof LivingEntity wearer && wearer.getItemBySlot(EquipmentSlot.HEAD) == $$0){
+            checkTick(wearer);
+        }
+    }
+
+    private static void checkTick(LivingEntity wearer) {
+        //if (wearer.level().isClientSide()) return;
+
+        if (isFullSetEquipped(wearer)) {
+            wearer.addEffect(new MobEffectInstance(MobEffectInit.BOKOLBIN_DISGUISE.get(), MIN_DURATION, 0, false, false, true));
+        }
+    }
+
+    public static boolean isFullSetEquipped(LivingEntity player) {
+        return player.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof BokolbinArmorItem;
     }
 }

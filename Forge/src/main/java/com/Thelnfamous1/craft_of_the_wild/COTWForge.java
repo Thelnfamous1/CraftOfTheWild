@@ -62,17 +62,19 @@ public class COTWForge {
         generator.addProvider(includeServer, new ModRecipeProvider(packOutput));
         generator.addProvider(includeServer, new ModLootTableProvider(packOutput));
         generator.addProvider(includeServer, new ModSoundProvider(packOutput, existingFileHelper));
-        generator.addProvider(includeServer, new ModTagProvider.BlockTagsProvider(packOutput,event.getLookupProvider(), existingFileHelper));
-        generator.addProvider(includeServer, new ModTagProvider.ItemTags(packOutput,event.getLookupProvider(), existingFileHelper));
+        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+        generator.addProvider(includeServer, new ModTagProvider.BlockTagsProvider(packOutput, lookupProvider, existingFileHelper));
+        generator.addProvider(includeServer, new ModTagProvider.ItemTags(packOutput, lookupProvider, existingFileHelper));
         generator.addProvider(includeClient, new ModItemModelProvider(packOutput, existingFileHelper));
         generator.addProvider(includeClient, new ModBlockStateProvider(packOutput, existingFileHelper));
         generator.addProvider(includeClient, new ModLangProvider(packOutput));
-        generator.addProvider(includeServer, new ModTagProvider.COTWBiomeTags(packOutput, event.getLookupProvider(), existingFileHelper));
-        generator.addProvider(includeServer, new ModAdvancementProvider(packOutput, event.getLookupProvider(), existingFileHelper));
-        generator.addProvider(includeServer, new ModPaintingVariantTagsProvider(packOutput, event.getLookupProvider(), existingFileHelper));
+        generator.addProvider(includeServer, new ModTagProvider.COTWBiomeTags(packOutput, lookupProvider, existingFileHelper));
+        generator.addProvider(includeServer, new ModAdvancementProvider(packOutput, lookupProvider, existingFileHelper));
+        generator.addProvider(includeServer, new ModPaintingVariantTagsProvider(packOutput, lookupProvider, existingFileHelper));
+        generator.addProvider(includeServer, new ModTagProvider.EntityTags(packOutput, lookupProvider, existingFileHelper));
         RegistrySetBuilder builder = createRegistrySetBuilder();
         CompletableFuture<HolderLookup.Provider> registries = getRegistries(builder);
-        generator.addProvider(includeServer, new DatapackBuiltinEntriesProvider(packOutput, event.getLookupProvider(), builder, Set.of(Constants.MODID)));
+        generator.addProvider(includeServer, new DatapackBuiltinEntriesProvider(packOutput, lookupProvider, builder, Set.of(Constants.MODID)));
         generator.addProvider(includeServer, new ModTagProvider.DamageTypes(packOutput,registries, existingFileHelper));
     }
 

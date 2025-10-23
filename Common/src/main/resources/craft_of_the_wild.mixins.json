@@ -8,11 +8,19 @@
     "EntityAccessor",
     "FeaturePoolElementAccessor",
     "PathAccessor",
+    "PlayerMixin",
     "SpawnEggItemAccessor",
+    "StartAttackingMixin",
+    "StopAttackingIfTargetInvalidMixin",
+    "TargetGoalMixin",
+    "TargetingConditionsMixin",
     "WalkNodeEvaluatorAccess"
   ],
   "client": [
     "LocalPlayerMixin",
+    "client.GuiGraphicsRendererMixin",
+    "client.ItemRendererAccess",
+    "client.ItemRendererMixin",
     "compat.AutoGlowingTextureAccessor"
   ],
   "injectors": {

@@ -1,5 +1,6 @@
 package com.Thelnfamous1.craft_of_the_wild.client;
 
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
@@ -14,7 +15,10 @@ public class COTWForgeClient {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener((EntityRenderersEvent.RegisterRenderers event) -> COTWCommonClient.registerRenderers(event::registerEntityRenderer));
         modEventBus.addListener((RegisterColorHandlersEvent.Item event) -> COTWCommonClient.registerColorHandlers(event::register));
-        modEventBus.addListener((FMLCommonSetupEvent event) -> event.enqueueWork(COTWCommonClient::setup));
+        modEventBus.addListener((FMLCommonSetupEvent event) -> {
+            event.enqueueWork(COTWCommonClient::setup);
+            event.enqueueWork(() -> COTWCommonClient.registerItemModelProperties(ItemProperties::register));
+        });
         modEventBus.addListener((RegisterParticleProvidersEvent event) -> COTWCommonClient.registerParticles(((particleType, particleProvider) ->
                 event.registerSpriteSet(particleType, sprites -> particleProvider))));
     }

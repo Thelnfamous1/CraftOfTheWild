@@ -1,5 +1,97 @@
 {
   "parent": "minecraft:item/generated",
+  "overrides": [
+    {
+      "model": "craft_of_the_wild:item/luminous_stone_glowing_01",
+      "predicate": {
+        "craft_of_the_wild:glow": 0.06666667
+      }
+    },
+    {
+      "model": "craft_of_the_wild:item/luminous_stone_glowing_02",
+      "predicate": {
+        "craft_of_the_wild:glow": 0.13333334
+      }
+    },
+    {
+      "model": "craft_of_the_wild:item/luminous_stone_glowing_03",
+      "predicate": {
+        "craft_of_the_wild:glow": 0.2
+      }
+    },
+    {
+      "model": "craft_of_the_wild:item/luminous_stone_glowing_04",
+      "predicate": {
+        "craft_of_the_wild:glow": 0.26666668
+      }
+    },
+    {
+      "model": "craft_of_the_wild:item/luminous_stone_glowing_05",
+      "predicate": {
+        "craft_of_the_wild:glow": 0.33333334
+      }
+    },
+    {
+      "model": "craft_of_the_wild:item/luminous_stone_glowing_06",
+      "predicate": {
+        "craft_of_the_wild:glow": 0.4
+      }
+    },
+    {
+      "model": "craft_of_the_wild:item/luminous_stone_glowing_07",
+      "predicate": {
+        "craft_of_the_wild:glow": 0.46666667
+      }
+    },
+    {
+      "model": "craft_of_the_wild:item/luminous_stone_glowing_08",
+      "predicate": {
+        "craft_of_the_wild:glow": 0.53333336
+      }
+    },
+    {
+      "model": "craft_of_the_wild:item/luminous_stone_glowing_09",
+      "predicate": {
+        "craft_of_the_wild:glow": 0.6
+      }
+    },
+    {
+      "model": "craft_of_the_wild:item/luminous_stone_glowing_10",
+      "predicate": {
+        "craft_of_the_wild:glow": 0.6666667
+      }
+    },
+    {
+      "model": "craft_of_the_wild:item/luminous_stone_glowing_11",
+      "predicate": {
+        "craft_of_the_wild:glow": 0.73333335
+      }
+    },
+    {
+      "model": "craft_of_the_wild:item/luminous_stone_glowing_12",
+      "predicate": {
+        "craft_of_the_wild:glow": 0.8
+      }
+    },
+    {
+      "model": "craft_of_the_wild:item/luminous_stone_glowing_13",
+      "predicate": {
+        "craft_of_the_wild:glow": 0.8666667
+      }
+    },
+    {
+      "model": "craft_of_the_wild:item/luminous_stone_glowing_14",
+      "predicate": {
+        "craft_of_the_wild:glow": 0.93333334
+      }
+    },
+    {
+      "model": "craft_of_the_wild:item/luminous_stone_glowing_15",
+      "predicate": {
+        "craft_of_the_wild:glow": 1.0
+      }
+    }
+  ],
   "textures": {
     "layer0": "craft_of_the_wild:item/luminous_stone"
   }

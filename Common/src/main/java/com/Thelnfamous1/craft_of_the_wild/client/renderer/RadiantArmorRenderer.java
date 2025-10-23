@@ -2,6 +2,7 @@ package com.Thelnfamous1.craft_of_the_wild.client.renderer;
 
 import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
 import com.Thelnfamous1.craft_of_the_wild.item.RadiantArmorItem;
+import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.HumanoidModel;
@@ -9,12 +10,9 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.level.Level;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.DefaultedItemGeoModel;
@@ -49,20 +47,8 @@ public class RadiantArmorRenderer extends GeoArmorRenderer<RadiantArmorItem> {
 				Entity wearer = RadiantArmorRenderer.this.currentEntity;
 				if (wearer == null) return;
 
-				Level level = wearer.level();
-				BlockPos pos = wearer.blockPosition();
-				float localBrightness = level.getMaxLocalRawBrightness(pos);
-
-				// Compute an ambient darkness factor based on world time
-				float timeOfDay = level.getTimeOfDay(partialTick); // 0 to 1 over a full day
-				float nightFactor = Mth.cos(timeOfDay * Mth.TWO_PI) * 0.5F + 0.5F;
-				// nightFactor is about 0 at midnight, about 1 at noon
-
-				// Darken perceived brightness at night
-				float perceivedBrightness = localBrightness * nightFactor;
-
-				float alpha = Mth.clamp(1.0F - (perceivedBrightness / 15.0F), 0.0F, 1.0F);
-                RenderType emissiveRenderType = getRenderType(animatable);
+				float alpha = COTWUtil.getLocalDarknessFactor(partialTick, wearer.level(), wearer.blockPosition());
+				RenderType emissiveRenderType = getRenderType(animatable);
 
                 getRenderer().reRender(bakedModel, poseStack, bufferSource, animatable, emissiveRenderType,
                         bufferSource.getBuffer(emissiveRenderType), partialTick, 15728640, OverlayTexture.NO_OVERLAY,

@@ -6,8 +6,9 @@
   "refmap": "${mod_id}.refmap.json",
   "mixins": [
     "BokolbinArmorItemMixin",
-    "PlayerMixin",
+    "PlayerMixin_Forge",
     "RadiantArmorItemMixin",
+    "RadiantItemMixin",
     "RayTracingMixin",
     "StoneTalusMixin",
     "StructureTemplateMixin"

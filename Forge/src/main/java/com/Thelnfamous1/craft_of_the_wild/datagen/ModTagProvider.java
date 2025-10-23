@@ -8,12 +8,15 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.BiomeTagsProvider;
+import net.minecraft.data.tags.EntityTypeTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.biome.Biome;
@@ -116,6 +119,19 @@ public class ModTagProvider {
             for (ResourceKey<Biome> damageType : damageTypes) {
                 tag(tag).add(damageType);
             }
+        }
+    }
+
+    public static class EntityTags extends EntityTypeTagsProvider{
+
+        public EntityTags(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pProvider, @Nullable ExistingFileHelper existingFileHelper) {
+            super(pOutput, pProvider, Constants.MODID, existingFileHelper);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider pProvider) {
+            this.tag(COTWTags.RADIANT_DISGUISE_AFFECTS).addTag(EntityTypeTags.SKELETONS);
+            this.tag(COTWTags.BOKOLBIN_DISGUISE_AFFECTS).add(EntityType.PIGLIN, EntityType.PIGLIN_BRUTE, EntityType.HOGLIN);
         }
     }
 }

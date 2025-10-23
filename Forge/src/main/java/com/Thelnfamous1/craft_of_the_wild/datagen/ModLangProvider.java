@@ -13,6 +13,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.BlockItem;
@@ -49,6 +50,7 @@ public class ModLangProvider extends LanguageProvider {
         EntityInit.ENTITIES.getEntries().forEach(this::entityLang);
         BlockInit.BLOCKS.getEntries().forEach(this::blockLang);
         AttributeInit.ATTRIBUTES.getEntries().forEach(this::attributeLang);
+        MobEffectInit.MOB_EFFECTS.getEntries().forEach(this::mobEffectLang);
         add("itemGroup." + Constants.MODID + ".tab", Constants.MOD_NAME);
         add(COTWJadePlugin.getConfigTranslationKey(COTWJadePlugin.ATTACK_TYPE), "Attack Type");
         add(AttackTypeComponentProvider.ATTACK_TYPE_TRANSLATION_KEY, "Attack Type");
@@ -110,6 +112,10 @@ public class ModLangProvider extends LanguageProvider {
 
     protected void entityLang(RegistryObject<EntityType<?>> entry) {
         addEntityType(entry, checkReplace(entry));
+    }
+
+    protected void mobEffectLang(RegistryObject<MobEffect> entry) {
+        addEffect(entry, checkReplace(entry));
     }
 
     protected String checkReplace(ResourceKey<?> registryObject) {

@@ -9,6 +9,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.PaintingVariantTags;
 import net.minecraft.world.entity.decoration.Painting;
@@ -71,7 +72,7 @@ public class ItemInit {
             new BowlFoodItem(getItemProperties().stacksTo(1).food(new FoodProperties.Builder().nutrition(10).saturationMod(0.6F).build())));
 
     public static final RegistryObject<Item> LUMINOUS_STONE = ITEMS.register("luminous_stone", () ->
-            new Item(getItemProperties()));
+            new RadiantItem(getItemProperties()));
 
     public static final RegistryObject<Item> RADIANT_HELMET = ITEMS.register("radiant_helmet", () ->
             new RadiantArmorItem(COTWArmorMaterials.RADIANT, ArmorItem.Type.HELMET, getItemProperties()));
