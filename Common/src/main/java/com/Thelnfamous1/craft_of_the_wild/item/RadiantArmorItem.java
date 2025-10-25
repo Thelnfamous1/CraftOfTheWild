@@ -1,9 +1,11 @@
 package com.Thelnfamous1.craft_of_the_wild.item;
 
+import com.Thelnfamous1.craft_of_the_wild.duck.DisguiseEffectUser;
 import com.Thelnfamous1.craft_of_the_wild.init.MobEffectInit;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityEvent;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorMaterial;
@@ -28,7 +30,10 @@ public class RadiantArmorItem extends DyeableArmorItem {
     private static void checkTick(LivingEntity wearer) {
         //if (wearer.level().isClientSide()) return;
 
-        if (isFullSetEquipped(wearer)) {
+        if (isFullSetEquipped(wearer) && ((DisguiseEffectUser) wearer).craft_of_the_wild$canApplyDisguiseEffect(MobEffectInit.RADIANT_DISGUISE.get())) {
+            if(!wearer.hasEffect(MobEffectInit.RADIANT_DISGUISE.get())){
+                wearer.level().broadcastEntityEvent(wearer, EntityEvent.POOF);
+            }
             wearer.addEffect(new MobEffectInstance(MobEffectInit.RADIANT_DISGUISE.get(), MIN_DURATION, 0, false, false, true));
         }
     }

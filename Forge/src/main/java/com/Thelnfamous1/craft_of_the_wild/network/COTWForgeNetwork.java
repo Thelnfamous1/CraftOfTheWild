@@ -20,5 +20,6 @@ public class COTWForgeNetwork {
 
     public static void init() {
         SYNC_CHANNEL.registerMessage(INDEX++, ClientboundCircleParticlesPacket.class, ClientboundCircleParticlesPacket::write, ClientboundCircleParticlesPacket::new, ClientboundCircleParticlesPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        SYNC_CHANNEL.registerMessage(INDEX++, ClientboundSyncDisguiseEffectCooldownsPacket.class, ClientboundSyncDisguiseEffectCooldownsPacket::write, ClientboundSyncDisguiseEffectCooldownsPacket::new, ClientboundSyncDisguiseEffectCooldownsPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
     }
 }

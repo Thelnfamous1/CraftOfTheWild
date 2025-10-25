@@ -1,4 +1,4 @@
-package com.Thelnfamous1.craft_of_the_wild.client.renderer;
+package com.Thelnfamous1.craft_of_the_wild.duck;
 
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;

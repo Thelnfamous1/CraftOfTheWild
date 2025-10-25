@@ -1,6 +1,6 @@
 package com.Thelnfamous1.craft_of_the_wild.mixin.client;
 
-import com.Thelnfamous1.craft_of_the_wild.client.renderer.EntityAwareItemRenderer;
+import com.Thelnfamous1.craft_of_the_wild.duck.EntityAwareItemRenderer;
 import com.Thelnfamous1.craft_of_the_wild.item.RadiantItem;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;

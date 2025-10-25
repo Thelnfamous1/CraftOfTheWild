@@ -9,13 +9,17 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
+import org.jetbrains.annotations.Nullable;
 
 public class COTWFabric implements ModInitializer {
+    private static MinecraftServer currentServer = null;
 
     @Override
     public void onInitialize() {
@@ -40,6 +44,12 @@ public class COTWFabric implements ModInitializer {
             }
             return vanillaResult ? InteractionResult.SUCCESS : InteractionResult.FAIL;
         }));
+        ServerLifecycleEvents.SERVER_STARTING.register(s -> currentServer = s);
+        ServerLifecycleEvents.SERVER_STOPPED.register(s -> currentServer = null);
     }
 
+    @Nullable
+    public static MinecraftServer getCurrentServer() {
+        return currentServer;
+    }
 }

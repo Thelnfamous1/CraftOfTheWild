@@ -5,10 +5,12 @@ import com.Thelnfamous1.craft_of_the_wild.entity.COTWMultipartEntity;
 import com.Thelnfamous1.craft_of_the_wild.entity.PartEntityController;
 import com.Thelnfamous1.craft_of_the_wild.network.COTWForgeNetwork;
 import com.Thelnfamous1.craft_of_the_wild.network.ClientboundCircleParticlesPacket;
+import com.Thelnfamous1.craft_of_the_wild.network.ClientboundSyncDisguiseEffectCooldownsPacket;
 import com.Thelnfamous1.craft_of_the_wild.platform.services.IPlatformHelper;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -17,6 +19,8 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.network.PacketDistributor;
+
+import java.util.Map;
 
 public class ForgePlatformHelper implements IPlatformHelper {
 
@@ -67,5 +71,10 @@ public class ForgePlatformHelper implements IPlatformHelper {
     @Override
     public void sendSmashAttackParticlePacket(AABB attackBox, int power) {
 
+    }
+
+    @Override
+    public void sendSyncDisguiseEffectPacket(Entity entity, Map<MobEffect, Integer> disguiseEffectCooldowns) {
+        COTWForgeNetwork.SYNC_CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new ClientboundSyncDisguiseEffectCooldownsPacket(entity.getId(), disguiseEffectCooldowns));
     }
 }

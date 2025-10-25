@@ -1,6 +1,6 @@
 package com.Thelnfamous1.craft_of_the_wild.mixin.client;
 
-import com.Thelnfamous1.craft_of_the_wild.client.renderer.EntityAwareItemRenderer;
+import com.Thelnfamous1.craft_of_the_wild.duck.EntityAwareItemRenderer;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.vertex.PoseStack;

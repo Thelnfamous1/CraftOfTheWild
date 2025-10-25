@@ -1,5 +1,6 @@
 package com.Thelnfamous1.craft_of_the_wild.client.renderer;
 
+import com.Thelnfamous1.craft_of_the_wild.duck.EntityAwareItemRenderer;
 import com.Thelnfamous1.craft_of_the_wild.mixin.client.ItemRendererAccess;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import com.mojang.blaze3d.vertex.PoseStack;

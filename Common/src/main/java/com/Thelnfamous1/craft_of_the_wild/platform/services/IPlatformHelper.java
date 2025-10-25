@@ -5,10 +5,13 @@ import com.Thelnfamous1.craft_of_the_wild.entity.PartEntityController;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
+
+import java.util.Map;
 
 public interface IPlatformHelper {
 
@@ -53,4 +56,6 @@ public interface IPlatformHelper {
     void onFinalizeSpawn(Mob mob, ServerLevelAccessor level, DifficultyInstance currentDifficultyAt, MobSpawnType spawnType, SpawnGroupData spawnGroupData, CompoundTag saveData);
 
     void sendSmashAttackParticlePacket(AABB attackBox, int power);
+
+    void sendSyncDisguiseEffectPacket(Entity entityId, Map<MobEffect, Integer> disguiseEffectCooldowns);
 }
