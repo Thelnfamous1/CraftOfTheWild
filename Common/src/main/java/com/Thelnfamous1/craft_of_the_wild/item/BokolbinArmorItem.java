@@ -10,26 +10,12 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.DyeableArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import software.bernie.geckolib.animatable.GeoItem;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class BokolbinArmorItem extends DyeableArmorItem implements GeoItem {
+public class BokolbinArmorItem extends DyeableArmorItem {
     public static final int MIN_DURATION = COTWUtil.secondsToTicks(10);
-    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     public BokolbinArmorItem(ArmorMaterial $$0, Type $$1, Properties $$2) {
         super($$0, $$1, $$2);
-    }
-
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-    }
-
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.cache;
     }
 
     @Override

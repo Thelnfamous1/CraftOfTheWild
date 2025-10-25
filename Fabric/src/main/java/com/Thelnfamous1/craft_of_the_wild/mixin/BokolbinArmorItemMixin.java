@@ -12,7 +12,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.RenderProvider;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -20,10 +23,21 @@ import java.util.function.Supplier;
 @Mixin(BokolbinArmorItem.class)
 public abstract class BokolbinArmorItemMixin extends DyeableArmorItem implements GeoItem {
     @Unique
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    @Unique
     private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
 
     public BokolbinArmorItemMixin(ArmorMaterial p_266710_, Type p_267178_, Properties p_267093_) {
         super(p_266710_, p_267178_, p_267093_);
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.cache;
     }
 
     // Create our armor model/renderer for Fabric and return it
@@ -35,7 +49,7 @@ public abstract class BokolbinArmorItemMixin extends DyeableArmorItem implements
             @Override
             public HumanoidModel<LivingEntity> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<LivingEntity> original) {
                 if(this.renderer == null)
-                    this.renderer = new BokolbinArmorRenderer();
+                    this.renderer = new BokolbinArmorRenderer<>();
 
                 // This prepares our GeoArmorRenderer for the current render frame.
                 // These parameters may be null however, so we don't do anything further with them

@@ -11,16 +11,31 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
 
 @Mixin(BokolbinArmorItem.class)
 public abstract class BokolbinArmorItemMixin extends DyeableArmorItem implements GeoItem {
+    @Unique
+    private final AnimatableInstanceCache craft_of_the_wild$cache = GeckoLibUtil.createInstanceCache(this);
 
     public BokolbinArmorItemMixin(ArmorMaterial p_266710_, Type p_267178_, Properties p_267093_) {
         super(p_266710_, p_267178_, p_267093_);
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.craft_of_the_wild$cache;
     }
 
     // Create our armor model/renderer for forge and return it
@@ -32,7 +47,7 @@ public abstract class BokolbinArmorItemMixin extends DyeableArmorItem implements
             @Override
             public @NotNull HumanoidModel<?> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
                 if (this.renderer == null)
-                    this.renderer = new BokolbinArmorRenderer();
+                    this.renderer = new BokolbinArmorRenderer<>();
 
                 // This prepares our GeoArmorRenderer for the current render frame.
                 // These parameters may be null however, so we don't do anything further with them

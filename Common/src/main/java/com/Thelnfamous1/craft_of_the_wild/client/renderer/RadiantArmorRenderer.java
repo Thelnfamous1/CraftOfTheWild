@@ -1,7 +1,6 @@
 package com.Thelnfamous1.craft_of_the_wild.client.renderer;
 
 import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
-import com.Thelnfamous1.craft_of_the_wild.item.RadiantArmorItem;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -13,6 +12,8 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
+import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.DefaultedItemGeoModel;
@@ -22,7 +23,7 @@ import software.bernie.geckolib.util.RenderUtils;
 
 import javax.annotation.Nullable;
 
-public class RadiantArmorRenderer extends GeoArmorRenderer<RadiantArmorItem> {
+public class RadiantArmorRenderer<T extends ArmorItem & GeoItem> extends GeoArmorRenderer<T> {
 	private static final ResourceLocation GLOW = COTWCommon.getResourceLocation("textures/item/armor/radiant_glow.png");
 	protected GeoBone waist = null;
 	public RadiantArmorRenderer() {
@@ -37,13 +38,13 @@ public class RadiantArmorRenderer extends GeoArmorRenderer<RadiantArmorItem> {
 			 */
 
 			@Override
-			protected ResourceLocation getTextureResource(RadiantArmorItem animatable) {
+			protected ResourceLocation getTextureResource(T animatable) {
 				//return super.getTextureResource(animatable);
 				return GLOW;
 			}
 
 			@Override
-			public void render(PoseStack poseStack, RadiantArmorItem animatable, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+			public void render(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
 				Entity wearer = RadiantArmorRenderer.this.currentEntity;
 				if (wearer == null) return;
 
@@ -59,16 +60,15 @@ public class RadiantArmorRenderer extends GeoArmorRenderer<RadiantArmorItem> {
 	}
 
 	@Override
-	public RenderType getRenderType(RadiantArmorItem animatable, ResourceLocation texture, @org.jetbrains.annotations.Nullable MultiBufferSource bufferSource, float partialTick) {
+	public RenderType getRenderType(T animatable, ResourceLocation texture, @org.jetbrains.annotations.Nullable MultiBufferSource bufferSource, float partialTick) {
 		return RenderType.entityCutout(texture); // Allows armor to render emissive layers, otherwise they are simply not rendered
 	}
 
 	@Override
 	protected void grabRelevantBones(BakedGeoModel bakedModel) {
-		super.grabRelevantBones(bakedModel);
-
 		if (this.lastModel == bakedModel)
 			return;
+		super.grabRelevantBones(bakedModel);
 		this.waist = getWaistBone();
 	}
 
