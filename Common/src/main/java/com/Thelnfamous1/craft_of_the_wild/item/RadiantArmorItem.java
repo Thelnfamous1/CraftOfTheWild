@@ -15,6 +15,7 @@ import net.minecraft.world.level.Level;
 
 public class RadiantArmorItem extends DyeableArmorItem {
     public static final int MIN_DURATION = COTWUtil.secondsToTicks(10);
+
     public RadiantArmorItem(ArmorMaterial $$0, Type $$1, Properties $$2) {
         super($$0, $$1, $$2);
     }

@@ -5,8 +5,8 @@ import com.Thelnfamous1.craft_of_the_wild.item.BokolbinArmorItem;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.DyeableArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +21,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.function.Consumer;
 
 @Mixin(BokolbinArmorItem.class)
-public abstract class BokolbinArmorItemMixin extends DyeableArmorItem implements GeoItem {
+public abstract class BokolbinArmorItemMixin extends ArmorItem implements GeoItem {
     @Unique
     private final AnimatableInstanceCache craft_of_the_wild$cache = GeckoLibUtil.createInstanceCache(this);
 

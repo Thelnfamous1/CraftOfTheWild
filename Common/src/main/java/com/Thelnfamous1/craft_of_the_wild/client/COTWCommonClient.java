@@ -22,12 +22,12 @@ import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
-import net.minecraft.client.renderer.item.ItemPropertyFunction;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 
@@ -93,8 +93,25 @@ public class COTWCommonClient {
         });
     }
 
+    public static void registerItemColors(ItemColorRegistration colorRegistration) {
+        colorRegistration.apply((itemStack, i) -> {
+                    if (i > 0) return -1; // overlay layer, no tint
+                    DyeableLeatherItem item = (DyeableLeatherItem) itemStack.getItem();
+                    // Only apply color if the stack has a custom color
+                    return item.hasCustomColor(itemStack) ? item.getColor(itemStack) : -1;
+                },
+                ItemInit.RADIANT_HELMET.get(), ItemInit.RADIANT_CHESTPLATE.get(), ItemInit.RADIANT_LEGGINGS.get(), ItemInit.RADIANT_BOOTS.get());
+    }
+
     @FunctionalInterface
     public interface ItemPropertyRegistration{
         void apply(Item pItem, ResourceLocation pName, ClampedItemPropertyFunction pProperty);
     }
+
+    @FunctionalInterface
+    public interface ItemColorRegistration{
+        void apply(ItemColor itemColor, ItemLike... itemLikes);
+    }
+
+
 }

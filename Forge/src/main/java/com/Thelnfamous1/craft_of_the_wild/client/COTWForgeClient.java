@@ -21,6 +21,9 @@ public class COTWForgeClient {
         });
         modEventBus.addListener((RegisterParticleProvidersEvent event) -> COTWCommonClient.registerParticles(((particleType, particleProvider) ->
                 event.registerSpriteSet(particleType, sprites -> particleProvider))));
+        modEventBus.addListener((RegisterColorHandlersEvent.Item event) -> {
+            COTWCommonClient.registerItemColors(event::register);
+        });
     }
 
 }

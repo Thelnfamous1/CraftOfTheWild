@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "craft_of_the_wild:item/radiant_chestplate"
+    "layer0": "craft_of_the_wild:item/radiant_chestplate",
+    "layer1": "craft_of_the_wild:item/radiant_chestplate_overlay"
   }
 }
