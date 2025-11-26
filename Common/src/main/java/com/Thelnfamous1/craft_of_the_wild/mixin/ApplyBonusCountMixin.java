@@ -24,7 +24,7 @@ public class ApplyBonusCountMixin {
     private int modify_efficiencyLevel_getDestroySpeed(int original, ItemStack stack, LootContext context){
         LivingEntity entity = context.hasParam(LootContextParams.THIS_ENTITY) ?
                 context.getParam(LootContextParams.THIS_ENTITY) instanceof LivingEntity living ? living : null : null;
-        if(this.enchantment == Enchantments.BLOCK_FORTUNE && COTWCommon.isMedalOfHonorTalusEquipped(entity)){
+        if(this.enchantment == Enchantments.BLOCK_FORTUNE && entity != null && COTWCommon.isMedalOfHonorTalusEquipped(entity)){
             original += 2;
         }
         return original;
