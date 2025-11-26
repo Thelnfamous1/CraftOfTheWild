@@ -1,6 +1,7 @@
 package com.Thelnfamous1.craft_of_the_wild.datagen;
 
 import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
+import com.Thelnfamous1.craft_of_the_wild.criterion.KilledCountTrigger;
 import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
 import com.Thelnfamous1.craft_of_the_wild.init.ItemInit;
 import com.Thelnfamous1.craft_of_the_wild.init.WorldGenInit;
@@ -34,6 +35,8 @@ public class ModAdventureAdvancements implements ForgeAdvancementProvider.Advanc
     public static final String KASS_QUEST_FINISH_DESCRIPTION = COTWCommon.makeDescriptionId("advancements", "adventure/kass_quest_finish/description");
     public static final String DEFEAT_STONE_TALUS_TITLE = COTWCommon.makeDescriptionId("advancements", "adventure/defeat_stone_talus/title");
     public static final String DEFEAT_STONE_TALUS_DESCRIPTION = COTWCommon.makeDescriptionId("advancements", "adventure/defeat_stone_talus/description");
+    public static final String DEFEAT_TWENTY_STONE_TALUS_TITLE = COTWCommon.makeDescriptionId("advancements", "adventure/defeat_twenty_stone_talus/title");
+    public static final String DEFEAT_TWENTY_STONE_TALUS_DESCRIPTION = COTWCommon.makeDescriptionId("advancements", "adventure/defeat_twenty_stone_talus/description");
 
     @Override
     public void generate(HolderLookup.Provider registries, Consumer<Advancement> saver, ExistingFileHelper existingFileHelper) {
@@ -49,15 +52,25 @@ public class ModAdventureAdvancements implements ForgeAdvancementProvider.Advanc
                 .addCriterion("stables_snowy",
                         PlayerTrigger.TriggerInstance.located(LocationPredicate.inStructure(WorldGenInit.STABLES_SNOWY_STRUCTURE)))
                 .save(saver, COTWCommon.getResourceLocation("adventure/root"), existingFileHelper);
-        Advancement.Builder.advancement()
+        Advancement rockHunter = Advancement.Builder.advancement()
                 .parent(root)
                 .display(
                         Items.COBBLESTONE,
                         Component.translatable(DEFEAT_STONE_TALUS_TITLE),
                         Component.translatable(DEFEAT_STONE_TALUS_DESCRIPTION),
-                        (ResourceLocation)null, FrameType.TASK, true, true, false)
+                        (ResourceLocation) null, FrameType.TASK, true, true, false)
                 .addCriterion("defeat_stone_talus", KilledTrigger.TriggerInstance.playerKilledEntity(EntityPredicate.Builder.entity().of(EntityInit.STONE_TALUS.get())))
                 .save(saver, COTWCommon.getResourceLocation("adventure/stone_talus_defeat"), existingFileHelper);
+        Advancement.Builder.advancement()
+                .parent(rockHunter)
+                .display(
+                        ItemInit.MEDAL_OF_HONOR_TALUS.get(),
+                        Component.translatable(DEFEAT_TWENTY_STONE_TALUS_TITLE),
+                        Component.translatable(DEFEAT_TWENTY_STONE_TALUS_DESCRIPTION),
+                        null, FrameType.CHALLENGE, true, true, false)
+                .addCriterion("defeat_twenty_stone_talus", KilledCountTrigger.TriggerInstance.playerKilledEntity(EntityPredicate.Builder.entity().of(EntityInit.STONE_TALUS.get()), 20))
+                .rewards(AdvancementRewards.Builder.loot(COTWLootTables.DEFEAT_TWENTY_STONE_TALUS))
+                .save(saver, COTWCommon.getResourceLocation("adventure/stone_talus_defeat_twenty"), existingFileHelper);
         Advancement kassQuestStart = Advancement.Builder.advancement()
                 .parent(root)
                 .display(

@@ -6,7 +6,8 @@ import net.minecraft.resources.ResourceLocation;
 public class COTWLootTables {
 
     public static ResourceLocation KASS_QUEST_FINISH = COTWCommon.getResourceLocation("advancement_reward/kass_quest_finish");
-    public static ResourceLocation  STABLES_V1_MAIN = COTWCommon.getResourceLocation("chests/stables/v1/main");
+    public static ResourceLocation DEFEAT_TWENTY_STONE_TALUS = COTWCommon.getResourceLocation("advancement_reward/defeat_twenty_stone_talus");
+    public static ResourceLocation STABLES_V1_MAIN = COTWCommon.getResourceLocation("chests/stables/v1/main");
     public static ResourceLocation STABLES_V1_MUSIC_DISC = COTWCommon.getResourceLocation("chests/stables/v1/music_disc");
     public static ResourceLocation STABLES_V1_BOX = COTWCommon.getResourceLocation("chests/stables/v1/box");
     public static ResourceLocation STABLES_V2_MAIN = COTWCommon.getResourceLocation("chests/stables/v2/main");

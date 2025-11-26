@@ -66,6 +66,8 @@ public class ModLangProvider extends LanguageProvider {
         add(ModAdventureAdvancements.KASS_QUEST_FINISH_DESCRIPTION, "Give Kass all Music Discs in a Meadows biome");
         add(ModAdventureAdvancements.DEFEAT_STONE_TALUS_TITLE, "Rock Hunter");
         add(ModAdventureAdvancements.DEFEAT_STONE_TALUS_DESCRIPTION, "Defeat a Stone Talus");
+        add(ModAdventureAdvancements.DEFEAT_TWENTY_STONE_TALUS_TITLE, "WANTED: Stone Talus");
+        add(ModAdventureAdvancements.DEFEAT_TWENTY_STONE_TALUS_DESCRIPTION, "Defeat 20 Stone Talus");
         PaintingVariantInit.PAINTING_VARIANTS.getEntries().forEach(paintingVariantRegistryObject -> {
             ResourceLocation id = paintingVariantRegistryObject.getId();
             this.add(id.toLanguageKey("painting", "title"), checkReplace(id));

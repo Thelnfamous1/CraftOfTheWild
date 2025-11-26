@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:advancement_reward",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": 1.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "craft_of_the_wild:medal_of_honor_talus"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "craft_of_the_wild:advancement_reward/defeat_twenty_stone_talus"
+}

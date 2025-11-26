@@ -34,6 +34,7 @@ public class COTWCommon {
         StructurePoolElementTypeInit.loadClass();
         ParticleInit.loadClass();
         MobEffectInit.loadClass();
+        CriterionInit.registerAll();
     }
 
     public static void registerSpawnEggs() {

@@ -1,0 +1,46 @@
+{
+  "parent": "craft_of_the_wild:adventure/stone_talus_defeat",
+  "criteria": {
+    "defeat_twenty_stone_talus": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "craft_of_the_wild:stone_talus"
+            }
+          }
+        ],
+        "kill_count": 20
+      },
+      "trigger": "craft_of_the_wild:player_killed_entity_count"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.craft_of_the_wild.adventure.defeat_twenty_stone_talus.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "craft_of_the_wild:medal_of_honor_talus"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.craft_of_the_wild.adventure.defeat_twenty_stone_talus.title"
+    }
+  },
+  "requirements": [
+    [
+      "defeat_twenty_stone_talus"
+    ]
+  ],
+  "rewards": {
+    "loot": [
+      "craft_of_the_wild:advancement_reward/defeat_twenty_stone_talus"
+    ]
+  },
+  "sends_telemetry_event": true
+}

@@ -21,5 +21,13 @@ public class ModAdvancementLootTables implements LootTableSubProvider {
                 .add(LootItem.lootTableItem(ItemInit.MUSIC_DISC_OF_THE_WILD.get())
                         .apply(SetItemCountFunction.setCount(ConstantValue.exactly(1.0F)))));
         saver.accept(COTWLootTables.KASS_QUEST_FINISH, kassQuestReward);
+
+
+        LootTable.Builder defeatTwentyStoneTalusReward = LootTable.lootTable();
+        defeatTwentyStoneTalusReward.withPool(LootPool.lootPool()
+                .setRolls(ConstantValue.exactly(1))
+                .add(LootItem.lootTableItem(ItemInit.MEDAL_OF_HONOR_TALUS.get())
+                        .apply(SetItemCountFunction.setCount(ConstantValue.exactly(1.0F)))));
+        saver.accept(COTWLootTables.DEFEAT_TWENTY_STONE_TALUS, defeatTwentyStoneTalusReward);
     }
 }
