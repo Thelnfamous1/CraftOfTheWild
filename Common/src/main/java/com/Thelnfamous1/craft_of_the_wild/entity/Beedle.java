@@ -1,6 +1,7 @@
 package com.Thelnfamous1.craft_of_the_wild.entity;
 
 import com.Thelnfamous1.craft_of_the_wild.Constants;
+import com.Thelnfamous1.craft_of_the_wild.compat.customvillagertrades.CustomVillagerTradesCompat;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.COTWSharedAi;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.behavior.*;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor.COTWNearbyPlayersSensor;
@@ -10,8 +11,9 @@ import com.Thelnfamous1.craft_of_the_wild.entity.trades.COTWVillagerTrades;
 import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
 import com.Thelnfamous1.craft_of_the_wild.init.ItemInit;
 import com.Thelnfamous1.craft_of_the_wild.init.SoundInit;
+import com.Thelnfamous1.craft_of_the_wild.init.VillagerProfessionInit;
+import com.Thelnfamous1.craft_of_the_wild.platform.Services;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
-import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -43,11 +45,11 @@ import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.npc.Npc;
 import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.trading.Merchant;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.GameRules;
@@ -73,9 +75,8 @@ import software.bernie.geckolib.core.animation.AnimatableManager;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Beedle> {
+public class Beedle extends COTWMob implements Npc, SmartBrainOwner<Beedle>, COTWVillager {
     private static final int DEATH_TIME = COTWUtil.secondsToTicks(2.0F);
     public static final int NUMBER_OF_TRADE_SLOTS = 7;
     private static final EntityDataAccessor<Boolean> DATA_TRADING = SynchedEntityData.defineId(Beedle.class, EntityDataSerializers.BOOLEAN);
@@ -83,6 +84,7 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
     public static final long RESTOCK_INTERVAL = 12000L;
     public static final long DAY_LENGTH = 24000L;
     public static final int MAX_RESTOCKS = 2;
+    public static final int MAX_OFFERS_PER_SLOT = 1;
     @Nullable
     private Player tradingPlayer;
     @Nullable
@@ -98,7 +100,7 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
         this.setMaxUpStep(1.0F); // Beedle can step up 1 block without triggering a jump
     }
 
-    public static AttributeSupplier.Builder createAttributes(){
+    public static AttributeSupplier.Builder createAttributes() {
         return Villager.createAttributes();
     }
 
@@ -112,7 +114,7 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
     @Override
     public void onSyncedDataUpdated(EntityDataAccessor<?> dataAccessor) {
         super.onSyncedDataUpdated(dataAccessor);
-        if(dataAccessor.equals(COTWMob.DATA_WALKING)){
+        if (dataAccessor.equals(COTWMob.DATA_WALKING)) {
             this.refreshDimensions();
         }
     }
@@ -144,7 +146,7 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
     public void setTradingPlayer(@Nullable Player player) {
         boolean shouldStop = this.tradingPlayer != null && player == null;
         this.tradingPlayer = player;
-        if(!this.level().isClientSide){
+        if (!this.level().isClientSide) {
             this.entityData.set(DATA_TRADING, this.tradingPlayer != null);
         }
         if (shouldStop) {
@@ -235,30 +237,14 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
 
     // AbstractVillager, Villager and WanderingTrader methods
 
-    protected void addOffersFromItemListings(MerchantOffers merchantOffers, VillagerTrades.ItemListing[] potentialTrades, int maxOffers) {
-        Set<Integer> indices = Sets.newHashSet();
-        if (potentialTrades.length > maxOffers) {
-            while(indices.size() < maxOffers) {
-                indices.add(this.random.nextInt(potentialTrades.length));
-            }
-        } else {
-            for(int i = 0; i < potentialTrades.length; ++i) {
-                indices.add(i);
-            }
-        }
-
-        for(Integer index : indices) {
-            VillagerTrades.ItemListing trade = potentialTrades[index];
-            MerchantOffer offer = trade.getOffer(this, this.random);
-            if (offer != null) {
-                merchantOffers.add(offer);
-            }
-        }
+    @Override
+    public void addOffersFromItemListings(MerchantOffers merchantOffers, VillagerTrades.ItemListing[] potentialTrades, int maxOffers) {
+        COTWVillager.addOffersFromitemListings(this, merchantOffers, potentialTrades, maxOffers);
 
     }
 
     public boolean isTrading() {
-        if(this.level().isClientSide){
+        if (this.level().isClientSide) {
             return this.entityData.get(DATA_TRADING);
         }
         return this.tradingPlayer != null;
@@ -311,7 +297,7 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
 
             Player playerKiller = null;
             if (killer instanceof Player) {
-                playerKiller = (Player)killer;
+                playerKiller = (Player) killer;
             } else if (killer instanceof OwnableEntity ownable) {
                 LivingEntity owner = ownable.getOwner();
                 if (owner instanceof Player) {
@@ -341,14 +327,23 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
     }
 
     protected void updateTrades() {
-        for(int tradeSlot = 1; tradeSlot <= NUMBER_OF_TRADE_SLOTS; tradeSlot++){
-            VillagerTrades.ItemListing[] potentialTradesForSlot = COTWVillagerTrades.BEEDLE_TRADES.get(tradeSlot);
-            if (potentialTradesForSlot != null) {
-                MerchantOffers offers = this.getOffers();
-                this.addOffersFromItemListings(offers, potentialTradesForSlot, 1);
-            }
+        boolean useCustomVillagerTrades = Services.PLATFORM.isModLoaded(Constants.CUSTOM_VILLAGER_TRADES_MODID);
+        int tradeSlots = this.getTradeSlots();
+        int maxOffersPerSlot = this.getMaxOffersPerSlot();
+        if (useCustomVillagerTrades) {
+            maxOffersPerSlot = CustomVillagerTradesCompat.getMaxOffers(this).orElse(maxOffersPerSlot);
         }
 
+        MerchantOffers merchantOffers = this.getOffers();
+        for (int tradeSlot = 1; tradeSlot <= tradeSlots; tradeSlot++) {
+            VillagerTrades.ItemListing[] potentialTradesForSlot = COTWVillagerTrades.BEEDLE_TRADES.get(tradeSlot);
+            if(useCustomVillagerTrades){
+                potentialTradesForSlot = CustomVillagerTradesCompat.replaceItemListings(this, potentialTradesForSlot, tradeSlot);
+            }
+            if (potentialTradesForSlot != null) {
+                this.addOffersFromItemListings(merchantOffers, potentialTradesForSlot, maxOffersPerSlot);
+            }
+        }
     }
 
     protected void rewardTradeXp(MerchantOffer offer) {
@@ -723,5 +718,20 @@ public class Beedle extends COTWMob implements Npc, Merchant, SmartBrainOwner<Be
     @Override
     public boolean canBeSeenAsEnemy() {
         return false;
+    }
+
+    @Override
+    public VillagerProfession getProfession() {
+        return VillagerProfessionInit.BEEDLE.get();
+    }
+
+    @Override
+    public int getTradeSlots() {
+        return NUMBER_OF_TRADE_SLOTS;
+    }
+
+    @Override
+    public int getMaxOffersPerSlot() {
+        return MAX_OFFERS_PER_SLOT;
     }
 }

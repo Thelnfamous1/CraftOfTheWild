@@ -27,6 +27,9 @@ dependencies {
         exclude(group: "net.fabricmc.fabric-api")
     }
     modCompileOnly "curse.maven:sodium-options-api-1103431:5807574"
+    // CVT
+    modImplementation "curse.maven:custom-villager-trades-fabric-700711:5383777"
+    modRuntimeOnly "curse.maven:architectury-api-419699:5137936"
 }
 
 loom {

@@ -105,6 +105,9 @@ dependencies {
     implementation fg.deobf("curse.maven:goety-586095:6778940")
     // To add curios compat
     implementation fg.deobf("curse.maven:curios-309927:6418456")
+    // To add CVT compat
+    implementation fg.deobf("curse.maven:custom-villager-trades-forge-463402:5383797")
+    runtimeOnly fg.deobf("curse.maven:architectury-api-419699:5137938")
 }
 
 tasks.withType(JavaCompile) {

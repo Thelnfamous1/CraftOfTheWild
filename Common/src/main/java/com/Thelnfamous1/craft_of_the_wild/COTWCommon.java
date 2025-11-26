@@ -35,6 +35,7 @@ public class COTWCommon {
         ParticleInit.loadClass();
         MobEffectInit.loadClass();
         CriterionInit.registerAll();
+        VillagerProfessionInit.loadClass();
     }
 
     public static void registerSpawnEggs() {

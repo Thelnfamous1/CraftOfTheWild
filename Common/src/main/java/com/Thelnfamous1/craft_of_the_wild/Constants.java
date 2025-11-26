@@ -7,6 +7,8 @@ public class Constants {
 
 	public static final String MODID = "craft_of_the_wild";
 	public static final String MOD_NAME = "Craft Of The Wild";
+	public static final String SODIUM_DYNAMIC_LIGHTS_MODID = "sodiumdynamiclights";
+	public static final String CUSTOM_VILLAGER_TRADES_MODID = "customvillagertrades";
 	public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
 
 	public static final boolean DEBUG_IDE = false;

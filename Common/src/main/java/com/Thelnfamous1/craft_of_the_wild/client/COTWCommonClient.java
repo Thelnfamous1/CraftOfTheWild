@@ -1,6 +1,7 @@
 package com.Thelnfamous1.craft_of_the_wild.client;
 
 import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
+import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.client.network.COTWClientPacketHandler;
 import com.Thelnfamous1.craft_of_the_wild.client.particle.CustomTerrainParticle;
 import com.Thelnfamous1.craft_of_the_wild.client.renderer.BeedleRenderer;
@@ -74,7 +75,7 @@ public class COTWCommonClient {
     }
 
     public static void setup(){
-        if(Services.PLATFORM.isModLoaded("sodiumdynamiclights")){
+        if(Services.PLATFORM.isModLoaded(Constants.SODIUM_DYNAMIC_LIGHTS_MODID)){
             DynamicLightHandlers.registerDynamicLightHandler(EntityInit.BEEDLE.get(), COTWDynamicLightHandlers.BEEDLE);
         }
     }
