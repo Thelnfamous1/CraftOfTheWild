@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
@@ -58,4 +59,6 @@ public interface IPlatformHelper {
     void sendSmashAttackParticlePacket(AABB attackBox, int power);
 
     void sendSyncDisguiseEffectPacket(Entity entityId, Map<MobEffect, Integer> disguiseEffectCooldowns);
+
+    boolean hasCharmEquipped(LivingEntity entity, Item item, String charmSlotId);
 }

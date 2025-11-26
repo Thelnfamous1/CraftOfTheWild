@@ -5,6 +5,7 @@ import com.Thelnfamous1.craft_of_the_wild.entity.CustomMusicPlayer;
 import com.Thelnfamous1.craft_of_the_wild.init.*;
 import com.Thelnfamous1.craft_of_the_wild.item.COTWSpawnEggItem;
 import com.Thelnfamous1.craft_of_the_wild.mixin.SpawnEggItemAccessor;
+import com.Thelnfamous1.craft_of_the_wild.platform.Services;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWTags;
 import net.minecraft.Util;
 import net.minecraft.resources.ResourceLocation;
@@ -78,5 +79,9 @@ public class COTWCommon {
             return true;
         }
         return false;
+    }
+
+    public static boolean isMedalOfHonorTalusEquipped(LivingEntity entity) {
+        return entity.getOffhandItem().is(ItemInit.MEDAL_OF_HONOR_TALUS.get()) || Services.PLATFORM.hasCharmEquipped(entity, ItemInit.MEDAL_OF_HONOR_TALUS.get(), "charm");
     }
 }

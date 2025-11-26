@@ -84,6 +84,10 @@ subprojects {
                 includeGroup "maven.modrinth"
             }
         }
+        maven {
+            name = "Ladysnake Mods"
+            url = 'https://maven.ladysnake.org/releases'
+        }
     }
 
     tasks.withType(JavaCompile).configureEach {

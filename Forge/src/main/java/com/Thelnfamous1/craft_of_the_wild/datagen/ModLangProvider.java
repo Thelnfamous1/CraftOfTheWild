@@ -74,6 +74,7 @@ public class ModLangProvider extends LanguageProvider {
             this.add(id.toLanguageKey("painting", "author"),
                     paintingVariantRegistryObject.get() instanceof COTWPaintingVariant paintingVariant ? paintingVariant.getAuthor() : "Unknown");
         });
+        add("trinkets.slot.offhand.charm", "Charm");
     }
 
     private void projectileDamageTypeLang(ResourceKey<DamageType> resourceKey, @Nullable String projectileDescription) {
