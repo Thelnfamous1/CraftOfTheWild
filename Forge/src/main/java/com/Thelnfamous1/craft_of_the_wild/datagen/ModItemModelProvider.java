@@ -56,7 +56,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         this.simpleGeneratedModel(ItemInit.RADIANT_BOOTS.get());
         this.simpleGeneratedModel(ItemInit.MEDAL_OF_HONOR_TALUS.get());
         this.simpleGeneratedModel(ItemInit.MON.get());
-        this.simpleGeneratedModel(ItemInit.BOKOLBIN_HELMET.get());
+        this.simpleGeneratedModel(ItemInit.BOKOBLIN_HELMET.get());
     }
 
     protected ItemModelBuilder spawnEgg(Item item) {

@@ -75,7 +75,7 @@ public class COTWCommon {
         }
         if(attacker.getType().is(COTWTags.RADIANT_DISGUISE_AFFECTS) && target.hasEffect(MobEffectInit.RADIANT_DISGUISE.get())){
             return true;
-        } else if(attacker.getType().is(COTWTags.BOKOLBIN_DISGUISE_AFFECTS) && target.hasEffect(MobEffectInit.BOKOLBIN_DISGUISE.get())){
+        } else if(attacker.getType().is(COTWTags.BOKOLBIN_DISGUISE_AFFECTS) && target.hasEffect(MobEffectInit.BOKOBLIN_DISGUISE.get())){
             return true;
         }
         return false;

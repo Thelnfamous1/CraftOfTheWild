@@ -13,10 +13,10 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-public class BokolbinArmorItem extends ArmorItem {
+public class BokoblinArmorItem extends ArmorItem {
     public static final int MIN_DURATION = COTWUtil.secondsToTicks(10);
 
-    public BokolbinArmorItem(ArmorMaterial $$0, Type $$1, Properties $$2) {
+    public BokoblinArmorItem(ArmorMaterial $$0, Type $$1, Properties $$2) {
         super($$0, $$1, $$2);
     }
 
@@ -31,15 +31,15 @@ public class BokolbinArmorItem extends ArmorItem {
     private static void checkTick(LivingEntity wearer) {
         //if (wearer.level().isClientSide()) return;
 
-        if (isFullSetEquipped(wearer) && ((DisguiseEffectUser) wearer).craft_of_the_wild$canApplyDisguiseEffect(MobEffectInit.BOKOLBIN_DISGUISE.get())) {
-            if(!wearer.hasEffect(MobEffectInit.BOKOLBIN_DISGUISE.get())){
+        if (isFullSetEquipped(wearer) && ((DisguiseEffectUser) wearer).craft_of_the_wild$canApplyDisguiseEffect(MobEffectInit.BOKOBLIN_DISGUISE.get())) {
+            if(!wearer.hasEffect(MobEffectInit.BOKOBLIN_DISGUISE.get())){
                 wearer.level().broadcastEntityEvent(wearer, EntityEvent.POOF);
             }
-            wearer.addEffect(new MobEffectInstance(MobEffectInit.BOKOLBIN_DISGUISE.get(), MIN_DURATION, 0, false, false, true));
+            wearer.addEffect(new MobEffectInstance(MobEffectInit.BOKOBLIN_DISGUISE.get(), MIN_DURATION, 0, false, false, true));
         }
     }
 
     public static boolean isFullSetEquipped(LivingEntity player) {
-        return player.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof BokolbinArmorItem;
+        return player.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof BokoblinArmorItem;
     }
 }

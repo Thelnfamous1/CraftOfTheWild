@@ -6,9 +6,9 @@ import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.model.DefaultedItemGeoModel;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 
-public class BokolbinArmorRenderer<T extends ArmorItem & GeoItem> extends GeoArmorRenderer<T> {
-	public BokolbinArmorRenderer() {
-		super(new DefaultedItemGeoModel<>(COTWCommon.getResourceLocation("armor/bokolbin")));
+public class BokoblinArmorRenderer<T extends ArmorItem & GeoItem> extends GeoArmorRenderer<T> {
+	public BokoblinArmorRenderer() {
+		super(new DefaultedItemGeoModel<>(COTWCommon.getResourceLocation("armor/bokoblin")));
 		//this.addRenderLayer(new AutoGlowingGeoLayer<>(this));
 		this.withScale(1.1F);
 	}

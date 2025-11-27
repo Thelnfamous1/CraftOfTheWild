@@ -13,7 +13,7 @@ public class MobEffectInit {
     public static final RegistryObject<MobEffect> RADIANT_DISGUISE = MOB_EFFECTS.register("radiant_disguise",
             () -> new COTWMobEffect(MobEffectCategory.BENEFICIAL, 0x58665E));
 
-    public static final RegistryObject<MobEffect> BOKOLBIN_DISGUISE = MOB_EFFECTS.register("bokolbin_disguise",
+    public static final RegistryObject<MobEffect> BOKOBLIN_DISGUISE = MOB_EFFECTS.register("bokoblin_disguise",
             () -> new COTWMobEffect(MobEffectCategory.BENEFICIAL, 0x9A2516));
 
 

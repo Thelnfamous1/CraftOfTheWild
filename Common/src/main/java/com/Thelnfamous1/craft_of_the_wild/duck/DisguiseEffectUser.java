@@ -29,7 +29,7 @@ public interface DisguiseEffectUser {
          return target.getType().is(COTWTags.RADIANT_DISGUISE_AFFECTS) ?
                  MobEffectInit.RADIANT_DISGUISE.get() :
                  target.getType().is(COTWTags.BOKOLBIN_DISGUISE_AFFECTS) ?
-                         MobEffectInit.BOKOLBIN_DISGUISE.get() :
+                         MobEffectInit.BOKOBLIN_DISGUISE.get() :
                          null;
      }
 

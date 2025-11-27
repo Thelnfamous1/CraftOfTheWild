@@ -9,7 +9,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.PaintingVariantTags;
 import net.minecraft.world.entity.decoration.Painting;
@@ -92,8 +91,8 @@ public class ItemInit {
     public static final RegistryObject<Item> MON = ITEMS.register("mon", () ->
             new Item(getItemProperties()));
 
-    public static final RegistryObject<Item> BOKOLBIN_HELMET = ITEMS.register("bokolbin_helmet", () ->
-            new BokolbinArmorItem(COTWArmorMaterials.BOKOLBIN, ArmorItem.Type.HELMET, getItemProperties()));
+    public static final RegistryObject<Item> BOKOBLIN_HELMET = ITEMS.register("bokoblin_helmet", () ->
+            new BokoblinArmorItem(COTWArmorMaterials.BOKOBLIN, ArmorItem.Type.HELMET, getItemProperties()));
 
     private static RegistryObject<Item> registerMusicDisc(String path, int analogSignal, RegistryObject<SoundEvent> soundSupplier, int durationInSeconds, String author) {
         return ITEMS.register(path, () ->

@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "craft_of_the_wild:item/bokolbin_helmet"
+    "layer0": "craft_of_the_wild:item/bokoblin_helmet"
   }
 }

@@ -1,7 +1,7 @@
 package com.Thelnfamous1.craft_of_the_wild.mixin;
 
-import com.Thelnfamous1.craft_of_the_wild.client.renderer.BokolbinArmorRenderer;
-import com.Thelnfamous1.craft_of_the_wild.item.BokolbinArmorItem;
+import com.Thelnfamous1.craft_of_the_wild.client.renderer.BokoblinArmorRenderer;
+import com.Thelnfamous1.craft_of_the_wild.item.BokoblinArmorItem;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,14 +20,14 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-@Mixin(BokolbinArmorItem.class)
-public abstract class BokolbinArmorItemMixin extends ArmorItem implements GeoItem {
+@Mixin(BokoblinArmorItem.class)
+public abstract class BokolbinArmorItemMixin_Fabric extends ArmorItem implements GeoItem {
     @Unique
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     @Unique
     private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
 
-    public BokolbinArmorItemMixin(ArmorMaterial p_266710_, Type p_267178_, Properties p_267093_) {
+    public BokolbinArmorItemMixin_Fabric(ArmorMaterial p_266710_, Type p_267178_, Properties p_267093_) {
         super(p_266710_, p_267178_, p_267093_);
     }
 
@@ -49,7 +49,7 @@ public abstract class BokolbinArmorItemMixin extends ArmorItem implements GeoIte
             @Override
             public HumanoidModel<LivingEntity> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<LivingEntity> original) {
                 if(this.renderer == null)
-                    this.renderer = new BokolbinArmorRenderer<>();
+                    this.renderer = new BokoblinArmorRenderer<>();
 
                 // This prepares our GeoArmorRenderer for the current render frame.
                 // These parameters may be null however, so we don't do anything further with them

@@ -20,7 +20,7 @@ public enum COTWArmorMaterials  implements StringRepresentable, ArmorMaterial{
         armorMultipliers.put(ArmorItem.Type.CHESTPLATE, 6);
         armorMultipliers.put(ArmorItem.Type.HELMET, 2);
     }), 9, SoundEvents.ARMOR_EQUIP_LEATHER, 0.0F, 0.0F, () -> Ingredient.of(ItemInit.LUMINOUS_STONE.get())),
-    BOKOLBIN("bokolbin", 7, Util.make(new EnumMap<>(ArmorItem.Type.class), (armorMultipliers) -> {
+    BOKOBLIN("bokoblin", 7, Util.make(new EnumMap<>(ArmorItem.Type.class), (armorMultipliers) -> {
         armorMultipliers.put(ArmorItem.Type.BOOTS, 1);
         armorMultipliers.put(ArmorItem.Type.LEGGINGS, 3);
         armorMultipliers.put(ArmorItem.Type.CHESTPLATE, 5);
