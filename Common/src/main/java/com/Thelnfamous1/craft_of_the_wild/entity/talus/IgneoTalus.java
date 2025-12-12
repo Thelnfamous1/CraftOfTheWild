@@ -17,6 +17,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 public class IgneoTalus extends StoneTalus {
     public IgneoTalus(EntityType<? extends IgneoTalus> type, Level level) {
         super(type, level);
+        this.xpReward = 80;
     }
 
     public static AttributeSupplier.Builder createAttributes(){

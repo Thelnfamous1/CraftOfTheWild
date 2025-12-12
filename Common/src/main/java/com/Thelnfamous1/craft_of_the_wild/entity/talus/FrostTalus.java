@@ -17,6 +17,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 public class FrostTalus extends StoneTalus {
     public FrostTalus(EntityType<? extends FrostTalus> type, Level level) {
         super(type, level);
+        this.xpReward = 80;
     }
 
     public static AttributeSupplier.Builder createAttributes(){

@@ -12,6 +12,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 public class StoneTalusRare extends StoneTalus {
     public StoneTalusRare(EntityType<? extends StoneTalusRare> type, Level level) {
         super(type, level);
+        this.xpReward = 60;
     }
 
     public static AttributeSupplier.Builder createAttributes(){
