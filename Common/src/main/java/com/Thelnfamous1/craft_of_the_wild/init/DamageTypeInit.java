@@ -1,7 +1,7 @@
 package com.Thelnfamous1.craft_of_the_wild.init;
 
 import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
-import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalusArm;
+import com.Thelnfamous1.craft_of_the_wild.entity.talus.arm.StoneTalusArm;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;

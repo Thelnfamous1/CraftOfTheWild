@@ -2,6 +2,7 @@ package com.Thelnfamous1.craft_of_the_wild.datagen;
 
 import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.init.DamageTypeInit;
+import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
 import com.Thelnfamous1.craft_of_the_wild.init.ItemInit;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWTags;
 import net.minecraft.core.HolderLookup;
@@ -132,6 +133,7 @@ public class ModTagProvider {
         protected void addTags(HolderLookup.Provider pProvider) {
             this.tag(COTWTags.RADIANT_DISGUISE_AFFECTS).addTag(EntityTypeTags.SKELETONS);
             this.tag(COTWTags.BOKOLBIN_DISGUISE_AFFECTS).add(EntityType.PIGLIN, EntityType.PIGLIN_BRUTE, EntityType.HOGLIN);
+            this.tag(COTWTags.STONE_TALUSES).add(EntityInit.STONE_TALUS.get(), EntityInit.FROST_TALUS.get(), EntityInit.IGNEO_TALUS.get(), EntityInit.STONE_TALUS_RARE.get(), EntityInit.STONE_TALUS_LUMINOUS.get());
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.Thelnfamous1.craft_of_the_wild;
 
 import com.Thelnfamous1.craft_of_the_wild.entity.Beedle;
-import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalus;
+import com.Thelnfamous1.craft_of_the_wild.entity.talus.*;
 import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
 import com.Thelnfamous1.craft_of_the_wild.init.WorldGenInit;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWTags;
@@ -30,6 +30,14 @@ public class COTWFabric implements ModInitializer {
         COTWCommon.registerSpawnEggs();
         SpawnPlacements.register(EntityInit.STONE_TALUS.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 StoneTalus::checkStoneTalusSpawnRules);
+        SpawnPlacements.register(EntityInit.FROST_TALUS.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                FrostTalus::checkFrostTalusSpawnRules);
+        SpawnPlacements.register(EntityInit.IGNEO_TALUS.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                IgneoTalus::checkIgneoTalusSpawnRules);
+        SpawnPlacements.register(EntityInit.STONE_TALUS_RARE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                StoneTalusRare::checkRareTalusSpawnRules);
+        SpawnPlacements.register(EntityInit.STONE_TALUS_LUMINOUS.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                StoneTalusLuminous::checkLuminousTalusSpawnRules);
         /*
         BiomeModifications.addSpawn(BiomeSelectors.tag(COTWTags.SPAWNS_STONE_TALUS),
                 MobCategory.MONSTER,

@@ -57,6 +57,7 @@ public abstract class COTWAttacker<T extends AnimatedAttacker.AttackType> extend
 
     protected void executeAttack(T currentAttackType, AttackPoint currentAttackPoint) {
         this.playAttackSound(currentAttackType, currentAttackPoint);
+        final double baseDamageModifier = this.getAttackBaseDamageModifier(currentAttackType, currentAttackPoint);
         switch (currentAttackPoint.damageMode()) {
             case AREA_OF_EFFECT -> {
                 AABB attackBox = this.createAttackBox(currentAttackType);
@@ -64,14 +65,14 @@ public abstract class COTWAttacker<T extends AnimatedAttacker.AttackType> extend
                 if (Constants.DEBUG_MONSTER) COTWUtil.sendHitboxParticles(attackBox, this.level());
                 if (!this.level().isClientSide) {
                     List<LivingEntity> targets = this.level().getNearbyEntities(LivingEntity.class, AREA_OF_EFFECT_TARGETING_CONDITIONS, this, attackBox);
-                    targets.forEach(target -> this.modifiedDoHurtTarget(target, currentAttackPoint.baseDamageModifier(), true));
+                    targets.forEach(target -> this.modifiedDoHurtTarget(target, baseDamageModifier, true));
                 }
                 this.finalizeAreaOfEffectAttack(attackBox);
             }
             case MELEE -> {
                 LivingEntity target = this.getTarget();
                 if (target != null && this.isWithinMeleeAttackRange(target, 1)) {
-                    this.modifiedDoHurtTarget(target, currentAttackPoint.baseDamageModifier(), false);
+                    this.modifiedDoHurtTarget(target, baseDamageModifier, false);
                 }
             }
             case RANGED -> {
@@ -93,6 +94,10 @@ public abstract class COTWAttacker<T extends AnimatedAttacker.AttackType> extend
                 this.doCustomAttack(currentAttackType, currentAttackPoint);
             }
         }
+    }
+
+    protected double getAttackBaseDamageModifier(T currentAttackType, AttackPoint currentAttackPoint) {
+        return currentAttackPoint.baseDamageModifier();
     }
 
     protected void doCustomAttack(T currentAttackType, AttackPoint currentAttackPoint) {

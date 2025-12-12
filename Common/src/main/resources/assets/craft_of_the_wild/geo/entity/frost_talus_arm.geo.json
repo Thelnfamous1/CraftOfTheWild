@@ -1,0 +1,54 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.stonetalus",
+				"texture_width": 1024,
+				"texture_height": 1024,
+				"visible_bounds_width": 13,
+				"visible_bounds_height": 10.5,
+				"visible_bounds_offset": [0, 4.75, 0]
+			},
+			"bones": [
+				{
+					"name": "all",
+					"pivot": [0, 14, 31],
+					"rotation": [90, 0, 0]
+				},
+				{
+					"name": "torso2",
+					"parent": "all",
+					"pivot": [0, 51, 31]
+				},
+				{
+					"name": "torso",
+					"parent": "torso2",
+					"pivot": [0, 51, 31]
+				},
+				{
+					"name": "arm_left",
+					"parent": "torso",
+					"pivot": [-0.47657, 20, 23.01142],
+					"rotation": [0, 90, 0]
+				},
+				{
+					"name": "lefthand",
+					"parent": "arm_left",
+					"pivot": [-12.97657, 54.5, 22.51142],
+					"cubes": [
+						{"origin": [-30.97657, 40.5, 4.51142], "size": [36, 28, 36], "uv": [0, 338]}
+					]
+				},
+				{
+					"name": "lowerleftarm",
+					"parent": "arm_left",
+					"pivot": [-11.97657, 29.5, 23.51142],
+					"cubes": [
+						{"origin": [-22.97657, 18.5, 12.51142], "size": [22, 22, 22], "pivot": [-11.97657, 29.5, 23.51142], "rotation": [0, 0, -15], "uv": [27, 290]}
+					]
+				}
+			]
+		}
+	]
+}

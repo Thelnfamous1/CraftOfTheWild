@@ -3,7 +3,7 @@ package com.Thelnfamous1.craft_of_the_wild.datagen;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.compat.jade.AttackTypeComponentProvider;
 import com.Thelnfamous1.craft_of_the_wild.compat.jade.COTWJadePlugin;
-import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalusAttackType;
+import com.Thelnfamous1.craft_of_the_wild.entity.talus.StoneTalusAttackType;
 import com.Thelnfamous1.craft_of_the_wild.init.*;
 import com.Thelnfamous1.craft_of_the_wild.item.COTWRecordItem;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWPaintingVariant;
@@ -37,7 +37,11 @@ public class ModLangProvider extends LanguageProvider {
             "radiant_chestplate", "Radiant Shirt",
             "radiant_leggings", "Radiant Tights",
             "bokolbin_helmet", "Bokolbin Mask",
-            "medal_of_honor_talus", "Medal of Honor: Talus"
+            "medal_of_honor_talus", "Medal of Honor: Talus",
+            "stone_talus_rare", "Stone Talus (Rare)",
+            "stone_talus_luminous", "Stone Talus (Luminous)",
+            "stone_talus_rare_spawn_egg", "Stone Talus (Rare) Spawn Egg",
+            "stone_talus_luminous_spawn_egg", "Stone Talus (Luminous)"
     );
 
     public ModLangProvider(PackOutput gen) {

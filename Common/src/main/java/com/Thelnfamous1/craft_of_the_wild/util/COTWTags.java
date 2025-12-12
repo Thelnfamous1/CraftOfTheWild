@@ -17,6 +17,7 @@ public class COTWTags {
     public static final TagKey<Block> STONE_TALUS_CAN_CONVERT_TO_DIRT = createBlockTag("stone_talus_can_convert_to_dirt");
     public static final TagKey<EntityType<?>> RADIANT_DISGUISE_AFFECTS = createEntityTypeTag("radiant_disguise_affects");
     public static final TagKey<EntityType<?>> BOKOLBIN_DISGUISE_AFFECTS = createEntityTypeTag("bokolbin_disguise_affects");
+    public static final TagKey<EntityType<?>> STONE_TALUSES = createEntityTypeTag("stone_taluses");
 
 
     private static TagKey<Block> createBlockTag(String path) {

@@ -33,6 +33,30 @@ public class ModEntityLootTables extends EntityLootSubProvider {
                 new LootEntry(Items.LAPIS_LAZULI, UniformGenerator.between(1, 4), 1.0F),
                 new LootEntry(Items.DIAMOND, UniformGenerator.between(1, 4), 0.2F),
                 new LootEntry(ItemInit.MUSIC_DISC_A_ROCKY_BALLAD.get(), ConstantValue.exactly(1.0F), 0.05F)));
+        this.add(EntityInit.FROST_TALUS.get(), this.chanceToDrop(
+                new LootEntry(Items.RAW_IRON, UniformGenerator.between(2, 4), 1.0F),
+                new LootEntry(Items.RAW_GOLD, UniformGenerator.between(2, 3), 1.0F),
+                new LootEntry(Items.LAPIS_LAZULI, UniformGenerator.between(1, 3), 1.0F),
+                new LootEntry(Items.DIAMOND, UniformGenerator.between(3, 6), 1.0F),
+                new LootEntry(ItemInit.MUSIC_DISC_A_ROCKY_BALLAD.get(), ConstantValue.exactly(1.0F), 0.25F)));
+        this.add(EntityInit.IGNEO_TALUS.get(), this.chanceToDrop(
+                new LootEntry(Items.RAW_IRON, UniformGenerator.between(2, 4), 1.0F),
+                new LootEntry(Items.RAW_GOLD, UniformGenerator.between(2, 3), 1.0F),
+                new LootEntry(Items.LAPIS_LAZULI, UniformGenerator.between(1, 3), 1.0F),
+                new LootEntry(Items.NETHERITE_SCRAP, UniformGenerator.between(2, 4), 1.0F),
+                new LootEntry(ItemInit.MUSIC_DISC_A_ROCKY_BALLAD.get(), ConstantValue.exactly(1.0F), 0.20F)));
+        this.add(EntityInit.STONE_TALUS_RARE.get(), this.chanceToDrop(
+                new LootEntry(Items.RAW_IRON, UniformGenerator.between(2, 4), 1.0F),
+                new LootEntry(Items.RAW_GOLD, UniformGenerator.between(2, 3), 1.0F),
+                new LootEntry(Items.LAPIS_LAZULI, UniformGenerator.between(1, 3), 1.0F),
+                new LootEntry(Items.DIAMOND, UniformGenerator.between(2, 4), 1.0F),
+                new LootEntry(ItemInit.MUSIC_DISC_A_ROCKY_BALLAD.get(), ConstantValue.exactly(1.0F), 0.15F)));
+        this.add(EntityInit.STONE_TALUS_LUMINOUS.get(), this.chanceToDrop(
+                new LootEntry(Items.RAW_IRON, UniformGenerator.between(2, 4), 1.0F),
+                new LootEntry(Items.RAW_GOLD, UniformGenerator.between(2, 3), 1.0F),
+                new LootEntry(Items.LAPIS_LAZULI, UniformGenerator.between(4, 7), 1.0F),
+                new LootEntry(ItemInit.LUMINOUS_STONE.get(), UniformGenerator.between(4, 6), 1.0F),
+                new LootEntry(ItemInit.MUSIC_DISC_A_ROCKY_BALLAD.get(), ConstantValue.exactly(1.0F), 0.15F)));
         this.dropSingle(EntityInit.BEEDLE.get(), Items.EMERALD);
         this.dropSingle(EntityInit.KASS.get(), Items.FEATHER);
     }

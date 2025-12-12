@@ -1,5 +1,6 @@
-package com.Thelnfamous1.craft_of_the_wild.entity;
+package com.Thelnfamous1.craft_of_the_wild.entity.talus;
 
+import com.Thelnfamous1.craft_of_the_wild.entity.AnimatedAttacker;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.util.ByIdMap;

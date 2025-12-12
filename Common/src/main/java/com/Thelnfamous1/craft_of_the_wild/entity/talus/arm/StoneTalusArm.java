@@ -1,7 +1,11 @@
-package com.Thelnfamous1.craft_of_the_wild.entity;
+package com.Thelnfamous1.craft_of_the_wild.entity.talus.arm;
 
 import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
+import com.Thelnfamous1.craft_of_the_wild.entity.COTWMonster;
+import com.Thelnfamous1.craft_of_the_wild.entity.COTWMultipartEntity;
+import com.Thelnfamous1.craft_of_the_wild.entity.talus.StoneTalus;
+import com.Thelnfamous1.craft_of_the_wild.entity.talus.StoneTalusBase;
 import com.Thelnfamous1.craft_of_the_wild.init.DamageTypeInit;
 import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
 import com.Thelnfamous1.craft_of_the_wild.init.ParticleInit;
@@ -48,7 +52,11 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
     }
 
     public StoneTalusArm(Level level, LivingEntity shooter, double xDist, double yDist, double zDist) {
-        super(EntityInit.STONE_TALUS_ARM.get(), shooter, xDist, yDist, zDist, level);
+        this(EntityInit.STONE_TALUS_ARM.get(), level, shooter, xDist, yDist, zDist);
+    }
+
+    public StoneTalusArm(EntityType<? extends StoneTalusArm> type, Level level, LivingEntity shooter, double xDist, double yDist, double zDist) {
+        super(type, shooter, xDist, yDist, zDist, level);
         this.applyPowerScaling();
         COTWCommon.debug(Constants.DEBUG_STONE_TALUS_ARM, "{} was created with {}, {}, {} power within [-3.9, 3.9] range: {}, {}, {}",
                 this,
@@ -67,7 +75,11 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
     }
 
     public StoneTalusArm(Level level, double x, double y, double z, double xDist, double yDist, double zDist) {
-        super(EntityInit.STONE_TALUS_ARM.get(), x, y, z, xDist, yDist, zDist, level);
+        this(EntityInit.STONE_TALUS_ARM.get(), level, x, y, z, xDist, yDist, zDist);
+    }
+
+    public StoneTalusArm(EntityType<? extends StoneTalusArm> type, Level level, double x, double y, double z, double xDist, double yDist, double zDist) {
+        super(type, x, y, z, xDist, yDist, zDist, level);
         this.applyPowerScaling();
         COTWCommon.debug(Constants.DEBUG_STONE_TALUS_ARM, "{} was created with {}, {}, {} power within [-3.9, 3.9] range: {}, {}, {}",
                 this,

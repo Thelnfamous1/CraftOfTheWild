@@ -52,6 +52,18 @@ public class ItemInit {
     public static final RegistryObject<Item> STONE_TALUS_SPAWN_EGG = ITEMS.register("stone_talus_spawn_egg", () ->
             new COTWSpawnEggItem(EntityInit.STONE_TALUS, 14405058, 7643954, getItemProperties()));
 
+    public static final RegistryObject<Item> FROST_TALUS_SPAWN_EGG = ITEMS.register("frost_talus_spawn_egg", () ->
+            new COTWSpawnEggItem(EntityInit.FROST_TALUS, 14405058, 7643954, getItemProperties()));
+
+    public static final RegistryObject<Item> IGNEO_TALUS_SPAWN_EGG = ITEMS.register("igneo_talus_spawn_egg", () ->
+            new COTWSpawnEggItem(EntityInit.IGNEO_TALUS, 14405058, 7643954, getItemProperties()));
+
+    public static final RegistryObject<Item> STONE_TALUS_RARE_SPAWN_EGG = ITEMS.register("stone_talus_rare_spawn_egg", () ->
+            new COTWSpawnEggItem(EntityInit.STONE_TALUS_RARE, 14405058, 7643954, getItemProperties()));
+
+    public static final RegistryObject<Item> STONE_TALUS_LUMINOUS_SPAWN_EGG = ITEMS.register("stone_talus_luminous_spawn_egg", () ->
+            new COTWSpawnEggItem(EntityInit.STONE_TALUS_LUMINOUS, 14405058, 7643954, getItemProperties()));
+
     public static final RegistryObject<Item> BEEDLE_SPAWN_EGG = ITEMS.register("beedle_spawn_egg", () ->
             new COTWSpawnEggItem(EntityInit.BEEDLE, 14405058, 7643954, getItemProperties()));
 

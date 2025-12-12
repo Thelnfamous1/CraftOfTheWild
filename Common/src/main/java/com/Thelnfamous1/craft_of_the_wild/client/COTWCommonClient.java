@@ -4,10 +4,7 @@ import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.client.network.COTWClientPacketHandler;
 import com.Thelnfamous1.craft_of_the_wild.client.particle.CustomTerrainParticle;
-import com.Thelnfamous1.craft_of_the_wild.client.renderer.BeedleRenderer;
-import com.Thelnfamous1.craft_of_the_wild.client.renderer.KassRenderer;
-import com.Thelnfamous1.craft_of_the_wild.client.renderer.StoneTalusArmRenderer;
-import com.Thelnfamous1.craft_of_the_wild.client.renderer.StoneTalusRenderer;
+import com.Thelnfamous1.craft_of_the_wild.client.renderer.*;
 import com.Thelnfamous1.craft_of_the_wild.compat.dynamiclights.COTWDynamicLightHandlers;
 import com.Thelnfamous1.craft_of_the_wild.duck.CustomMusicListener;
 import com.Thelnfamous1.craft_of_the_wild.entity.CustomMusicPlayer;
@@ -44,8 +41,14 @@ public class COTWCommonClient {
     }
 
     public static void registerRenderers(BiConsumer<EntityType, EntityRendererProvider> register){
-        registerRendererTyped(EntityInit.STONE_TALUS.get(), StoneTalusRenderer::new, register);
-        registerRendererTyped(EntityInit.STONE_TALUS_ARM.get(), StoneTalusArmRenderer::new, register);
+        registerRendererTyped(EntityInit.STONE_TALUS.get(), renderManager -> new StoneTalusRenderer<>(renderManager, EntityInit.STONE_TALUS.getId()), register);
+        registerRendererTyped(EntityInit.FROST_TALUS.get(), renderManager -> new StoneTalusRenderer<>(renderManager, EntityInit.FROST_TALUS.getId()), register);
+        registerRendererTyped(EntityInit.IGNEO_TALUS.get(), renderManager -> new GlowingStoneTalusRenderer<>(renderManager, EntityInit.IGNEO_TALUS.getId()), register);
+        registerRendererTyped(EntityInit.STONE_TALUS_RARE.get(), renderManager -> new GlowingStoneTalusRenderer<>(renderManager, EntityInit.STONE_TALUS_RARE.getId()), register);
+        registerRendererTyped(EntityInit.STONE_TALUS_LUMINOUS.get(), renderManager -> new GlowingStoneTalusRenderer<>(renderManager, EntityInit.STONE_TALUS_LUMINOUS.getId()), register);
+        registerRendererTyped(EntityInit.STONE_TALUS_ARM.get(), renderManager -> new StoneTalusArmRenderer<>(renderManager, EntityInit.STONE_TALUS_ARM.getId()), register);
+        registerRendererTyped(EntityInit.FROST_TALUS_ARM.get(), renderManager -> new StoneTalusArmRenderer<>(renderManager, EntityInit.FROST_TALUS_ARM.getId()), register);
+        registerRendererTyped(EntityInit.IGNEO_TALUS_ARM.get(), renderManager -> new GlowingStoneTalusArmRenderer<>(renderManager, EntityInit.IGNEO_TALUS_ARM.getId()), register);
         registerRendererTyped(EntityInit.BEEDLE.get(), BeedleRenderer::new, register);
         registerRendererTyped(EntityInit.KASS.get(), KassRenderer::new, register);
     }

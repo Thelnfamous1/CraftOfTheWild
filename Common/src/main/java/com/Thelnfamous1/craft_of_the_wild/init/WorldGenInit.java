@@ -7,7 +7,6 @@ import com.Thelnfamous1.craft_of_the_wild.feature.CustomFeaturePoolElement;
 import com.Thelnfamous1.craft_of_the_wild.feature.SpawnEntityFeature;
 import com.Thelnfamous1.craft_of_the_wild.structure.StoneTalusPiece;
 import com.Thelnfamous1.craft_of_the_wild.structure.StoneTalusStructure;
-import com.Thelnfamous1.craft_of_the_wild.util.COTWTags;
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import com.nyfaria.craft_of_the_wild.registration.RegistrationProvider;
@@ -24,11 +23,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.GenerationStep;
-import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.heightproviders.ConstantHeight;
 import net.minecraft.world.level.levelgen.placement.*;
 import net.minecraft.world.level.levelgen.structure.*;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
@@ -36,7 +32,6 @@ import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStruct
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadType;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
-import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure;
 
 import java.util.List;
 import java.util.Map;
@@ -151,6 +146,7 @@ public class WorldGenInit {
                                 TerrainAdjustment.NONE)
                         ));
          */
+        /* // TODO: These are no longer datagenned as the mod uses an externally created datapack
         context.register(STABLES_STRUCTURE, new JigsawStructure(
                 structure(biomeLookup.getOrThrow(COTWTags.HAS_STABLES),
                         TerrainAdjustment.BEARD_THIN),
@@ -167,6 +163,7 @@ public class WorldGenInit {
                 ConstantHeight.of(VerticalAnchor.absolute(0)),
                 false,
                 Heightmap.Types.WORLD_SURFACE_WG));
+         */
 
     }
     private static Structure.StructureSettings structure(HolderSet<Biome> pBiomes, Map<MobCategory, StructureSpawnOverride> pSpawnOverrides, GenerationStep.Decoration pStep, TerrainAdjustment pTerrainAdaptation) {

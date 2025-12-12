@@ -1,13 +1,15 @@
-package com.Thelnfamous1.craft_of_the_wild.entity;
+package com.Thelnfamous1.craft_of_the_wild.entity.talus;
 
 import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
+import com.Thelnfamous1.craft_of_the_wild.entity.*;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.COTWSharedAi;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.behavior.*;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor.COTWNearbyPlayersSensor;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor.NearestBurrowSensor;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor.SleepSensor;
 import com.Thelnfamous1.craft_of_the_wild.entity.animation.COTWAnimations;
+import com.Thelnfamous1.craft_of_the_wild.entity.talus.arm.StoneTalusArm;
 import com.Thelnfamous1.craft_of_the_wild.init.AttributeInit;
 import com.Thelnfamous1.craft_of_the_wild.init.MemoryModuleInit;
 import com.Thelnfamous1.craft_of_the_wild.init.SoundInit;
@@ -266,10 +268,14 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Cus
             BrainUtils.setMemory(this, MemoryModuleInit.IS_SLEEPING.get(), true);
         }
 
-        this.setVariant(Util.getRandom(Variant.values(), pLevel.getRandom()));
+        setSpawnVariant(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
         COTWCommon.debug(Constants.DEBUG_STONE_TALUS, "Spawned {} at {}", this, this.blockPosition());
 
         return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+    }
+
+    protected void setSpawnVariant(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, SpawnGroupData pSpawnData, CompoundTag pDataTag) {
+        this.setVariant(Util.getRandom(Variant.values(), pLevel.getRandom()));
     }
 
     @Override
@@ -630,14 +636,19 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Cus
             double xDist = targetX - x;
             double yDist = targetY - y;
             double zDist = targetZ - z;
-            StoneTalusArm stoneTalusArm = new StoneTalusArm(this.level(), this, xDist, yDist, zDist);
+            StoneTalusArm stoneTalusArm = this.createArmProjectile(xDist, yDist, zDist);
             stoneTalusArm.setVariant(this.getVariant());
-            stoneTalusArm.setBaseDamage(this.getAttributeValue(Attributes.ATTACK_DAMAGE) * currentAttackPoint.baseDamageModifier());
+            double baseDamageModifier = this.getAttackBaseDamageModifier(currentAttackType, currentAttackPoint);
+            stoneTalusArm.setBaseDamage(this.getAttributeValue(Attributes.ATTACK_DAMAGE) * baseDamageModifier);
             stoneTalusArm.setRadius(1 * LOGICAL_SCALE * this.getScale()); // diameter = 2, scaled up by 7/3 to be 14/3 (4 + 2/3)
 
             stoneTalusArm.setPosRaw(x, y, z);
             this.level().addFreshEntity(stoneTalusArm);
         }
+    }
+
+    protected StoneTalusArm createArmProjectile(double xDist, double yDist, double zDist) {
+        return new StoneTalusArm(this.level(), this, xDist, yDist, zDist);
     }
 
     public int getLastPoseChangeTick() {

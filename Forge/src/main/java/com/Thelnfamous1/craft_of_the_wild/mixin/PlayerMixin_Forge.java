@@ -2,8 +2,8 @@ package com.Thelnfamous1.craft_of_the_wild.mixin;
 
 import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
 import com.Thelnfamous1.craft_of_the_wild.entity.AnimatedAttacker;
-import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalus;
-import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalusAttackType;
+import com.Thelnfamous1.craft_of_the_wild.entity.talus.StoneTalus;
+import com.Thelnfamous1.craft_of_the_wild.entity.talus.StoneTalusAttackType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;

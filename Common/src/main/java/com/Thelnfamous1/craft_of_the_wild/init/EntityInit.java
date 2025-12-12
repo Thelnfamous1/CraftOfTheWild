@@ -3,8 +3,10 @@ package com.Thelnfamous1.craft_of_the_wild.init;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.entity.Beedle;
 import com.Thelnfamous1.craft_of_the_wild.entity.Kass;
-import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalus;
-import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalusArm;
+import com.Thelnfamous1.craft_of_the_wild.entity.talus.*;
+import com.Thelnfamous1.craft_of_the_wild.entity.talus.arm.FrostTalusArm;
+import com.Thelnfamous1.craft_of_the_wild.entity.talus.arm.IgneoTalusArm;
+import com.Thelnfamous1.craft_of_the_wild.entity.talus.arm.StoneTalusArm;
 import com.nyfaria.craft_of_the_wild.registration.RegistrationProvider;
 import com.nyfaria.craft_of_the_wild.registration.RegistryObject;
 import net.minecraft.core.registries.Registries;
@@ -23,19 +25,39 @@ public class EntityInit {
         return ENTITIES.register(name, () -> supplier.get().build(Constants.MODID + ":" + name));
     }
 
-    public static final RegistryObject<EntityType<StoneTalus>> STONE_TALUS = registerEntity("stone_talus", () ->
-            EntityType.Builder.of(StoneTalus::new, MobCategory.MONSTER)
-                    .fireImmune()
-                    .sized(3.125F * StoneTalus.LOGICAL_SCALE, 2.9375F * StoneTalus.LOGICAL_SCALE)
-                    .clientTrackingRange(10),
-            StoneTalus::createAttributes);
+    public static final RegistryObject<EntityType<StoneTalus>> STONE_TALUS = registerTalus("stone_talus", StoneTalus::new, StoneTalus::createAttributes);
 
-    public static final RegistryObject<EntityType<StoneTalusArm>> STONE_TALUS_ARM = registerEntity("stone_talus_arm", () ->
-                    EntityType.Builder.<StoneTalusArm>of(StoneTalusArm::new, MobCategory.MISC)
-                            .fireImmune()
-                            .sized(1.5625F * StoneTalus.LOGICAL_SCALE, 1.125F * StoneTalus.LOGICAL_SCALE) // the arm will be horizontal when thrown, so flip the width/height from the part entity
-                            .clientTrackingRange(4)
-                            .updateInterval(10));
+    public static final RegistryObject<EntityType<FrostTalus>> FROST_TALUS = registerTalus("frost_talus", FrostTalus::new, FrostTalus::createAttributes);
+
+    public static final RegistryObject<EntityType<IgneoTalus>> IGNEO_TALUS = registerTalus("igneo_talus", IgneoTalus::new, IgneoTalus::createAttributes);
+
+    public static final RegistryObject<EntityType<StoneTalusRare>> STONE_TALUS_RARE = registerTalus("stone_talus_rare", StoneTalusRare::new, StoneTalusRare::createAttributes);
+
+    public static final RegistryObject<EntityType<StoneTalusLuminous>> STONE_TALUS_LUMINOUS = registerTalus("stone_talus_luminous", StoneTalusLuminous::new, StoneTalusLuminous::createAttributes);
+
+    private static <T extends StoneTalus> RegistryObject<EntityType<T>> registerTalus(String talusName, EntityType.EntityFactory<T> factory, Supplier<AttributeSupplier.Builder> talusAttributes) {
+        return registerEntity(talusName, () ->
+                        EntityType.Builder.of(factory, MobCategory.MONSTER)
+                                .fireImmune()
+                                .sized(3.125F * StoneTalus.LOGICAL_SCALE, 2.9375F * StoneTalus.LOGICAL_SCALE)
+                                .clientTrackingRange(10),
+                talusAttributes);
+    }
+
+    public static final RegistryObject<EntityType<StoneTalusArm>> STONE_TALUS_ARM = registerTalusArm("stone_talus_arm", StoneTalusArm::new);
+
+    public static final RegistryObject<EntityType<StoneTalusArm>> FROST_TALUS_ARM = registerTalusArm("frost_talus_arm", FrostTalusArm::new);
+
+    public static final RegistryObject<EntityType<StoneTalusArm>> IGNEO_TALUS_ARM = registerTalusArm("igneo_talus_arm", IgneoTalusArm::new);
+
+    private static <T extends StoneTalusArm> RegistryObject<EntityType<T>> registerTalusArm(String talusArmName, EntityType.EntityFactory<T> factory) {
+        return registerEntity(talusArmName, () ->
+                EntityType.Builder.<T>of(factory, MobCategory.MISC)
+                        .fireImmune()
+                        .sized(1.5625F * StoneTalus.LOGICAL_SCALE, 1.125F * StoneTalus.LOGICAL_SCALE) // the arm will be horizontal when thrown, so flip the width/height from the part entity
+                        .clientTrackingRange(4)
+                        .updateInterval(10));
+    }
 
     // Beedle height is 36/16
     // Beedle width is 14/16

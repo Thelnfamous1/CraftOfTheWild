@@ -1,6 +1,6 @@
 package com.Thelnfamous1.craft_of_the_wild.structure;
 
-import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalus;
+import com.Thelnfamous1.craft_of_the_wild.entity.talus.StoneTalus;
 import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
 import com.Thelnfamous1.craft_of_the_wild.init.WorldGenInit;
 import net.minecraft.core.BlockPos;

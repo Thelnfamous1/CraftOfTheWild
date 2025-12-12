@@ -1,4 +1,4 @@
-package com.Thelnfamous1.craft_of_the_wild.entity;
+package com.Thelnfamous1.craft_of_the_wild.entity.talus;
 
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
 

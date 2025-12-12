@@ -2,7 +2,7 @@ package com.Thelnfamous1.craft_of_the_wild.event;
 
 import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
-import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalus;
+import com.Thelnfamous1.craft_of_the_wild.entity.talus.*;
 import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
 import com.Thelnfamous1.craft_of_the_wild.network.COTWForgeNetwork;
 import net.minecraft.world.entity.SpawnPlacements;
@@ -32,5 +32,13 @@ public class CommonModEvents {
     static void onSpawnPlacementRegistration(SpawnPlacementRegisterEvent event){
         event.register(EntityInit.STONE_TALUS.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 StoneTalus::checkStoneTalusSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+        event.register(EntityInit.FROST_TALUS.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                FrostTalus::checkFrostTalusSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+        event.register(EntityInit.IGNEO_TALUS.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                IgneoTalus::checkIgneoTalusSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+        event.register(EntityInit.STONE_TALUS_RARE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                StoneTalusRare::checkRareTalusSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+        event.register(EntityInit.STONE_TALUS_LUMINOUS.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                StoneTalusLuminous::checkLuminousTalusSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
     }
 }

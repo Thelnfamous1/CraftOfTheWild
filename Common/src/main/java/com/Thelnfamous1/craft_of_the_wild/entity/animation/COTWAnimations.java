@@ -2,7 +2,7 @@ package com.Thelnfamous1.craft_of_the_wild.entity.animation;
 
 import com.Thelnfamous1.craft_of_the_wild.entity.Beedle;
 import com.Thelnfamous1.craft_of_the_wild.entity.Kass;
-import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalus;
+import com.Thelnfamous1.craft_of_the_wild.entity.talus.StoneTalus;
 import net.minecraft.world.entity.Pose;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
