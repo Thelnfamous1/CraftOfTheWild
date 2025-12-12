@@ -42,7 +42,7 @@ public class COTWCommonClient {
 
     public static void registerRenderers(BiConsumer<EntityType, EntityRendererProvider> register){
         registerRendererTyped(EntityInit.STONE_TALUS.get(), renderManager -> new StoneTalusRenderer<>(renderManager, EntityInit.STONE_TALUS.getId()), register);
-        registerRendererTyped(EntityInit.FROST_TALUS.get(), renderManager -> new StoneTalusRenderer<>(renderManager, EntityInit.FROST_TALUS.getId()), register);
+        registerRendererTyped(EntityInit.FROST_TALUS.get(), renderManager -> new GlowingStoneTalusRenderer<>(renderManager, EntityInit.FROST_TALUS.getId()), register);
         registerRendererTyped(EntityInit.IGNEO_TALUS.get(), renderManager -> new GlowingStoneTalusRenderer<>(renderManager, EntityInit.IGNEO_TALUS.getId()), register);
         registerRendererTyped(EntityInit.STONE_TALUS_RARE.get(), renderManager -> new GlowingStoneTalusRenderer<>(renderManager, EntityInit.STONE_TALUS_RARE.getId()), register);
         registerRendererTyped(EntityInit.STONE_TALUS_LUMINOUS.get(), renderManager -> new GlowingStoneTalusRenderer<>(renderManager, EntityInit.STONE_TALUS_LUMINOUS.getId()), register);
