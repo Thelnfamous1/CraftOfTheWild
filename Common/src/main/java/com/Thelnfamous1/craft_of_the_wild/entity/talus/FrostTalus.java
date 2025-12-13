@@ -42,7 +42,7 @@ public class FrostTalus extends StoneTalus {
             int ticksRequiredToFreeze = target.getTicksRequiredToFreeze();
             int frozenTicksToAdd = (int) (ticksRequiredToFreeze / 2.0D);
             frozenTicksToAdd = Math.min(ticksRequiredToFreeze - target.getTicksFrozen(), frozenTicksToAdd);
-            FreezeAttackVictim.applyFreezeEffect(target, frozenTicksToAdd, 80);
+            FreezeAttackVictim.applyFreezeEffect(target, frozenTicksToAdd, 160);
         }
     }
 
