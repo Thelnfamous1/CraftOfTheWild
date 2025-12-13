@@ -53,7 +53,7 @@ public class COTWCommon {
     }
 
     public static void debug(boolean debugFlag, String format, Object... args){
-        if(debugFlag) Constants.LOG.info(format, args);
+        if(debugFlag && Services.PLATFORM.isDevelopmentEnvironment()) Constants.LOG.info(format, args);
     }
 
     public static <T extends LivingEntity & CustomMusicPlayer> void playCustomMusicFor(T boss) {

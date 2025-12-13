@@ -568,7 +568,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Cus
         return true;
     }
 
-    private boolean isTargetOnTopOfMe(Entity target) {
+    protected boolean isTargetOnTopOfMe(Entity target) {
         if(target.getBoundingBox().minY < this.getBoundingBox().maxY){
             return false;
         }
@@ -1039,7 +1039,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Cus
         return canDig;
     }
 
-    private static double getTargetingRange(StoneTalus talus) {
+    protected static double getTargetingRange(StoneTalus talus) {
         return COTWUtil.getFollowRange(talus);
     }
 

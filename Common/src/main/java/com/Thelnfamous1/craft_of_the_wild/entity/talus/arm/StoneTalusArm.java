@@ -174,7 +174,7 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
             BlockPos blockPos = BlockPos.containing(particlePos);
             if(!level().getBlockState(blockPos.below()).canBeReplaced()){
                 particlePos = new Vec3(particlePos.x, blockPos.getY(), particlePos.z);
-                Services.PLATFORM.sendCircleParticlesPacket(new BlockParticleOption(ParticleInit.DUST_PILLAR.get(), this.level().getBlockState(blockPos.below())), particlePos.x, particlePos.y, particlePos.z, this.getRadius(), 750);
+                this.spawnServerSideAOEParticles(blockPos, particlePos);
             }
             /*
             Services.PLATFORM.sendSmashAttackParticlePacket(attackBox, 750);
@@ -183,11 +183,23 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
         }
     }
 
-    private void applyDamage(LivingEntity target, @Nullable LivingEntity owner){
+    protected void spawnServerSideAOEParticles(BlockPos blockPos, Vec3 particlePos) {
+        Services.PLATFORM.sendCircleParticlesPacket(new BlockParticleOption(ParticleInit.DUST_PILLAR.get(), this.level().getBlockState(blockPos.below())), particlePos.x, particlePos.y, particlePos.z, this.getRadius(), 750);
+    }
+
+    protected boolean applyDamage(LivingEntity target, @Nullable LivingEntity owner){
         boolean hurt = target.hurt(DamageTypeInit.stoneTalusArm(this, owner), (float) this.getBaseDamage());
         if (hurt && owner != null && target.isAlive()) {
             this.doEnchantDamageEffects(owner, target);
         }
+        if(hurt && target.isAlive()){
+            this.doPostDamageEffects(target);
+        }
+        return hurt;
+    }
+
+    protected void doPostDamageEffects(LivingEntity target) {
+
     }
 
     @Override

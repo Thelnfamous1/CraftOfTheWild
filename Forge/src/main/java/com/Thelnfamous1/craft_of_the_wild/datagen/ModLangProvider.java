@@ -36,7 +36,7 @@ public class ModLangProvider extends LanguageProvider {
             "radiant_helmet", "Radiant Mask",
             "radiant_chestplate", "Radiant Shirt",
             "radiant_leggings", "Radiant Tights",
-            "bokolbin_helmet", "Bokolbin Mask",
+            "bokoblin_helmet", "Bokoblin Mask",
             "medal_of_honor_talus", "Medal of Honor: Talus",
             "stone_talus_rare", "Stone Talus (Rare)",
             "stone_talus_luminous", "Stone Talus (Luminous)",
@@ -60,6 +60,10 @@ public class ModLangProvider extends LanguageProvider {
         add(AttackTypeComponentProvider.ATTACK_TYPE_TRANSLATION_KEY, "Attack Type");
         for(StoneTalusAttackType attackType : StoneTalusAttackType.values()){
             add(AttackTypeComponentProvider.getAttackTypeDisplayName(EntityInit.STONE_TALUS.get(), attackType).getString(), checkReplace(attackType.getKey()));
+            add(AttackTypeComponentProvider.getAttackTypeDisplayName(EntityInit.IGNEO_TALUS.get(), attackType).getString(), checkReplace(attackType.getKey()));
+            add(AttackTypeComponentProvider.getAttackTypeDisplayName(EntityInit.FROST_TALUS.get(), attackType).getString(), checkReplace(attackType.getKey()));
+            add(AttackTypeComponentProvider.getAttackTypeDisplayName(EntityInit.STONE_TALUS_RARE.get(), attackType).getString(), checkReplace(attackType.getKey()));
+            add(AttackTypeComponentProvider.getAttackTypeDisplayName(EntityInit.STONE_TALUS_LUMINOUS.get(), attackType).getString(), checkReplace(attackType.getKey()));
         }
         this.projectileDamageTypeLang(DamageTypeInit.STONE_TALUS_ARM, "a stony arm");
         add(ModAdventureAdvancements.ADVANCEMENTS_ROOT_TITLE, "A New Adventure");

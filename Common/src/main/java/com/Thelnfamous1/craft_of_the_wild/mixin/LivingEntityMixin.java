@@ -1,7 +1,12 @@
 package com.Thelnfamous1.craft_of_the_wild.mixin;
 
 import com.Thelnfamous1.craft_of_the_wild.duck.DisguiseEffectUser;
+import com.Thelnfamous1.craft_of_the_wild.duck.FreezeAttackVictim;
 import com.Thelnfamous1.craft_of_the_wild.platform.Services;
+import com.llamalad7.mixinextras.injector.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
@@ -22,7 +27,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 @Mixin(LivingEntity.class)
-public abstract class LivingEntityMixin extends Entity implements DisguiseEffectUser {
+public abstract class LivingEntityMixin extends Entity implements DisguiseEffectUser, FreezeAttackVictim{
 
     @Shadow public abstract boolean removeEffect(MobEffect pEffect);
 
@@ -87,6 +92,28 @@ public abstract class LivingEntityMixin extends Entity implements DisguiseEffect
                 disguisedAttacker.craft_of_the_wild$removeDisguiseEffect(disguiseEffect);
                 disguisedAttacker.craft_of_the_wild$cooldownDisguiseEffect(disguiseEffect);
             }
+        }
+    }
+
+    @WrapOperation(method = "aiStep", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/LivingEntity;isInPowderSnow:Z"))
+    private boolean wrap_isInPowderSnow_aiStep(LivingEntity instance, Operation<Boolean> original){
+        return original.call(instance) && this.craft_of_the_wild$getPauseFrozenTicks() <= 0;
+    }
+
+    @WrapWithCondition(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;setTicksFrozen(I)V", ordinal = 1))
+    private boolean wrap_setTicksFrozen_notInPowderSnow_aiStep(LivingEntity instance, int i){
+        return this.craft_of_the_wild$getPauseFrozenTicks() <= 0;
+    }
+
+    @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
+    private void post_addAdditionaLSaveData(CompoundTag $$0, CallbackInfo ci){
+        $$0.putInt(PAUSE_FROZEN_TICKS, this.craft_of_the_wild$getPauseFrozenTicks());
+    }
+
+    @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
+    private void post_readAdditionaLSaveData(CompoundTag $$0, CallbackInfo ci){
+        if($$0.contains(PAUSE_FROZEN_TICKS)){
+            this.craft_of_the_wild$setPauseFrozenTicks($$0.getInt(PAUSE_FROZEN_TICKS));
         }
     }
 }

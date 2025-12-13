@@ -124,9 +124,13 @@ public abstract class COTWAttacker<T extends AnimatedAttacker.AttackType> extend
             if (!level().getBlockState(blockPos.below()).canBeReplaced()) {
                 particlePos = new Vec3(particlePos.x, blockPos.getY(), particlePos.z);
                 //COTWUtil.spawnParticlesInCircle(this.level(), new BlockParticleOption(ParticleInit.DUST_PILLAR.get(), this.level().getBlockState(blockPos.below())), particlePos.x, particlePos.y, particlePos.z, radius, 100);
-                COTWUtil.spawnSmashAttackParticles(this.level(), new BlockParticleOption(ParticleInit.DUST_PILLAR.get(), this.level().getBlockState(blockPos.below())), particlePos, COTWUtil.getXZSize(attackBox), 750);
+                this.spawnClientSideAOEParticles(attackBox, blockPos, particlePos);
             }
         }
+    }
+
+    protected void spawnClientSideAOEParticles(AABB attackBox, BlockPos blockPos, Vec3 particlePos) {
+        COTWUtil.spawnSmashAttackParticles(this.level(), new BlockParticleOption(ParticleInit.DUST_PILLAR.get(), this.level().getBlockState(blockPos.below())), particlePos, COTWUtil.getXZSize(attackBox), 750);
     }
 
     protected AABB createAttackBox(T currentAttackType) {
@@ -140,7 +144,7 @@ public abstract class COTWAttacker<T extends AnimatedAttacker.AttackType> extend
     protected abstract double getAttackRadius(T currentAttackType);
 
     // Largely the same as Mob#doHurtTarget, but with adjustments for area of effect attacks and damage scaling
-    protected void modifiedDoHurtTarget(Entity target, double baseDamageModifier, boolean isAreaOfEffect) {
+    protected boolean modifiedDoHurtTarget(Entity target, double baseDamageModifier, boolean isAreaOfEffect) {
         float attackDamage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
         attackDamage *= baseDamageModifier;
         float attackKnockback = (float) this.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
@@ -164,7 +168,13 @@ public abstract class COTWAttacker<T extends AnimatedAttacker.AttackType> extend
 
             this.doEnchantDamageEffects(this, target);
             this.setLastHurtMob(target);
+            this.doPostDamageEffects(target);
         }
+        return hurt;
+    }
+
+    protected void doPostDamageEffects(Entity target) {
+
     }
 
     protected boolean vanillaDoHurtTarget(Entity target) {

@@ -13,20 +13,22 @@ public class Constants {
 	public static final String TRINKETS_MODID = "trinkets";
 	public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
 
-	public static final boolean DEBUG_IDE = false;
-	public static final boolean DEBUG_STONE_TALUS = DEBUG_IDE;
-	public static final boolean DEBUG_MONSTER = DEBUG_IDE;
-	public static final boolean FIX_DEBUG_UTILS_MULTIPART_ENTITIES = DEBUG_IDE;
-	public static final boolean FIX_JADE_MULTIPART_ENTITIES = DEBUG_IDE;
+	public static final boolean DEBUG_IDE = true;
+	public static final boolean DEBUG_STONE_TALUS = false;
+	public static final boolean DEBUG_MONSTER = false;
+	public static final boolean FIX_DEBUG_UTILS_MULTIPART_ENTITIES = false;
+	public static final boolean FIX_JADE_MULTIPART_ENTITIES = false;
 	public static final boolean DEBUG_BRAIN_DESERIALIZATION = false;
 	public static final boolean DEBUG_STONE_TALUS_HEADBUTT = false;
 	public static final boolean DEBUG_STONE_TALUS_FACEPLANT = false;
-	public static final boolean DEBUG_CUSTOM_MUSIC = DEBUG_IDE;
+	public static final boolean DEBUG_CUSTOM_MUSIC = false;
 	public static final boolean DEBUG_STONE_TALUS_ARM = false;
-	public static final boolean DEBUG_STONE_TALUS_SHAKE = DEBUG_IDE;
-	public static final boolean DEBUG_STONE_TALUS_ARM_PARTICLES = DEBUG_IDE;
-	public static final boolean DEBUG_NEAREST_BURROW_SENSOR = DEBUG_IDE;
+	public static final boolean DEBUG_STONE_TALUS_SHAKE = false;
+	public static final boolean DEBUG_STONE_TALUS_ARM_PARTICLES = false;
+	public static final boolean DEBUG_NEAREST_BURROW_SENSOR = false;
 	public static final boolean DEBUG_STONE_TALUS_DIG = false;
-	public static final boolean DEBUG_STONE_TALUS_STRUCTURE = DEBUG_IDE;
-	public static final boolean DEBUG_BEEDLE_RESTOCK = DEBUG_IDE;
+	public static final boolean DEBUG_STONE_TALUS_STRUCTURE = false;
+	public static final boolean DEBUG_BEEDLE_RESTOCK = false;
+	public static final boolean DEBUG_PAUSE_FROZEN_TICKS = DEBUG_IDE;
+	public static final boolean DEBUG_IGNEO_TALUS = DEBUG_IDE;
 }
