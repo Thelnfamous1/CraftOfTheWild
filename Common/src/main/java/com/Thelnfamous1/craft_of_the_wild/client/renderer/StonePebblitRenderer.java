@@ -10,6 +10,7 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 public class StonePebblitRenderer<T extends StonePebblit> extends COTWMobRenderer<T> {
     public StonePebblitRenderer(EntityRendererProvider.Context renderManager, ResourceLocation id) {
         super(renderManager, new StonePebblitModel<>(id));
+        this.withScale(StonePebblit.VISUAL_SCALE);
     }
 
     @Override

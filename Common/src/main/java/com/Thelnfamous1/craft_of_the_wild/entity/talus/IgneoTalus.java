@@ -97,7 +97,7 @@ public class IgneoTalus extends StoneTalus {
     }
 
     @Override
-    protected void spawnClientSideAOEParticles(AABB attackBox, BlockPos blockPos, Vec3 particlePos) {
+    protected void spawnClientSideAOEParticles(StoneTalusAttackType currentAttackType, AttackPoint currentAttackPoint, AABB attackBox, BlockPos blockPos, Vec3 particlePos) {
         COTWUtil.spawnSmashAttackParticles(this.level(), ParticleTypes.FLAME, particlePos, COTWUtil.getXZSize(attackBox), 750);
     }
 

@@ -714,8 +714,8 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Cus
     }
 
     @Override
-    protected void finalizeAreaOfEffectAttack(AABB attackBox) {
-        super.finalizeAreaOfEffectAttack(attackBox);
+    protected void finalizeAreaOfEffectAttack(StoneTalusAttackType currentAttackType, AttackPoint currentAttackPoint, AABB attackBox) {
+        super.finalizeAreaOfEffectAttack(currentAttackType, currentAttackPoint, attackBox);
         if(!this.level().isClientSide && Services.PLATFORM.canEntityGrief(this.level(), this)){
             COTWUtil.destroyBlocksInBoundingBox(attackBox, this.level(), this, StoneTalus::canDestroy);
             COTWUtil.convertGrassToDirt(attackBox.expandTowards(0, -1, 0), this.level(), this, StoneTalus::canConvertToDirt);

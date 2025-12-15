@@ -11,7 +11,7 @@ import java.util.function.IntFunction;
 
 public enum StonePebblitAttackType implements AnimatedAttacker.AttackType, StringRepresentable {
     POUND(0, "pound", ImmutableList.of(
-            AnimatedAttacker.AttackPoint.of(0.67F, 1.0D, AnimatedAttacker.AttackPoint.DamageMode.MELEE)),
+            AnimatedAttacker.AttackPoint.of(0.67F, 1.0D, AnimatedAttacker.AttackPoint.DamageMode.AREA_OF_EFFECT)),
             COTWUtil.secondsToTicks(1.25F));
 
     public static final EnumCodec<StonePebblitAttackType> CODEC = StringRepresentable.fromEnum(StonePebblitAttackType::values);

@@ -99,7 +99,7 @@ public class EntityInit {
         return registerEntity(pebblitName, () ->
                         EntityType.Builder.of(factory, MobCategory.MONSTER)
                                 .fireImmune()
-                                .sized(pixelsToBlocks(31.0F), 1.95F)
+                                .sized(pixelsToBlocks(31.0F) * StonePebblit.LOGICAL_SCALE, pixelsToBlocks(31.0F) * StonePebblit.LOGICAL_SCALE)
                                 .clientTrackingRange(10),
                 pebblitAttributes);
     }

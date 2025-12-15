@@ -67,7 +67,7 @@ public abstract class COTWAttacker<T extends AnimatedAttacker.AttackType> extend
                     List<LivingEntity> targets = this.level().getNearbyEntities(LivingEntity.class, AREA_OF_EFFECT_TARGETING_CONDITIONS, this, attackBox);
                     targets.forEach(target -> this.modifiedDoHurtTarget(target, baseDamageModifier, true));
                 }
-                this.finalizeAreaOfEffectAttack(attackBox);
+                this.finalizeAreaOfEffectAttack(currentAttackType, currentAttackPoint, attackBox);
             }
             case MELEE -> {
                 LivingEntity target = this.getTarget();
@@ -115,7 +115,7 @@ public abstract class COTWAttacker<T extends AnimatedAttacker.AttackType> extend
         return 15;
     }
 
-    protected void finalizeAreaOfEffectAttack(AABB attackBox) {
+    protected void finalizeAreaOfEffectAttack(T currentAttackType, AttackPoint currentAttackPoint, AABB attackBox) {
         if (this.level().isClientSide) {
             Vec3 center = attackBox.getCenter();
             double radius = attackBox.getSize() * 0.5;
@@ -124,12 +124,12 @@ public abstract class COTWAttacker<T extends AnimatedAttacker.AttackType> extend
             if (!level().getBlockState(blockPos.below()).canBeReplaced()) {
                 particlePos = new Vec3(particlePos.x, blockPos.getY(), particlePos.z);
                 //COTWUtil.spawnParticlesInCircle(this.level(), new BlockParticleOption(ParticleInit.DUST_PILLAR.get(), this.level().getBlockState(blockPos.below())), particlePos.x, particlePos.y, particlePos.z, radius, 100);
-                this.spawnClientSideAOEParticles(attackBox, blockPos, particlePos);
+                this.spawnClientSideAOEParticles(currentAttackType, currentAttackPoint, attackBox, blockPos, particlePos);
             }
         }
     }
 
-    protected void spawnClientSideAOEParticles(AABB attackBox, BlockPos blockPos, Vec3 particlePos) {
+    protected void spawnClientSideAOEParticles(T currentAttackType, AttackPoint currentAttackPoint, AABB attackBox, BlockPos blockPos, Vec3 particlePos) {
         COTWUtil.spawnSmashAttackParticles(this.level(), new BlockParticleOption(ParticleInit.DUST_PILLAR.get(), this.level().getBlockState(blockPos.below())), particlePos, COTWUtil.getXZSize(attackBox), 750);
     }
 

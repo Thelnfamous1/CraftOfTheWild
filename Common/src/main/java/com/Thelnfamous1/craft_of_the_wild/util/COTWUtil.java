@@ -29,6 +29,9 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.ExpirableValue;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
+import net.minecraft.world.entity.item.PrimedTnt;
+import net.minecraft.world.item.enchantment.ProtectionEnchantment;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
@@ -395,5 +398,35 @@ public class COTWUtil {
 
         // Repack
         return (newSky << 20) | (newBlock << 4);
+    }
+
+    @Nullable
+    public static Vec3 createExplosionKnockbackVector(Vec3 sourcePos, Entity entity, float diameter){
+        double d12 = Math.sqrt(entity.distanceToSqr(sourcePos)) / (double)diameter;
+        if (d12 <= 1.0D) {
+            double xDist = entity.getX() - sourcePos.x;
+            double yDist = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - sourcePos.y;
+            double zDist = entity.getZ() - sourcePos.z;
+            double dist = Math.sqrt(xDist * xDist + yDist * yDist + zDist * zDist);
+            if (dist != 0.0D) {
+                xDist /= dist;
+                yDist /= dist;
+                zDist /= dist;
+            }
+            double seenPercent = Explosion.getSeenPercent(sourcePos, entity);
+            double knockbackPower = (1.0D - d12) * seenPercent;
+            double knockbackFactor;
+            if (entity instanceof LivingEntity livingentity) {
+                knockbackFactor = ProtectionEnchantment.getExplosionKnockbackAfterDampener(livingentity, knockbackPower);
+            } else {
+                knockbackFactor = knockbackPower;
+            }
+
+            xDist *= knockbackFactor;
+            yDist *= knockbackFactor;
+            zDist *= knockbackFactor;
+            return new Vec3(xDist, yDist, zDist);
+        }
+        return null;
     }
 }
