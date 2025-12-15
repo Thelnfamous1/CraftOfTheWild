@@ -341,6 +341,7 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
                 boolean canTarget = !(target instanceof LivingEntity victim) || COTWAttacker.AREA_OF_EFFECT_TARGETING_CONDITIONS.test(this, victim);
                 if(!target.ignoreExplosion() && canTarget){
                     target.hurt(this.level().damageSources().explosion(this, null), 6.0F);
+                    this.doPostDamageEffects(target);
                     Vec3 explosionKnockbackVector = COTWUtil.createExplosionKnockbackVector(this.position(), target, explosionDiameter);
                     if(explosionKnockbackVector != null){
                         target.push(explosionKnockbackVector.x, explosionKnockbackVector.y, explosionKnockbackVector.z);
