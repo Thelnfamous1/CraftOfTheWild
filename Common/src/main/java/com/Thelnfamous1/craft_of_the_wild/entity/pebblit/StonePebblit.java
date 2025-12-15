@@ -316,6 +316,11 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
         return other.getType().is(COTWTags.STONE_PEBBLIT_FRIENDS);
     }
 
+    @Override
+    protected void finalizeAreaOfEffectAttack(StonePebblitAttackType currentAttackType, AttackPoint currentAttackPoint, AABB attackBox) {
+
+    }
+
     // BRAIN
 
     @Override
@@ -323,7 +328,7 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
         boolean wasDying = this.customDeathTime > 0;
         super.tickDeath();
         if(this.customDeathTime > 0 && !wasDying && !this.level().isClientSide){
-            float explosionRadius = (this.getBbWidth() * 3.0F) / 2.0F;
+            float explosionRadius = (this.getBbWidth() * 6.0F) / 2.0F;
             float explosionDiameter = explosionRadius * 2;
             int k1 = Mth.floor(this.getX() - (double)explosionDiameter - 1.0D);
             int l1 = Mth.floor(this.getX() + (double)explosionDiameter + 1.0D);
