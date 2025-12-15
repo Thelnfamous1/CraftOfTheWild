@@ -106,6 +106,15 @@ public class ItemInit {
     public static final RegistryObject<Item> BOKOBLIN_HELMET = ITEMS.register("bokoblin_helmet", () ->
             new BokoblinArmorItem(COTWArmorMaterials.BOKOBLIN, ArmorItem.Type.HELMET, getItemProperties()));
 
+    public static final RegistryObject<Item> STONE_PEBBLIT_SPAWN_EGG = ITEMS.register("stone_pebblit_spawn_egg", () ->
+            new COTWSpawnEggItem(EntityInit.STONE_PEBBLIT, 14405058, 7643954, getItemProperties()));
+
+    public static final RegistryObject<Item> FROST_PEBBLIT_SPAWN_EGG = ITEMS.register("frost_pebblit_spawn_egg", () ->
+            new COTWSpawnEggItem(EntityInit.FROST_PEBBLIT, 14405058, 7643954, getItemProperties()));
+
+    public static final RegistryObject<Item> IGNEO_PEBBLIT_SPAWN_EGG = ITEMS.register("igneo_pebblit_spawn_egg", () ->
+            new COTWSpawnEggItem(EntityInit.IGNEO_PEBBLIT, 14405058, 7643954, getItemProperties()));
+
     private static RegistryObject<Item> registerMusicDisc(String path, int analogSignal, RegistryObject<SoundEvent> soundSupplier, int durationInSeconds, String author) {
         return ITEMS.register(path, () ->
                 new COTWRecordItem(analogSignal, soundSupplier.get(), getItemProperties().stacksTo(1).rarity(Rarity.RARE), durationInSeconds, author));

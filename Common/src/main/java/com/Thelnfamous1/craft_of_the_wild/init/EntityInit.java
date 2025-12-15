@@ -3,6 +3,9 @@ package com.Thelnfamous1.craft_of_the_wild.init;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.entity.Beedle;
 import com.Thelnfamous1.craft_of_the_wild.entity.Kass;
+import com.Thelnfamous1.craft_of_the_wild.entity.pebblit.FrostPebblit;
+import com.Thelnfamous1.craft_of_the_wild.entity.pebblit.IgneoPebblit;
+import com.Thelnfamous1.craft_of_the_wild.entity.pebblit.StonePebblit;
 import com.Thelnfamous1.craft_of_the_wild.entity.talus.*;
 import com.Thelnfamous1.craft_of_the_wild.entity.talus.arm.FrostTalusArm;
 import com.Thelnfamous1.craft_of_the_wild.entity.talus.arm.IgneoTalusArm;
@@ -84,6 +87,21 @@ public class EntityInit {
         RegistryObject<EntityType<T>> entityTypeSupplier = registerEntity(name, supplier);
         attributeSuppliers.add(new AttributesRegister<>(entityTypeSupplier, attributeSupplier));
         return entityTypeSupplier;
+    }
+
+    public static final RegistryObject<EntityType<StonePebblit>> STONE_PEBBLIT = registerPebblit("stone_pebblit", StonePebblit::new, StonePebblit::createAttributes);
+
+    public static final RegistryObject<EntityType<FrostPebblit>> FROST_PEBBLIT = registerPebblit("frost_pebblit", FrostPebblit::new, FrostPebblit::createAttributes);
+
+    public static final RegistryObject<EntityType<IgneoPebblit>> IGNEO_PEBBLIT = registerPebblit("igneo_pebblit", IgneoPebblit::new, IgneoPebblit::createAttributes);
+
+    private static <T extends StonePebblit> RegistryObject<EntityType<T>> registerPebblit(String pebblitName, EntityType.EntityFactory<T> factory, Supplier<AttributeSupplier.Builder> pebblitAttributes) {
+        return registerEntity(pebblitName, () ->
+                        EntityType.Builder.of(factory, MobCategory.MONSTER)
+                                .fireImmune()
+                                .sized(pixelsToBlocks(31.0F), 1.95F)
+                                .clientTrackingRange(10),
+                pebblitAttributes);
     }
 
     public static float pixelsToBlocks(float pixels){

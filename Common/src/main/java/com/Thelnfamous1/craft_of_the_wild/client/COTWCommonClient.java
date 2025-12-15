@@ -51,6 +51,9 @@ public class COTWCommonClient {
         registerRendererTyped(EntityInit.IGNEO_TALUS_ARM.get(), renderManager -> new GlowingStoneTalusArmRenderer<>(renderManager, EntityInit.IGNEO_TALUS_ARM.getId()), register);
         registerRendererTyped(EntityInit.BEEDLE.get(), BeedleRenderer::new, register);
         registerRendererTyped(EntityInit.KASS.get(), KassRenderer::new, register);
+        registerRendererTyped(EntityInit.STONE_PEBBLIT.get(), renderManager -> new StonePebblitRenderer<>(renderManager, EntityInit.STONE_PEBBLIT.getId()), register);
+        registerRendererTyped(EntityInit.FROST_PEBBLIT.get(), renderManager -> new StonePebblitRenderer<>(renderManager, EntityInit.FROST_PEBBLIT.getId()), register);
+        registerRendererTyped(EntityInit.IGNEO_PEBBLIT.get(), renderManager -> new GlowingStonePebblitRenderer<>(renderManager, EntityInit.IGNEO_PEBBLIT.getId()), register);
     }
 
     private static <T extends Entity> void registerRendererTyped(EntityType<T> type, EntityRendererProvider<T> provider, BiConsumer<EntityType, EntityRendererProvider> register) {

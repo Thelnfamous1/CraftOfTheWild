@@ -3,6 +3,7 @@ package com.Thelnfamous1.craft_of_the_wild.datagen;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.compat.jade.AttackTypeComponentProvider;
 import com.Thelnfamous1.craft_of_the_wild.compat.jade.COTWJadePlugin;
+import com.Thelnfamous1.craft_of_the_wild.entity.pebblit.StonePebblitAttackType;
 import com.Thelnfamous1.craft_of_the_wild.entity.talus.StoneTalusAttackType;
 import com.Thelnfamous1.craft_of_the_wild.init.*;
 import com.Thelnfamous1.craft_of_the_wild.item.COTWRecordItem;
@@ -64,6 +65,11 @@ public class ModLangProvider extends LanguageProvider {
             add(AttackTypeComponentProvider.getAttackTypeDisplayName(EntityInit.FROST_TALUS.get(), attackType).getString(), checkReplace(attackType.getKey()));
             add(AttackTypeComponentProvider.getAttackTypeDisplayName(EntityInit.STONE_TALUS_RARE.get(), attackType).getString(), checkReplace(attackType.getKey()));
             add(AttackTypeComponentProvider.getAttackTypeDisplayName(EntityInit.STONE_TALUS_LUMINOUS.get(), attackType).getString(), checkReplace(attackType.getKey()));
+        }
+        for(StonePebblitAttackType attackType : StonePebblitAttackType.values()){
+            add(AttackTypeComponentProvider.getAttackTypeDisplayName(EntityInit.STONE_PEBBLIT.get(), attackType).getString(), checkReplace(attackType.getKey()));
+            add(AttackTypeComponentProvider.getAttackTypeDisplayName(EntityInit.FROST_PEBBLIT.get(), attackType).getString(), checkReplace(attackType.getKey()));
+            add(AttackTypeComponentProvider.getAttackTypeDisplayName(EntityInit.IGNEO_PEBBLIT.get(), attackType).getString(), checkReplace(attackType.getKey()));
         }
         this.projectileDamageTypeLang(DamageTypeInit.STONE_TALUS_ARM, "a stony arm");
         add(ModAdventureAdvancements.ADVANCEMENTS_ROOT_TITLE, "A New Adventure");

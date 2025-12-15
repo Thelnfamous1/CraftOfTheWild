@@ -19,6 +19,9 @@ public class COTWTags {
     public static final TagKey<EntityType<?>> BOKOLBIN_DISGUISE_AFFECTS = createEntityTypeTag("bokolbin_disguise_affects");
     public static final TagKey<EntityType<?>> STONE_TALUSES = createEntityTypeTag("stone_taluses");
     public static final TagKey<Item> BURN_IMMUNE_WEARABLES = createItemTag("burn_immune_wearables");
+    public static final TagKey<EntityType<?>> STONE_PEBBLITS = createEntityTypeTag("stone_pebblits");
+    public static final TagKey<EntityType<?>> STONE_TALUS_FRIENDS = createEntityTypeTag("stone_talus_friends");
+    public static final TagKey<EntityType<?>> STONE_PEBBLIT_FRIENDS = createEntityTypeTag("stone_pebblit_friends");
 
 
     private static TagKey<Block> createBlockTag(String path) {

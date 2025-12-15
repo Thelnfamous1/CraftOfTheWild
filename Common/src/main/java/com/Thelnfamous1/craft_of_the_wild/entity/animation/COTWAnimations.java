@@ -2,6 +2,7 @@ package com.Thelnfamous1.craft_of_the_wild.entity.animation;
 
 import com.Thelnfamous1.craft_of_the_wild.entity.Beedle;
 import com.Thelnfamous1.craft_of_the_wild.entity.Kass;
+import com.Thelnfamous1.craft_of_the_wild.entity.pebblit.StonePebblit;
 import com.Thelnfamous1.craft_of_the_wild.entity.talus.StoneTalus;
 import net.minecraft.world.entity.Pose;
 import software.bernie.geckolib.core.animation.AnimationController;
@@ -9,7 +10,6 @@ import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 
 public class COTWAnimations {
-
     public static RawAnimation WALK = RawAnimation.begin().thenLoop("walk"); // continuous animation
     public static RawAnimation IDLE = RawAnimation.begin().thenLoop("idle"); // continuous animation
 
@@ -29,6 +29,8 @@ public class COTWAnimations {
 
     public static RawAnimation BEEDLE_SHOP = RawAnimation.begin().thenPlayAndHold("shop"); // non-looping continuous animation
     public static RawAnimation KASS_MUSIC = RawAnimation.begin().thenLoop("music"); // continuous animation
+
+    private static final RawAnimation STONE_PEBBLIT_POUND = RawAnimation.begin().thenPlay("attack");
 
 
     public static AnimationController<StoneTalus> moveController(StoneTalus talus) {
@@ -145,6 +147,46 @@ public class COTWAnimations {
             } else{
                 return PlayState.STOP;
             }
+        });
+    }
+
+
+    public static AnimationController<StonePebblit> moveController(StonePebblit talus) {
+        return new AnimationController<>(talus, "Move", 10, state -> {
+            if(!talus.refuseToMove(true)){
+                if (talus.isWalking()) {
+                    return state.setAndContinue(WALK);
+                } else{
+                    return state.setAndContinue(IDLE);
+                }
+            }
+            return PlayState.STOP;
+        });
+    }
+
+    public static AnimationController<StonePebblit> poseController(StonePebblit talus) {
+        return new AnimationController<>(talus, "Pose", 0, state -> {
+            if(talus.hasPose(Pose.DYING)){
+                return state.setAndContinue(DEATH);
+            }
+            return PlayState.STOP;
+        });
+    }
+
+    public static AnimationController<StonePebblit> attackController(StonePebblit talus) {
+        return new AnimationController<>(talus, "Attack", 0, state -> {
+            if (!talus.refuseToMove(false) && talus.isAttackAnimationInProgress()){
+                //noinspection ConstantConditions
+                switch (talus.getCurrentAttackType()){
+                    case POUND -> {
+                        return state.setAndContinue(STONE_PEBBLIT_POUND);
+                    }
+                }
+            }
+
+            state.resetCurrentAnimation();
+
+            return PlayState.STOP;
         });
     }
 

@@ -59,6 +59,9 @@ public class ModEntityLootTables extends EntityLootSubProvider {
                 new LootEntry(ItemInit.MUSIC_DISC_A_ROCKY_BALLAD.get(), ConstantValue.exactly(1.0F), 0.15F)));
         this.dropSingle(EntityInit.BEEDLE.get(), Items.EMERALD);
         this.dropSingle(EntityInit.KASS.get(), Items.FEATHER);
+        this.dropSingle(EntityInit.STONE_PEBBLIT.get(), Items.COBBLESTONE);
+        this.dropSingle(EntityInit.FROST_PEBBLIT.get(), Items.BLUE_ICE);
+        this.dropSingle(EntityInit.IGNEO_PEBBLIT.get(), Items.MAGMA_BLOCK);
     }
 
     @Override

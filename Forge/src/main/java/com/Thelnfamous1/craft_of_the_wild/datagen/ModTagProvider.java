@@ -135,6 +135,9 @@ public class ModTagProvider {
             this.tag(COTWTags.RADIANT_DISGUISE_AFFECTS).addTag(EntityTypeTags.SKELETONS);
             this.tag(COTWTags.BOKOLBIN_DISGUISE_AFFECTS).add(EntityType.PIGLIN, EntityType.PIGLIN_BRUTE, EntityType.HOGLIN);
             this.tag(COTWTags.STONE_TALUSES).add(EntityInit.STONE_TALUS.get(), EntityInit.FROST_TALUS.get(), EntityInit.IGNEO_TALUS.get(), EntityInit.STONE_TALUS_RARE.get(), EntityInit.STONE_TALUS_LUMINOUS.get());
+            this.tag(COTWTags.STONE_PEBBLITS).add(EntityInit.STONE_PEBBLIT.get(), EntityInit.FROST_PEBBLIT.get(), EntityInit.IGNEO_PEBBLIT.get());
+            this.tag(COTWTags.STONE_TALUS_FRIENDS).addTags(COTWTags.STONE_TALUSES, COTWTags.STONE_PEBBLITS);
+            this.tag(COTWTags.STONE_PEBBLIT_FRIENDS).addTags(COTWTags.STONE_PEBBLITS, COTWTags.STONE_TALUSES);
         }
     }
 }

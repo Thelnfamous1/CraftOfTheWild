@@ -91,7 +91,7 @@ import java.util.Map;
 import java.util.OptionalInt;
 import java.util.function.Predicate;
 
-public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements CustomMusicPlayer, SmartBrainOwner<StoneTalus>, COTWMultipartEntity, StoneTalusBase, RangedAttackMob {
+public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements CustomMusicPlayer, SmartBrainOwner<StoneTalus>, COTWMultipartEntity, StoneTalusBase, RangedAttackMob, StoneTalusLike {
     public static final float LOGICAL_SCALE = 7F/3F; // desired target is 7
     public static final float VISUAL_SCALE = 7F/6F; // desired target is 7
     public static final float FACEPLANT_ROTATION = 85.0F;
@@ -524,6 +524,11 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Cus
     }
 
     @Override
+    protected boolean isAlliedToDefault(Entity other) {
+        return other.getType().is(COTWTags.STONE_TALUS_FRIENDS);
+    }
+
+    @Override
     protected double getAttackRadius(StoneTalusAttackType currentAttackType) {
         switch (currentAttackType){
             case HEADBUTT, STUN -> {
@@ -667,6 +672,7 @@ public class StoneTalus extends COTWMonster<StoneTalusAttackType> implements Cus
         this.entityData.set(DATA_LAST_POSE_CHANGE_TICK, lastPoseChangeTick);
     }
 
+    @Override
     public boolean refuseToMove(boolean checkAttacking){
         return this.isInsideGround() || this.isDeadOrDying() || checkAttacking && this.isAttackAnimationInProgress();
     }
