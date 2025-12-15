@@ -1,8 +1,8 @@
 {
   "values": [
     "craft_of_the_wild:cookie_recipe",
-    "craft_of_the_wild:stables_sign",
     "craft_of_the_wild:egg_pudding_recipe",
-    "craft_of_the_wild:pumpkin_pie_recipe"
+    "craft_of_the_wild:pumpkin_pie_recipe",
+    "craft_of_the_wild:stables_sign"
   ]
 }

@@ -5,11 +5,13 @@ import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.COTWSharedAi;
 import com.Thelnfamous1.craft_of_the_wild.entity.talus.arm.IgneoTalusArm;
 import com.Thelnfamous1.craft_of_the_wild.entity.talus.arm.StoneTalusArm;
+import com.Thelnfamous1.craft_of_the_wild.init.SoundInit;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWTags;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.*;
@@ -43,6 +45,31 @@ public class IgneoTalus extends StoneTalus {
             int remainingTicksOnFire = Math.max(0, target.getRemainingFireTicks());
             target.setRemainingFireTicks(remainingTicksOnFire + (4 * 20));
             COTWCommon.debug(Constants.DEBUG_IGNEO_TALUS, "Talus burned {} for {} ticks and they are {}", target, target.getRemainingFireTicks(), (target.isOnFire() ? "on fire" : "not on fire"));
+        }
+    }
+
+    @Override
+    protected void onAttackStarted(StoneTalusAttackType currentAttackType) {
+        switch (currentAttackType){
+            case HEADBUTT -> this.playSoundEvent(SoundInit.IGNEO_TALUS_HEADBUTT.get());
+            case STUN -> this.playSoundEvent(SoundInit.STONE_TALUS_STUN.get());
+            case PUNCH -> this.playSoundEvent(SoundInit.IGNEO_TALUS_PUNCH.get());
+            case POUND -> this.playSoundEvent(SoundInit.IGNEO_TALUS_POUND.get());
+            case THROW -> this.playSoundEvent(SoundInit.STONE_TALUS_THROW_ARMS.get());
+            case SHAKE -> this.playSoundEvent(SoundInit.STONE_TALUS_SHAKE.get());
+        }
+    }
+
+    @Override
+    protected void playAttackSound(StoneTalusAttackType currentAttackType, AttackPoint currentAttackPoint) {
+        if(!this.level().isClientSide){
+            if(currentAttackPoint.damageMode() == AttackPoint.DamageMode.AREA_OF_EFFECT){
+                switch (currentAttackType){
+                    case PUNCH, POUND -> COTWUtil.playVanillaExplosionSound(this, SoundInit.IGNEO_TALUS_BREAK_ROCKS.get(), 4.0F);
+                    case HEADBUTT, STUN -> COTWUtil.playVanillaExplosionSound(this, SoundEvents.GENERIC_EXPLODE, 4.0F);
+                }
+
+            }
         }
     }
 

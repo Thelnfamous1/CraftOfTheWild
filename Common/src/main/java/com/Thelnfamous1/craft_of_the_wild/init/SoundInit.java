@@ -55,6 +55,22 @@ public class SoundInit {
 
     public static final RegistryObject<SoundEvent> MUSIC_A_ROCKY_BALLAD = registerSoundEvent("music_a_rocky_ballad");
 
+    public static final RegistryObject<SoundEvent> FROST_TALUS_HEADBUTT = registerSoundEvent("frost_talus_headbutt");
+
+    public static final RegistryObject<SoundEvent> FROST_TALUS_POUND = registerSoundEvent("frost_talus_pound");
+
+    public static final RegistryObject<SoundEvent> FROST_TALUS_PUNCH = registerSoundEvent("frost_talus_punch");
+
+    public static final RegistryObject<SoundEvent> FROST_TALUS_BREAK_ROCKS = registerSoundEvent("frost_talus_break_rocks");
+
+    public static final RegistryObject<SoundEvent> IGNEO_TALUS_HEADBUTT = registerSoundEvent("igneo_talus_headbutt");
+
+    public static final RegistryObject<SoundEvent> IGNEO_TALUS_POUND = registerSoundEvent("igneo_talus_pound");
+
+    public static final RegistryObject<SoundEvent> IGNEO_TALUS_PUNCH = registerSoundEvent("igneo_talus_punch");
+
+    public static final RegistryObject<SoundEvent> IGNEO_TALUS_BREAK_ROCKS = registerSoundEvent("igneo_talus_break_rocks");
+
     private static RegistryObject<SoundEvent> registerSoundEvent(String path) {
         return SOUND_EVENTS.register(path, () -> SoundEvent.createVariableRangeEvent(COTWCommon.getResourceLocation(path)));
     }

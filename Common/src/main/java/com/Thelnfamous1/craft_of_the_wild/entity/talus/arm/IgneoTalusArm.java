@@ -2,9 +2,11 @@ package com.Thelnfamous1.craft_of_the_wild.entity.talus.arm;
 
 import com.Thelnfamous1.craft_of_the_wild.entity.talus.IgneoTalus;
 import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
+import com.Thelnfamous1.craft_of_the_wild.init.SoundInit;
 import com.Thelnfamous1.craft_of_the_wild.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -31,5 +33,10 @@ public class IgneoTalusArm extends StoneTalusArm{
     @Override
     protected void spawnServerSideAOEParticles(BlockPos blockPos, Vec3 particlePos) {
         Services.PLATFORM.sendCircleParticlesPacket(ParticleTypes.FLAME, particlePos.x, particlePos.y, particlePos.z, this.getRadius(), 750);
+    }
+
+    @Override
+    protected SoundEvent getImpactSound() {
+        return SoundInit.IGNEO_TALUS_BREAK_ROCKS.get();
     }
 }

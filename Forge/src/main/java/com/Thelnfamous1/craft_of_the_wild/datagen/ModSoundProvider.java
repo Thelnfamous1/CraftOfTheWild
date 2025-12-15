@@ -39,6 +39,16 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
         this.addSound(SoundInit.MUSIC_OF_THE_WILD);
         this.addSound(SoundInit.KASS_THEME);
         this.addSound(SoundInit.MUSIC_A_ROCKY_BALLAD, 2);
+
+        this.addSound(SoundInit.FROST_TALUS_HEADBUTT, 2);
+        this.addSound(SoundInit.FROST_TALUS_POUND, 2);
+        this.addSound(SoundInit.FROST_TALUS_PUNCH, 2);
+        this.addSound(SoundInit.FROST_TALUS_BREAK_ROCKS, 2);
+
+        this.addSound(SoundInit.IGNEO_TALUS_HEADBUTT, 2);
+        this.addSound(SoundInit.IGNEO_TALUS_POUND, 2);
+        this.addSound(SoundInit.IGNEO_TALUS_PUNCH, 2);
+        this.addSound(SoundInit.IGNEO_TALUS_BREAK_ROCKS, 2);
     }
 
     public void addSound(RegistryObject<SoundEvent> entry, float volume) {

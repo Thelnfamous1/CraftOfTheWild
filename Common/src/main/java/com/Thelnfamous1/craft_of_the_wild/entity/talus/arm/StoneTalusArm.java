@@ -22,6 +22,7 @@ import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -155,7 +156,7 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
     protected void onHit(HitResult hitResult) {
         super.onHit(hitResult);
         if (!this.level().isClientSide) {
-            COTWUtil.playVanillaExplosionSound(this, SoundInit.STONE_TALUS_BREAK_ROCKS.get(), 4.0F);
+            COTWUtil.playVanillaExplosionSound(this, this.getImpactSound(), 4.0F);
             double radius = this.getRadius();
             double attackSize = radius * 2;
             AABB attackBox = AABB.ofSize(this.position(), attackSize, attackSize, attackSize).inflate(1.0D);
@@ -181,6 +182,10 @@ public class StoneTalusArm extends AbstractHurtingProjectile implements GeoEntit
              */
             this.discard();
         }
+    }
+
+    protected SoundEvent getImpactSound() {
+        return SoundInit.STONE_TALUS_BREAK_ROCKS.get();
     }
 
     protected void spawnServerSideAOEParticles(BlockPos blockPos, Vec3 particlePos) {

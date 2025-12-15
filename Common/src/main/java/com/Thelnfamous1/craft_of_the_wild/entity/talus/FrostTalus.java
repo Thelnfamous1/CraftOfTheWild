@@ -4,10 +4,12 @@ import com.Thelnfamous1.craft_of_the_wild.duck.FreezeAttackVictim;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.COTWSharedAi;
 import com.Thelnfamous1.craft_of_the_wild.entity.talus.arm.FrostTalusArm;
 import com.Thelnfamous1.craft_of_the_wild.entity.talus.arm.StoneTalusArm;
+import com.Thelnfamous1.craft_of_the_wild.init.SoundInit;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
@@ -43,6 +45,31 @@ public class FrostTalus extends StoneTalus {
             int frozenTicksToAdd = (int) (ticksRequiredToFreeze / 2.0D);
             frozenTicksToAdd = Math.min(ticksRequiredToFreeze - target.getTicksFrozen(), frozenTicksToAdd);
             FreezeAttackVictim.applyFreezeEffect(target, frozenTicksToAdd, 160);
+        }
+    }
+
+    @Override
+    protected void onAttackStarted(StoneTalusAttackType currentAttackType) {
+        switch (currentAttackType){
+            case HEADBUTT -> this.playSoundEvent(SoundInit.FROST_TALUS_HEADBUTT.get());
+            case STUN -> this.playSoundEvent(SoundInit.STONE_TALUS_STUN.get());
+            case PUNCH -> this.playSoundEvent(SoundInit.FROST_TALUS_PUNCH.get());
+            case POUND -> this.playSoundEvent(SoundInit.FROST_TALUS_POUND.get());
+            case THROW -> this.playSoundEvent(SoundInit.STONE_TALUS_THROW_ARMS.get());
+            case SHAKE -> this.playSoundEvent(SoundInit.STONE_TALUS_SHAKE.get());
+        }
+    }
+
+    @Override
+    protected void playAttackSound(StoneTalusAttackType currentAttackType, AttackPoint currentAttackPoint) {
+        if(!this.level().isClientSide){
+            if(currentAttackPoint.damageMode() == AttackPoint.DamageMode.AREA_OF_EFFECT){
+                switch (currentAttackType){
+                    case PUNCH, POUND -> COTWUtil.playVanillaExplosionSound(this, SoundInit.FROST_TALUS_BREAK_ROCKS.get(), 4.0F);
+                    case HEADBUTT, STUN -> COTWUtil.playVanillaExplosionSound(this, SoundEvents.GENERIC_EXPLODE, 4.0F);
+                }
+
+            }
         }
     }
 

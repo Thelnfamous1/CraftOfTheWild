@@ -47,6 +47,70 @@
       }
     ]
   },
+  "frost_talus_break_rocks": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:frost_talus_break_rocks",
+        "volume": 2.0
+      }
+    ]
+  },
+  "frost_talus_headbutt": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:frost_talus_headbutt",
+        "volume": 2.0
+      }
+    ]
+  },
+  "frost_talus_pound": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:frost_talus_pound",
+        "volume": 2.0
+      }
+    ]
+  },
+  "frost_talus_punch": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:frost_talus_punch",
+        "volume": 2.0
+      }
+    ]
+  },
+  "igneo_talus_break_rocks": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:igneo_talus_break_rocks",
+        "volume": 2.0
+      }
+    ]
+  },
+  "igneo_talus_headbutt": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:igneo_talus_headbutt",
+        "volume": 2.0
+      }
+    ]
+  },
+  "igneo_talus_pound": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:igneo_talus_pound",
+        "volume": 2.0
+      }
+    ]
+  },
+  "igneo_talus_punch": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:igneo_talus_punch",
+        "volume": 2.0
+      }
+    ]
+  },
   "kass_theme": {
     "sounds": [
       "craft_of_the_wild:kass_theme"
