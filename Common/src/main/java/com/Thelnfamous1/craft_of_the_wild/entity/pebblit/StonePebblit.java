@@ -117,7 +117,8 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
 
     @Override
     protected void playStepSound(BlockPos stepPos, BlockState stepState) {
-        this.playSoundEvent(SoundInit.STONE_PEBBLIT_WALK.get());
+        super.playStepSound(stepPos, stepState);
+        //this.playSoundEvent(SoundInit.STONE_TALUS_WALK.get());
     }
 
     @Override
