@@ -25,6 +25,9 @@ public class MemoryModuleInit {
     public static final RegistryObject<MemoryModuleType<Unit>> IS_DIGGING = MEMORY_MODULE_TYPES.register("is_digging",
             () -> new MemoryModuleType<>(Optional.of(Codec.unit(Unit.INSTANCE))));
 
+    public static final RegistryObject<MemoryModuleType<Boolean>> IS_DISGUISED = MEMORY_MODULE_TYPES.register("is_disguised",
+            () -> new MemoryModuleType<>(Optional.of(Codec.BOOL)));
+
 
     public static void loadClass() {
 

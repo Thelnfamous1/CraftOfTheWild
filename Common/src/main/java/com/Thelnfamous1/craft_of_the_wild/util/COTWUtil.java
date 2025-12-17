@@ -20,6 +20,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -30,12 +31,15 @@ import net.minecraft.world.entity.ai.memory.ExpirableValue;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.item.PrimedTnt;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.enchantment.ProtectionEnchantment;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.util.BrainUtils;
@@ -428,5 +432,24 @@ public class COTWUtil {
             return new Vec3(xDist, yDist, zDist);
         }
         return null;
+    }
+
+    public static Set<TagKey<Fluid>> updateAndGetFluidOnEyes(LivingEntity entity, Set<TagKey<Fluid>> fluidsInEye){
+        fluidsInEye.clear();
+        double eyeYThreshold = entity.getEyeY() - 0.1111111119389534;
+        Entity vehicle = entity.getVehicle();
+        if (vehicle instanceof Boat boat) {
+            if (!boat.isUnderWater() && boat.getBoundingBox().maxY >= eyeYThreshold && boat.getBoundingBox().minY <= eyeYThreshold) {
+                return fluidsInEye;
+            }
+        }
+
+        BlockPos blockPos = BlockPos.containing(entity.getX(), eyeYThreshold, entity.getZ());
+        FluidState fluidState = entity.level().getFluidState(blockPos);
+        double fluidY = (float)blockPos.getY() + fluidState.getHeight(entity.level(), blockPos);
+        if (fluidY > eyeYThreshold) {
+            fluidState.getTags().forEach(fluidsInEye::add);
+        }
+        return fluidsInEye;
     }
 }

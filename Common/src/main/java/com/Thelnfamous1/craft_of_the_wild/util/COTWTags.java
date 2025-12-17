@@ -7,6 +7,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Fluid;
 
 public class COTWTags {
     public final static TagKey<Block> STONE_TALUS_CAN_DESTROY = createBlockTag("stone_talus_can_destroy");
@@ -22,6 +23,7 @@ public class COTWTags {
     public static final TagKey<EntityType<?>> STONE_PEBBLITS = createEntityTypeTag("stone_pebblits");
     public static final TagKey<EntityType<?>> STONE_TALUS_FRIENDS = createEntityTypeTag("stone_talus_friends");
     public static final TagKey<EntityType<?>> STONE_PEBBLIT_FRIENDS = createEntityTypeTag("stone_pebblit_friends");
+    public static final TagKey<Fluid> STONE_PEBBLIT_DROWNS_IN = createFluidTypeTag("stone_pebblit_drowns_in");
 
 
     private static TagKey<Block> createBlockTag(String path) {
@@ -38,5 +40,9 @@ public class COTWTags {
 
     private static TagKey<EntityType<?>> createEntityTypeTag(String path) {
         return TagKey.create(Registries.ENTITY_TYPE, COTWCommon.getResourceLocation(path));
+    }
+
+    private static TagKey<Fluid> createFluidTypeTag(String path) {
+        return TagKey.create(Registries.FLUID, COTWCommon.getResourceLocation(path));
     }
 }

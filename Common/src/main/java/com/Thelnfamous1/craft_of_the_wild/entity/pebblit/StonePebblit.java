@@ -2,12 +2,10 @@ package com.Thelnfamous1.craft_of_the_wild.entity.pebblit;
 
 import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
-import com.Thelnfamous1.craft_of_the_wild.entity.AnimatedAttacker;
-import com.Thelnfamous1.craft_of_the_wild.entity.COTWAttacker;
-import com.Thelnfamous1.craft_of_the_wild.entity.COTWMonster;
-import com.Thelnfamous1.craft_of_the_wild.entity.StoneTalusLike;
+import com.Thelnfamous1.craft_of_the_wild.entity.*;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.COTWSharedAi;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.behavior.*;
+import com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor.BlockDisguiseSensor;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor.COTWNearbyPlayersSensor;
 import com.Thelnfamous1.craft_of_the_wild.entity.animation.COTWAnimations;
 import com.Thelnfamous1.craft_of_the_wild.entity.talus.StoneTalusBodyRotationControl;
@@ -15,12 +13,15 @@ import com.Thelnfamous1.craft_of_the_wild.init.AttributeInit;
 import com.Thelnfamous1.craft_of_the_wild.init.MemoryModuleInit;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWTags;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
+import com.google.common.collect.Sets;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.CrashReportCategory;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.protocol.game.DebugPackets;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -29,10 +30,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -45,6 +48,11 @@ import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LevelEvent;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
@@ -68,15 +76,23 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 
 import java.util.List;
+import java.util.Map;
 import java.util.OptionalInt;
+import java.util.Set;
 
-public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements SmartBrainOwner<StonePebblit>, StoneTalusLike {
+public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements SmartBrainOwner<StonePebblit>, StoneTalusLike, BlockDisguise {
     public static final float LOGICAL_SCALE = 1F/2F; // desired target is 1
     public static final float VISUAL_SCALE = 1F/2F; // desired target is 1
+    protected static final EntityDataAccessor<BlockState> DATA_DISGUISE_BLOCK_STATE = SynchedEntityData.defineId(StonePebblit.class, EntityDataSerializers.BLOCK_STATE);
     protected static final EntityDataAccessor<OptionalInt> DATA_ATTACK_TYPE_ID = SynchedEntityData.defineId(StonePebblit.class, EntityDataSerializers.OPTIONAL_UNSIGNED_INT);
+    public static final int DROWN_TICKS = COTWUtil.secondsToTicks(3);
+    public static final EntityDimensions BLOCK_DISGUISE_DIMENSIONS = EntityDimensions.fixed(1.0F, 1.0F);
     @Nullable private StonePebblitAttackType currentAttackType;
 
     public static final int MAX_DEATH_TIME = COTWUtil.secondsToTicks(1.5F);
+    private final Set<TagKey<Fluid>> fluidsInEye = Sets.newHashSet();
+    @Nullable
+    public CompoundTag blockData;
 
     public StonePebblit(EntityType<? extends StonePebblit> type, Level level) {
         super(type, level);
@@ -95,7 +111,7 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
 
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
-        if(!pSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && !isPickaxeDamage(pSource)){
+        if(!pSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && !pSource.is(DamageTypeTags.IS_DROWNING) && !isPickaxeDamage(pSource)){
             return false;
         }
         if(pSource.is(DamageTypeTags.IS_PROJECTILE)){
@@ -135,6 +151,14 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
     }
 
     @Override
+    public EntityDimensions getDimensions(Pose $$0) {
+        if(this.hasBlockDisguise()){
+            return BLOCK_DISGUISE_DIMENSIONS;
+        }
+        return super.getDimensions($$0);
+    }
+
+    @Override
     public void setCurrentAttackType(@Nullable StonePebblitAttackType attackType, boolean force) {
         this.currentAttackType = attackType;
         this.entityData.set(DATA_ATTACK_TYPE_ID, attackType == null ? OptionalInt.empty() : OptionalInt.of(attackType.getId()), force);
@@ -158,7 +182,7 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
     }
 
     public boolean isInsideGround() {
-        return this.hasPose(Pose.DIGGING) || this.hasPose(Pose.EMERGING) || this.hasPose(Pose.SLEEPING);
+        return this.hasBlockDisguise();
     }
 
     @Override
@@ -196,11 +220,6 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
     }
 
     @Override
-    protected int decreaseAirSupply(int pAir) {
-        return pAir;
-    }
-
-    @Override
     public boolean canBeAffected(MobEffectInstance effectInstance) {
         return false; // Talus is immune to potions
     }
@@ -215,14 +234,44 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
     }
 
     @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.put("block_state", NbtUtils.writeBlockState(this.getDisguiseBlockState()));
+        if (this.blockData != null) {
+            tag.put("TileEntityData", this.blockData);
+        }
+    }
+
+    @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
+        if(tag.contains("block_state", CompoundTag.TAG_COMPOUND)){
+            this.setDisguiseBlockState(NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK), tag.getCompound("block_state")));
+        }
+
+        if (tag.contains("TileEntityData", CompoundTag.TAG_COMPOUND)) {
+            this.blockData = tag.getCompound("TileEntityData");
+        }
         // Doing this here since SBL does not deserialize Brain NBT
         COTWUtil.readBrainFromTag(tag, this);
         /*
-        COTWUtil.debugMemoryStatus(Constants.DEBUG_STONE_TALUS, this, MemoryModuleInit.IS_SLEEPING.get());
         COTWUtil.debugMemoryStatus(Constants.DEBUG_STONE_TALUS, this, MemoryModuleInit.DIG_COOLDOWN.get());
          */
+    }
+
+    @Override
+    public void fillCrashReportCategory(CrashReportCategory $$0) {
+        super.fillCrashReportCategory($$0);
+        $$0.setDetail("Immitating BlockState", this.getDisguiseBlockState().toString());
+    }
+
+    @Override
+    public BlockState getDisguiseBlockState() {
+        return this.entityData.get(DATA_DISGUISE_BLOCK_STATE);
+    }
+
+    public void setDisguiseBlockState(BlockState pBlockState) {
+        this.entityData.set(DATA_DISGUISE_BLOCK_STATE, pBlockState);
     }
 
     @Override
@@ -234,6 +283,15 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_ATTACK_TYPE_ID, OptionalInt.empty());
+        this.entityData.define(DATA_DISGUISE_BLOCK_STATE, Blocks.STONE.defaultBlockState());
+    }
+
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> dataAccessor) {
+        super.onSyncedDataUpdated(dataAccessor);
+        if(dataAccessor.equals(DATA_DISGUISE_BLOCK_STATE)){
+            this.refreshDimensions();
+        }
     }
 
     @Override
@@ -247,19 +305,8 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
     }
 
     @Override
-    public boolean ignoreExplosion() {
-        return this.isInsideGround();
-    }
-
-    @Override
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @javax.annotation.Nullable CompoundTag pDataTag) {
-        //resetDigCooldown(this);
-        if (pReason == MobSpawnType.STRUCTURE) {
-            this.setPose(Pose.SLEEPING);
-            BrainUtils.setMemory(this, MemoryModuleInit.IS_SLEEPING.get(), true);
-        }
-
         COTWCommon.debug(Constants.DEBUG_STONE_PEBBLIT, "Spawned {} at {}", this, this.blockPosition());
 
         return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
@@ -271,18 +318,18 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
         return new StoneTalusBodyRotationControl<>(this);
     }
 
+    /*
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return new ClientboundAddEntityPacket(this, this.hasPose(Pose.SLEEPING) ? 1 : 0);
+        return new ClientboundAddEntityPacket(this, Block.getId(this.getDisguiseBlockState()));
     }
 
     @Override
     public void recreateFromPacket(ClientboundAddEntityPacket pPacket) {
         super.recreateFromPacket(pPacket);
-        if (pPacket.getData() == 1) {
-            this.setPose(Pose.SLEEPING);
-        }
+        this.setBlockState(Block.stateById(pPacket.getData()));
     }
+     */
 
     @Override
     public boolean canBeCollidedWith() {
@@ -297,11 +344,6 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
     @Override
     public boolean checkSpawnObstruction(LevelReader pLevel) {
         return super.checkSpawnObstruction(pLevel) && pLevel.noCollision(this, this.getType().getDimensions().makeBoundingBox(this.position()));
-    }
-
-    @Override
-    public boolean isInvulnerableTo(DamageSource pSource) {
-        return this.isInsideGround() && !pSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY) || super.isInvulnerableTo(pSource);
     }
 
     protected boolean isTargetOnTopOfMe(Entity target) {
@@ -319,6 +361,53 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
     @Override
     protected void finalizeAreaOfEffectAttack(StonePebblitAttackType currentAttackType, AttackPoint currentAttackPoint, AABB attackBox) {
 
+    }
+
+    // NO-OP to work around the vanilla logic of drowning entities
+    @Override
+    protected int decreaseAirSupply(int pAir) {
+        return pAir;
+    }
+
+    // Used to work around the vanilla logic of drowning entities
+    protected int loseAirSupply(int air){
+        return super.decreaseAirSupply(air);
+    }
+
+    @Override
+    public int getMaxAirSupply() {
+        return DROWN_TICKS;
+    }
+
+    @Override
+    public void baseTick() {
+        super.baseTick();
+
+        this.tickAirSupply();
+    }
+
+    protected void tickAirSupply() {
+        if (this.isPebblitEyeInFluid(COTWTags.STONE_PEBBLIT_DROWNS_IN) && !this.level().getBlockState(BlockPos.containing(this.getX(), this.getEyeY(), this.getZ())).is(Blocks.BUBBLE_COLUMN)) {
+            boolean canDrown = !this.canBreatheUnderwater() && !MobEffectUtil.hasWaterBreathing(this);
+            if (canDrown) {
+                this.setAirSupply(this.loseAirSupply(this.getAirSupply()));
+                if (this.getAirSupply() == -20) {
+                    this.setAirSupply(0);
+                    this.hurt(this.damageSources().drown(), Float.MAX_VALUE);
+                }
+            }
+
+            if (!this.level().isClientSide && this.isPassenger() && this.getVehicle() != null && this.getVehicle().dismountsUnderwater()) {
+                this.stopRiding();
+            }
+        } else if (this.getAirSupply() < this.getMaxAirSupply()) {
+            this.setAirSupply(this.increaseAirSupply(this.getAirSupply()));
+        }
+    }
+
+    // Fixes a forge-specific issue with how it changes Entity#updateFluidOnEyes
+    protected boolean isPebblitEyeInFluid(TagKey<Fluid> fluidTagKey) {
+        return this.isEyeInFluid(fluidTagKey) || COTWUtil.updateAndGetFluidOnEyes(this, this.fluidsInEye).contains(fluidTagKey);
     }
 
     // BRAIN
@@ -376,12 +465,12 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
 
     @Override
     public void handleAdditionalBrainSetup(SmartBrain<? extends StonePebblit> brain) {
-        brain.setActiveActivityIfPossible(Activity.IDLE);
+        brain.setActiveActivityIfPossible(this.hasBlockDisguise() ? Activity.HIDE : Activity.IDLE);
     }
 
     @Override
     public List<Activity> getActivityPriorities() {
-        return ObjectArrayList.of(Activity.FIGHT, Activity.IDLE);
+        return ObjectArrayList.of(Activity.HIDE, Activity.FIGHT, Activity.IDLE);
     }
 
     @Override
@@ -389,7 +478,8 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
         return ObjectArrayList.of(
                 new COTWNearbyPlayersSensor<>(),
                 new NearbyLivingEntitySensor<>(),
-                new HurtBySensor<>()
+                new HurtBySensor<>(),
+                new BlockDisguiseSensor<>()
         );
     }
 
@@ -418,6 +508,29 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
                                 .startCondition(StonePebblit::isInMeleeMode)
                 )
         );
+    }
+
+    @Override
+    public Map<Activity, BrainActivityGroup<? extends StonePebblit>> getAdditionalTasks() {
+        return Util.make(new Object2ObjectOpenHashMap<>(), map -> {
+            map.put(Activity.HIDE,
+                    new BrainActivityGroup<StonePebblit>(Activity.HIDE)
+                            .behaviours(
+                                    new CustomBehaviour<StonePebblit>(pebblit -> {
+                                        BlockState disguiseBlockState = pebblit.getDisguiseBlockState();
+                                        if(disguiseBlockState.shouldSpawnParticlesOnBreak()){
+                                            pebblit.level().levelEvent(null, LevelEvent.PARTICLES_DESTROY_BLOCK, pebblit.blockPosition(), Block.getId(disguiseBlockState));
+                                        }
+                                        pebblit.setDisguiseBlockState(Blocks.AIR.defaultBlockState());
+                                        BrainUtils.clearMemory(pebblit, MemoryModuleInit.IS_DISGUISED.get());
+                                    })
+                                            .startCondition(talus -> COTWUtil.getOptionalMemory(this, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER)
+                                                    .filter(player -> player.closerThan(talus, COTWUtil.getHitboxAdjustedDistance(talus, player, getDetectingRange())))
+                                                    .isPresent())
+                            )
+                            .requireAndWipeMemoriesOnUse(MemoryModuleInit.IS_DISGUISED.get())
+            );
+        });
     }
 
     private static double getFollowingRange(StonePebblit talus) {

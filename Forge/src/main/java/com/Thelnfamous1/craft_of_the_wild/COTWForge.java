@@ -72,6 +72,7 @@ public class COTWForge {
         generator.addProvider(includeServer, new ModAdvancementProvider(packOutput, lookupProvider, existingFileHelper));
         generator.addProvider(includeServer, new ModPaintingVariantTagsProvider(packOutput, lookupProvider, existingFileHelper));
         generator.addProvider(includeServer, new ModTagProvider.EntityTags(packOutput, lookupProvider, existingFileHelper));
+        generator.addProvider(includeServer, new ModTagProvider.ModFluidTags(packOutput, lookupProvider, existingFileHelper));
         RegistrySetBuilder builder = createRegistrySetBuilder();
         CompletableFuture<HolderLookup.Provider> registries = getRegistries(builder);
         generator.addProvider(includeServer, new DatapackBuiltinEntriesProvider(packOutput, lookupProvider, builder, Set.of(Constants.MODID)));

@@ -10,11 +10,13 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.tslat.smartbrainlib.util.BrainUtils;
 
 public class IgneoPebblit extends StonePebblit{
     public IgneoPebblit(EntityType<? extends IgneoPebblit> type, Level level) {
         super(type, level);
+        this.setDisguiseBlockState(Blocks.MAGMA_BLOCK.defaultBlockState());
     }
 
     public static AttributeSupplier.Builder createAttributes(){

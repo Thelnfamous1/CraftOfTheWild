@@ -10,12 +10,10 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.BiomeTagsProvider;
 import net.minecraft.data.tags.EntityTypeTagsProvider;
+import net.minecraft.data.tags.FluidTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.DamageTypeTags;
-import net.minecraft.tags.EntityTypeTags;
-import net.minecraft.tags.TagKey;
+import net.minecraft.tags.*;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -138,6 +136,18 @@ public class ModTagProvider {
             this.tag(COTWTags.STONE_PEBBLITS).add(EntityInit.STONE_PEBBLIT.get(), EntityInit.FROST_PEBBLIT.get(), EntityInit.IGNEO_PEBBLIT.get());
             this.tag(COTWTags.STONE_TALUS_FRIENDS).addTags(COTWTags.STONE_TALUSES, COTWTags.STONE_PEBBLITS);
             this.tag(COTWTags.STONE_PEBBLIT_FRIENDS).addTags(COTWTags.STONE_PEBBLITS, COTWTags.STONE_TALUSES);
+        }
+    }
+
+    public static class ModFluidTags extends FluidTagsProvider {
+
+        public ModFluidTags(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pProvider, @Nullable ExistingFileHelper existingFileHelper) {
+            super(pOutput, pProvider, Constants.MODID, existingFileHelper);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider pProvider) {
+            this.tag(COTWTags.STONE_PEBBLIT_DROWNS_IN).addTags(FluidTags.WATER, FluidTags.LAVA);
         }
     }
 }
