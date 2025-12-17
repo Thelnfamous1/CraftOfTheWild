@@ -111,7 +111,10 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
 
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
-        if(!pSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && !pSource.is(DamageTypeTags.IS_DROWNING) && !isPickaxeDamage(pSource)){
+        if(!pSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY)
+                && !pSource.is(DamageTypeTags.IS_DROWNING)
+                && !pSource.is(DamageTypeTags.IS_EXPLOSION)
+                && !isPickaxeDamage(pSource)){
             return false;
         }
         if(pSource.is(DamageTypeTags.IS_PROJECTILE)){
