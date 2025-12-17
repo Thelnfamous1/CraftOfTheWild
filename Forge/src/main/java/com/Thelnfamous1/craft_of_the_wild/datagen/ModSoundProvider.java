@@ -49,6 +49,9 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
         this.addSound(SoundInit.IGNEO_TALUS_POUND, 2);
         this.addSound(SoundInit.IGNEO_TALUS_PUNCH, 2);
         this.addSound(SoundInit.IGNEO_TALUS_BREAK_ROCKS, 2);
+
+        this.addSound(SoundInit.STONE_PEBBLIT_WALK, 1);
+        this.addSound(SoundInit.STONE_PEBBLIT_POUND, 1);
     }
 
     public void addSound(RegistryObject<SoundEvent> entry, float volume) {

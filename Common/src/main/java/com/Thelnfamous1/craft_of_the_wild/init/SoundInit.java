@@ -71,6 +71,10 @@ public class SoundInit {
 
     public static final RegistryObject<SoundEvent> IGNEO_TALUS_BREAK_ROCKS = registerSoundEvent("igneo_talus_break_rocks");
 
+    public static final RegistryObject<SoundEvent> STONE_PEBBLIT_WALK = registerSoundEvent("stone_pebblit_walk");
+
+    public static final RegistryObject<SoundEvent> STONE_PEBBLIT_POUND = registerSoundEvent("stone_pebblit_pound");
+
     private static RegistryObject<SoundEvent> registerSoundEvent(String path) {
         return SOUND_EVENTS.register(path, () -> SoundEvent.createVariableRangeEvent(COTWCommon.getResourceLocation(path)));
     }

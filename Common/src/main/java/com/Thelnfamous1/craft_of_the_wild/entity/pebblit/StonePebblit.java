@@ -11,6 +11,7 @@ import com.Thelnfamous1.craft_of_the_wild.entity.animation.COTWAnimations;
 import com.Thelnfamous1.craft_of_the_wild.entity.talus.StoneTalusBodyRotationControl;
 import com.Thelnfamous1.craft_of_the_wild.init.AttributeInit;
 import com.Thelnfamous1.craft_of_the_wild.init.MemoryModuleInit;
+import com.Thelnfamous1.craft_of_the_wild.init.SoundInit;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWTags;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import com.google.common.collect.Sets;
@@ -27,6 +28,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.ItemTags;
@@ -109,6 +111,15 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
                 .add(Attributes.MOVEMENT_SPEED, 0.35D);
     }
 
+    protected void playSoundEvent(SoundEvent soundEvent){
+        this.playSound(soundEvent, this.getSoundVolume(), this.getVoicePitch());
+    }
+
+    @Override
+    protected void playStepSound(BlockPos stepPos, BlockState stepState) {
+        this.playSoundEvent(SoundInit.STONE_PEBBLIT_WALK.get());
+    }
+
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
         if(!pSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY)
@@ -130,6 +141,13 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
     @Override
     protected double getAttackRadius(StonePebblitAttackType currentAttackType) {
         return 1.0D;
+    }
+
+    @Override
+    protected void onAttackStarted(StonePebblitAttackType currentAttackType) {
+        if(currentAttackType == StonePebblitAttackType.POUND){
+            this.playSoundEvent(SoundInit.STONE_PEBBLIT_POUND.get());
+        }
     }
 
     @Override
@@ -413,13 +431,16 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
         return this.isEyeInFluid(fluidTagKey) || COTWUtil.updateAndGetFluidOnEyes(this, this.fluidsInEye).contains(fluidTagKey);
     }
 
-    // BRAIN
-
     @Override
-    protected void tickDeath() {
-        boolean wasDying = this.customDeathTime > 0;
-        super.tickDeath();
-        if(this.customDeathTime > 0 && !wasDying && !this.level().isClientSide){
+    public void die(DamageSource $$0) {
+        if(!this.isRemoved() && !this.dead){
+            this.explodeOnDeath();
+        }
+        super.die($$0);
+    }
+
+    protected void explodeOnDeath() {
+        if(!this.level().isClientSide){
             float explosionRadius = (this.getBbWidth() * 6.0F) / 2.0F;
             float explosionDiameter = explosionRadius * 2;
             int k1 = Mth.floor(this.getX() - (double)explosionDiameter - 1.0D);
@@ -445,6 +466,8 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
             COTWUtil.playVanillaExplosionSound(this, SoundEvents.GENERIC_EXPLODE, 1.0F);
         }
     }
+
+    // BRAIN
 
     @Override
     protected void customServerAiStep() {

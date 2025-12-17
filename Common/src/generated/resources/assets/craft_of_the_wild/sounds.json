@@ -139,6 +139,16 @@
       "craft_of_the_wild:music_stables"
     ]
   },
+  "stone_pebblit_pound": {
+    "sounds": [
+      "craft_of_the_wild:stone_pebblit_pound"
+    ]
+  },
+  "stone_pebblit_walk": {
+    "sounds": [
+      "craft_of_the_wild:stone_pebblit_walk"
+    ]
+  },
   "stone_talus_boss_music": {
     "sounds": [
       {
