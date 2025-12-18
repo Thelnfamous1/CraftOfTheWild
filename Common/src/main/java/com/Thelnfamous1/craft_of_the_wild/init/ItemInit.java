@@ -115,6 +115,15 @@ public class ItemInit {
     public static final RegistryObject<Item> IGNEO_PEBBLIT_SPAWN_EGG = ITEMS.register("igneo_pebblit_spawn_egg", () ->
             new COTWSpawnEggItem(EntityInit.IGNEO_PEBBLIT, 14405058, 7643954, getItemProperties()));
 
+    public static final RegistryObject<Item> STONE_TALUS_BOULDER = ITEMS.register("stone_talus_boulder", () ->
+            new BlockItem(BlockInit.STONE_TALUS_BOULDER.get(), getItemProperties()));
+
+    public static final RegistryObject<Item> FROST_TALUS_BOULDER = ITEMS.register("frost_talus_boulder", () ->
+            new BlockItem(BlockInit.FROST_TALUS_BOULDER.get(), getItemProperties()));
+
+    public static final RegistryObject<Item> IGNEO_TALUS_BOULDER = ITEMS.register("igneo_talus_boulder", () ->
+            new BlockItem(BlockInit.IGNEO_TALUS_BOULDER.get(), getItemProperties()));
+
     private static RegistryObject<Item> registerMusicDisc(String path, int analogSignal, RegistryObject<SoundEvent> soundSupplier, int durationInSeconds, String author) {
         return ITEMS.register(path, () ->
                 new COTWRecordItem(analogSignal, soundSupplier.get(), getItemProperties().stacksTo(1).rarity(Rarity.RARE), durationInSeconds, author));

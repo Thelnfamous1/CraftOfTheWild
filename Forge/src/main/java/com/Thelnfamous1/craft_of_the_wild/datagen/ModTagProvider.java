@@ -77,6 +77,9 @@ public class ModTagProvider {
         protected void addTags(HolderLookup.Provider pProvider) {
             this.tag(COTWTags.STONE_TALUS_CAN_DESTROY).addTag(BlockTags.LEAVES).addTag(BlockTags.LOGS);
             this.tag(COTWTags.STONE_TALUS_CAN_CONVERT_TO_DIRT).add(Blocks.GRASS_BLOCK.builtInRegistryHolder().key(), Blocks.PODZOL.builtInRegistryHolder().key(), Blocks.MYCELIUM.builtInRegistryHolder().key());
+            this.populateTag(COTWTags.STONE_TALUS_BOULDER_COMPONENT, () -> Blocks.STONE, () -> Blocks.ANDESITE, () -> Blocks.IRON_ORE, () -> Blocks.GOLD_ORE, () -> Blocks.COAL_ORE, () -> Blocks.STONE_SLAB);
+            this.populateTag(COTWTags.FROST_TALUS_BOULDER_COMPONENT, () -> Blocks.PACKED_ICE, () -> Blocks.BLUE_ICE);
+            this.populateTag(COTWTags.IGNEO_TALUS_BOULDER_COMPONENT, () -> Blocks.MAGMA_BLOCK, () -> Blocks.GOLD_BLOCK, () -> Blocks.ANCIENT_DEBRIS);
         }
         public  <T extends Block>void populateTag(TagKey<Block> tag, Supplier<?>... items){
             for (Supplier<?> item : items) {

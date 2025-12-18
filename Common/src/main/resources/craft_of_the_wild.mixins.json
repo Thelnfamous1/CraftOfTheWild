@@ -14,9 +14,11 @@
     "LivingEntityMixin",
     "PathAccessor",
     "PlayerMixin",
+    "SinglePoolElementAccessor",
     "SpawnEggItemAccessor",
     "StartAttackingMixin",
     "StopAttackingIfTargetInvalidMixin",
+    "StructureTemplateAccessor",
     "TargetGoalMixin",
     "TargetingConditionsMixin",
     "WalkNodeEvaluatorAccess"

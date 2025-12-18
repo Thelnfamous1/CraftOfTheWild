@@ -32,4 +32,5 @@ public class Constants {
 	public static final boolean DEBUG_PAUSE_FROZEN_TICKS = DEBUG_IDE;
 	public static final boolean DEBUG_IGNEO_TALUS = DEBUG_IDE;
 	public static final boolean DEBUG_STONE_PEBBLIT = false;
+	public static final boolean DEBUG_STONE_TALUS_BOULDER = DEBUG_IDE;
 }

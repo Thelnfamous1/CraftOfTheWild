@@ -30,6 +30,10 @@ public class COTWTags {
     public static final TagKey<Biome> HAS_FROST_TALUS_BOULDERS = createBiomeTag("has_frost_talus_boulders");
     public static final TagKey<Biome> HAS_IGNEO_TALUS_BOULDERS = createBiomeTag("has_igneo_talus_boulders");
 
+    public static final TagKey<Block> STONE_TALUS_BOULDER_COMPONENT = createBlockTag("stone_talus_boulder_component");
+    public static final TagKey<Block> FROST_TALUS_BOULDER_COMPONENT = createBlockTag("frost_talus_boulder_component");
+    public static final TagKey<Block> IGNEO_TALUS_BOULDER_COMPONENT = createBlockTag("igneo_talus_boulder_component");
+
 
     private static TagKey<Block> createBlockTag(String path) {
         return TagKey.create(Registries.BLOCK, COTWCommon.getResourceLocation(path));
