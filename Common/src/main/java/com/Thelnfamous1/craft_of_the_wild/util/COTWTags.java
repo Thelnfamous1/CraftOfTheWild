@@ -26,6 +26,11 @@ public class COTWTags {
     public static final TagKey<Fluid> STONE_PEBBLIT_DROWNS_IN = createFluidTypeTag("stone_pebblit_drowns_in");
 
 
+    public static final TagKey<Biome> HAS_STONE_TALUS_BOULDERS = createBiomeTag("has_stone_talus_boulders");
+    public static final TagKey<Biome> HAS_FROST_TALUS_BOULDERS = createBiomeTag("has_frost_talus_boulders");
+    public static final TagKey<Biome> HAS_IGNEO_TALUS_BOULDERS = createBiomeTag("has_igneo_talus_boulders");
+
+
     private static TagKey<Block> createBlockTag(String path) {
         return TagKey.create(Registries.BLOCK, COTWCommon.getResourceLocation(path));
     }

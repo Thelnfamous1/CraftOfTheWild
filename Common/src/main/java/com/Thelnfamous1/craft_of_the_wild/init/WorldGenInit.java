@@ -7,6 +7,7 @@ import com.Thelnfamous1.craft_of_the_wild.feature.CustomFeaturePoolElement;
 import com.Thelnfamous1.craft_of_the_wild.feature.SpawnEntityFeature;
 import com.Thelnfamous1.craft_of_the_wild.structure.StoneTalusPiece;
 import com.Thelnfamous1.craft_of_the_wild.structure.StoneTalusStructure;
+import com.Thelnfamous1.craft_of_the_wild.util.COTWTags;
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import com.nyfaria.craft_of_the_wild.registration.RegistrationProvider;
@@ -23,8 +24,11 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.heightproviders.ConstantHeight;
 import net.minecraft.world.level.levelgen.placement.*;
 import net.minecraft.world.level.levelgen.structure.*;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
@@ -32,6 +36,7 @@ import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStruct
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadType;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure;
 
 import java.util.List;
 import java.util.Map;
@@ -72,10 +77,14 @@ public class WorldGenInit {
     public static final ResourceKey<Structure> STONE_TALUS_STRUCTURE = ResourceKey.create(Registries.STRUCTURE, COTWCommon.getResourceLocation("stone_talus"));
     public static final ResourceKey<Structure> STABLES_STRUCTURE = ResourceKey.create(Registries.STRUCTURE, COTWCommon.getResourceLocation("stables"));
     public static final ResourceKey<Structure> STABLES_SNOWY_STRUCTURE = ResourceKey.create(Registries.STRUCTURE, COTWCommon.getResourceLocation("stables_snowy"));
+    public static final ResourceKey<Structure> STONE_TALUS_BOULDER_STRUCTURE = ResourceKey.create(Registries.STRUCTURE, COTWCommon.getResourceLocation("stone_talus_boulder"));
+    public static final ResourceKey<Structure> FROST_TALUS_BOULDER_STRUCTURE = ResourceKey.create(Registries.STRUCTURE, COTWCommon.getResourceLocation("frost_talus_boulder"));
+    public static final ResourceKey<Structure> IGNEO_TALUS_BOULDER_STRUCTURE = ResourceKey.create(Registries.STRUCTURE, COTWCommon.getResourceLocation("igneo_talus_boulder"));
 
     // structure set
     public static final ResourceKey<StructureSet> STONE_TALUS_SS = ResourceKey.create(Registries.STRUCTURE_SET, COTWCommon.getResourceLocation("stone_talus"));
     public static final ResourceKey<StructureSet> STABLES_SS = ResourceKey.create(Registries.STRUCTURE_SET, COTWCommon.getResourceLocation("stables"));
+    public static final ResourceKey<StructureSet> STONE_TALUS_BOULDERS_SS = ResourceKey.create(Registries.STRUCTURE_SET, COTWCommon.getResourceLocation("stone_talus_boulders"));
 
     // structure pieces
     public static final RegistrationProvider<StructurePieceType> STRUCTURE_PIECE_TYPES = RegistrationProvider.get(Registries.STRUCTURE_PIECE, Constants.MODID);
@@ -91,6 +100,10 @@ public class WorldGenInit {
     public static final ResourceKey<StructureTemplatePool> KASS_COMMON_STP = ResourceKey.create(Registries.TEMPLATE_POOL, COTWCommon.getResourceLocation("kass_common"));
     public static final ResourceKey<StructureTemplatePool> HORSE_STP = ResourceKey.create(Registries.TEMPLATE_POOL, COTWCommon.getResourceLocation("horse"));
     public static final ResourceKey<StructureTemplatePool> DONKEY_STP = ResourceKey.create(Registries.TEMPLATE_POOL, COTWCommon.getResourceLocation("donkey"));
+
+    public static final ResourceKey<StructureTemplatePool> STONE_TALUS_BOULDER_STP = ResourceKey.create(Registries.TEMPLATE_POOL, COTWCommon.getResourceLocation("stone_talus_boulder"));
+    public static final ResourceKey<StructureTemplatePool> FROST_TALUS_BOULDER_STP = ResourceKey.create(Registries.TEMPLATE_POOL, COTWCommon.getResourceLocation("frost_talus_boulder"));
+    public static final ResourceKey<StructureTemplatePool> IGNEO_TALUS_BOUDLER_STP = ResourceKey.create(Registries.TEMPLATE_POOL, COTWCommon.getResourceLocation("igneo_talus_boulder"));
 
 
     public static void placedFeatures(BootstapContext<PlacedFeature> context) {
@@ -165,6 +178,31 @@ public class WorldGenInit {
                 Heightmap.Types.WORLD_SURFACE_WG));
          */
 
+        // boulders
+        context.register(STONE_TALUS_BOULDER_STRUCTURE, new JigsawStructure(
+                structure(biomeLookup.getOrThrow(COTWTags.HAS_STONE_TALUS_BOULDERS),
+                        TerrainAdjustment.BEARD_THIN),
+                templatePoolLookup.getOrThrow(STONE_TALUS_BOULDER_STP),
+                1,
+                ConstantHeight.of(VerticalAnchor.absolute(0)),
+                false,
+                Heightmap.Types.WORLD_SURFACE_WG));
+        context.register(FROST_TALUS_BOULDER_STRUCTURE, new JigsawStructure(
+                structure(biomeLookup.getOrThrow(COTWTags.HAS_FROST_TALUS_BOULDERS),
+                        TerrainAdjustment.BEARD_THIN),
+                templatePoolLookup.getOrThrow(FROST_TALUS_BOULDER_STP),
+                1,
+                ConstantHeight.of(VerticalAnchor.absolute(0)),
+                false,
+                Heightmap.Types.WORLD_SURFACE_WG));
+        context.register(IGNEO_TALUS_BOULDER_STRUCTURE, new JigsawStructure(
+                structure(biomeLookup.getOrThrow(COTWTags.HAS_IGNEO_TALUS_BOULDERS),
+                        TerrainAdjustment.BEARD_THIN),
+                templatePoolLookup.getOrThrow(IGNEO_TALUS_BOUDLER_STP),
+                1,
+                ConstantHeight.of(VerticalAnchor.absolute(40)),
+                false));
+
     }
     private static Structure.StructureSettings structure(HolderSet<Biome> pBiomes, Map<MobCategory, StructureSpawnOverride> pSpawnOverrides, GenerationStep.Decoration pStep, TerrainAdjustment pTerrainAdaptation) {
         return new Structure.StructureSettings(pBiomes, pSpawnOverrides, pStep, pTerrainAdaptation);
@@ -192,6 +230,16 @@ public class WorldGenInit {
                         new RandomSpreadStructurePlacement(
                                 34, 8,
                                 RandomSpreadType.LINEAR, 49016397)));
+        // boulders
+        context.register(
+                STONE_TALUS_BOULDERS_SS,
+                new StructureSet(List.of(
+                        StructureSet.entry(structureLookup.getOrThrow(STONE_TALUS_BOULDER_STRUCTURE)),
+                        StructureSet.entry(structureLookup.getOrThrow(FROST_TALUS_BOULDER_STRUCTURE)),
+                        StructureSet.entry(structureLookup.getOrThrow(IGNEO_TALUS_BOULDER_STRUCTURE))),
+                        new RandomSpreadStructurePlacement(
+                                32, 12,
+                                RandomSpreadType.LINEAR, 192837465)));
     }
 
     public static void templatePools(BootstapContext<StructureTemplatePool> context){
@@ -222,6 +270,31 @@ public class WorldGenInit {
         context.register(KASS_RARE_STP, singleFeaturePoolWithChance(emptyPool, pfLookup.get(KASS_PF).get(), 1, 4));
         context.register(HORSE_STP, singleFeaturePool(emptyPool, pfLookup.get(HORSE_PF).get()));
         context.register(DONKEY_STP, singleFeaturePool(emptyPool, pfLookup.get(DONKEY_PF).get()));
+
+        // boulders
+        context.register(STONE_TALUS_BOULDER_STP,
+                new StructureTemplatePool(
+                        emptyPool,
+                        ImmutableList.of(
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder1").toString()), 1),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder2").toString()), 1),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder3").toString()), 1),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder4").toString()), 1)),
+                        StructureTemplatePool.Projection.RIGID));
+        context.register(FROST_TALUS_BOULDER_STP,
+                new StructureTemplatePool(
+                        emptyPool,
+                        ImmutableList.of(
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder_snow1").toString()), 1),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder_snow2").toString()), 1)),
+                        StructureTemplatePool.Projection.RIGID));
+        context.register(IGNEO_TALUS_BOUDLER_STP,
+                new StructureTemplatePool(
+                        emptyPool,
+                        ImmutableList.of(
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder_nether1").toString()), 1),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder_nether2").toString()), 1)),
+                        StructureTemplatePool.Projection.RIGID));
 
     }
 

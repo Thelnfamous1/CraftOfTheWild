@@ -1,0 +1,22 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 192837465,
+    "separation": 12,
+    "spacing": 32
+  },
+  "structures": [
+    {
+      "structure": "craft_of_the_wild:stone_talus_boulder",
+      "weight": 1
+    },
+    {
+      "structure": "craft_of_the_wild:frost_talus_boulder",
+      "weight": 1
+    },
+    {
+      "structure": "craft_of_the_wild:igneo_talus_boulder",
+      "weight": 1
+    }
+  ]
+}
