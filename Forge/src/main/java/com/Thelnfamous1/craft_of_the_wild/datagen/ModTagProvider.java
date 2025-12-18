@@ -111,12 +111,12 @@ public class ModTagProvider {
 
         @Override
         protected void addTags(HolderLookup.Provider pProvider) {
-            this.tag(COTWTags.SPAWNS_STONE_TALUS).add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.SNOWY_PLAINS, Biomes.SAVANNA, Biomes.SPARSE_JUNGLE, Biomes.WINDSWEPT_GRAVELLY_HILLS, Biomes.WINDSWEPT_HILLS, Biomes.MEADOW);
+            this.tag(COTWTags.SPAWNS_STONE_TALUS).add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.SAVANNA, Biomes.SPARSE_JUNGLE, Biomes.WINDSWEPT_GRAVELLY_HILLS, Biomes.WINDSWEPT_HILLS, Biomes.MEADOW);
             this.tag(COTWTags.HAS_STABLES).add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.SAVANNA, Biomes.SPARSE_JUNGLE);
             this.tag(COTWTags.HAS_STABLES_SNOWY).add(Biomes.SNOWY_PLAINS);
 
 
-            this.tag(COTWTags.HAS_STONE_TALUS_BOULDERS).add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.SNOWY_PLAINS, Biomes.SAVANNA, Biomes.SPARSE_JUNGLE, Biomes.WINDSWEPT_GRAVELLY_HILLS, Biomes.WINDSWEPT_HILLS, Biomes.MEADOW);
+            this.tag(COTWTags.HAS_STONE_TALUS_BOULDERS).add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.SAVANNA, Biomes.SPARSE_JUNGLE, Biomes.WINDSWEPT_GRAVELLY_HILLS, Biomes.WINDSWEPT_HILLS, Biomes.MEADOW);
             this.tag(COTWTags.HAS_FROST_TALUS_BOULDERS).add(Biomes.SNOWY_PLAINS, Biomes.SNOWY_SLOPES, Biomes.GROVE);
             this.tag(COTWTags.HAS_IGNEO_TALUS_BOULDERS).add(Biomes.NETHER_WASTES);
         }
