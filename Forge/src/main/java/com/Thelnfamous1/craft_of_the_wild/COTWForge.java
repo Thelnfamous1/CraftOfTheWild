@@ -5,7 +5,6 @@ import com.Thelnfamous1.craft_of_the_wild.datagen.*;
 import com.Thelnfamous1.craft_of_the_wild.entity.Beedle;
 import com.Thelnfamous1.craft_of_the_wild.init.DamageTypeInit;
 import com.Thelnfamous1.craft_of_the_wild.init.WorldGenInit;
-import com.Thelnfamous1.craft_of_the_wild.util.COTWTags;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import net.minecraft.Util;
 import net.minecraft.core.*;
@@ -14,13 +13,11 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.world.ForgeBiomeModifiers;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -97,12 +94,14 @@ public class COTWForge {
                 .add(ForgeRegistries.Keys.BIOME_MODIFIERS, context -> {
                     HolderGetter<Biome> biomeLookup = context.lookup(Registries.BIOME);
                     HolderGetter<PlacedFeature> placedFeatureLookup = context.lookup(Registries.PLACED_FEATURE);
+                    /*
                     context.register(ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, COTWCommon.getResourceLocation("stone_talus_spawns")),
                             new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                                     biomeLookup.getOrThrow(COTWTags.SPAWNS_STONE_TALUS),
                                     HolderSet.direct(placedFeatureLookup.getOrThrow(WorldGenInit.STONE_TALUS_PF)),
                                     GenerationStep.Decoration.SURFACE_STRUCTURES
                                     ));
+                     */
                 })
                 .add(Registries.STRUCTURE, WorldGenInit::structures)
                 .add(Registries.STRUCTURE_SET, WorldGenInit::structureSets)

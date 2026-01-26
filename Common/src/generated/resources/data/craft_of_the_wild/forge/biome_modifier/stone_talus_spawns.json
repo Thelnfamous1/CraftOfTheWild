@@ -1,6 +1,0 @@
-{
-  "type": "forge:add_features",
-  "biomes": "#craft_of_the_wild:spawns_stone_talus",
-  "features": "craft_of_the_wild:stone_talus",
-  "step": "surface_structures"
-}

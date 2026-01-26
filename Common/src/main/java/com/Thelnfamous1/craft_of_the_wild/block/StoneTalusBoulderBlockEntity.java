@@ -138,7 +138,7 @@ public class StoneTalusBoulderBlockEntity extends BlockEntity {
                                         BlockEntity pebblitBoulder = level.getBlockEntity(worldPos);
                                         if(pebblitBoulder instanceof StonePebblitBoulderBlockEntity pebblitBoulderBlockEntity){
                                             COTWCommon.debug(Constants.DEBUG_STONE_TALUS_BOULDER, "Forcing stone pebblit boulder {} at {} to spawn its pebblit", pebblitBoulderBlockEntity, worldPos);
-                                            pebblitBoulderBlockEntity.forceSpawnPebblit(serverLevel, blockPos, blockState);
+                                            pebblitBoulderBlockEntity.forceSpawnPebblit(serverLevel);
                                         }
                                     }
                                     COTWCommon.debug(Constants.DEBUG_STONE_TALUS_BOULDER, "Destroyed {} blocks that comprised the boulder at {}", destroyedBlocks.size(), boundingBox.getCenter());

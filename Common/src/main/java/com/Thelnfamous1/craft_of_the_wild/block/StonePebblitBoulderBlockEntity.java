@@ -70,9 +70,9 @@ public class StonePebblitBoulderBlockEntity extends BlockEntity {
 
     }
 
-    public void forceSpawnPebblit(ServerLevel level, BlockPos blockPos, BlockState blockState){
+    public void forceSpawnPebblit(ServerLevel level){
         if(!this.spawned){
-            this.spawnPebblit(level, blockPos, blockState);
+            this.spawnPebblit(level, this.getBlockPos(), this.getBlockState());
         }
     }
 

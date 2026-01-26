@@ -3,18 +3,13 @@ package com.Thelnfamous1.craft_of_the_wild;
 import com.Thelnfamous1.craft_of_the_wild.entity.Beedle;
 import com.Thelnfamous1.craft_of_the_wild.entity.talus.*;
 import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
-import com.Thelnfamous1.craft_of_the_wild.init.WorldGenInit;
-import com.Thelnfamous1.craft_of_the_wild.util.COTWTags;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
-import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.SpawnPlacements;
-import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,9 +38,11 @@ public class COTWFabric implements ModInitializer {
                 MobCategory.MONSTER,
                 EntityInit.STONE_TALUS.get(), 30, 1, 1);
          */
+        /*
         BiomeModifications.addFeature(BiomeSelectors.tag(COTWTags.SPAWNS_STONE_TALUS),
                 GenerationStep.Decoration.SURFACE_STRUCTURES,
                 WorldGenInit.STONE_TALUS_PF);
+         */
         EntitySleepEvents.ALLOW_BED.register(((entity, sleepingPos, state, vanillaResult) -> {
             if(entity instanceof Beedle){
                 return InteractionResult.SUCCESS;
