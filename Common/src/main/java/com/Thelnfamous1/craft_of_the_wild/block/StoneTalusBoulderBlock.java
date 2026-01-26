@@ -4,6 +4,7 @@ import com.Thelnfamous1.craft_of_the_wild.init.BlockInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -18,11 +19,13 @@ import org.jetbrains.annotations.Nullable;
 public class StoneTalusBoulderBlock extends BaseEntityBlock {
     private final ResourceKey<Structure> stoneTalusBoulderStructure;
     private final TagKey<Block> stoneTalusBoulderComponents;
+    private final TagKey<EntityType<?>> stoneTalusBoulderSpawns;
 
-    public StoneTalusBoulderBlock(Properties $$0, ResourceKey<Structure> stoneTalusBoulderStructure, TagKey<Block> stoneTalusBoulderComponents) {
+    public StoneTalusBoulderBlock(Properties $$0, ResourceKey<Structure> stoneTalusBoulderStructure, TagKey<Block> stoneTalusBoulderComponents, TagKey<EntityType<?>> stoneTalusBoulderSpawns) {
         super($$0);
         this.stoneTalusBoulderStructure = stoneTalusBoulderStructure;
         this.stoneTalusBoulderComponents = stoneTalusBoulderComponents;
+        this.stoneTalusBoulderSpawns = stoneTalusBoulderSpawns;
     }
 
     @Override
@@ -34,7 +37,7 @@ public class StoneTalusBoulderBlock extends BaseEntityBlock {
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         StoneTalusBoulderBlockEntity stoneTalusBoulderBlockEntity = new StoneTalusBoulderBlockEntity(blockPos, blockState);
-        stoneTalusBoulderBlockEntity.setStoneTalusBoulderInfo(this.stoneTalusBoulderStructure, this.stoneTalusBoulderComponents);
+        stoneTalusBoulderBlockEntity.setStoneTalusBoulderInfo(this.stoneTalusBoulderStructure, this.stoneTalusBoulderComponents, this.stoneTalusBoulderSpawns);
         return stoneTalusBoulderBlockEntity;
     }
 

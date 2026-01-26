@@ -144,6 +144,12 @@ public class ModTagProvider {
             this.tag(COTWTags.STONE_PEBBLITS).add(EntityInit.STONE_PEBBLIT.get(), EntityInit.FROST_PEBBLIT.get(), EntityInit.IGNEO_PEBBLIT.get());
             this.tag(COTWTags.STONE_TALUS_FRIENDS).addTags(COTWTags.STONE_TALUSES, COTWTags.STONE_PEBBLITS);
             this.tag(COTWTags.STONE_PEBBLIT_FRIENDS).addTags(COTWTags.STONE_PEBBLITS, COTWTags.STONE_TALUSES);
+            this.tag(COTWTags.STONE_TALUS_BOULDER_SPAWNS).add(EntityInit.STONE_TALUS.get(), EntityInit.STONE_TALUS_RARE.get(), EntityInit.STONE_TALUS_LUMINOUS.get());
+            this.tag(COTWTags.FROST_TALUS_BOULDER_SPAWNS).add(EntityInit.FROST_TALUS.get());
+            this.tag(COTWTags.IGNEO_TALUS_BOULDER_SPAWNS).add(EntityInit.IGNEO_TALUS.get());
+            this.tag(COTWTags.STONE_PEBBLIT_BOULDER_SPAWNS).add(EntityInit.STONE_PEBBLIT.get());
+            this.tag(COTWTags.FROST_PEBBLIT_BOULDER_SPAWNS).add(EntityInit.FROST_PEBBLIT.get());
+            this.tag(COTWTags.IGNEO_PEBBLIT_BOULDER_SPAWNS).add(EntityInit.IGNEO_PEBBLIT.get());
         }
     }
 

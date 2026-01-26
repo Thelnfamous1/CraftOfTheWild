@@ -292,6 +292,7 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
         return this.entityData.get(DATA_DISGUISE_BLOCK_STATE);
     }
 
+    @Override
     public void setDisguiseBlockState(BlockState pBlockState) {
         this.entityData.set(DATA_DISGUISE_BLOCK_STATE, pBlockState);
     }

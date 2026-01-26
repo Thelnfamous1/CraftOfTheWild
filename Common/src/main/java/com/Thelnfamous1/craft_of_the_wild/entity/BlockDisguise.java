@@ -8,4 +8,6 @@ public interface BlockDisguise {
     default boolean hasBlockDisguise(){
         return !this.getDisguiseBlockState().isAir();
     }
+
+    void setDisguiseBlockState(BlockState pBlockState);
 }

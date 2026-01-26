@@ -34,6 +34,14 @@ public class COTWTags {
     public static final TagKey<Block> FROST_TALUS_BOULDER_COMPONENT = createBlockTag("frost_talus_boulder_component");
     public static final TagKey<Block> IGNEO_TALUS_BOULDER_COMPONENT = createBlockTag("igneo_talus_boulder_component");
 
+    public static final TagKey<EntityType<?>> STONE_TALUS_BOULDER_SPAWNS = createEntityTypeTag("stone_talus_boulder_spawns");
+    public static final TagKey<EntityType<?>> FROST_TALUS_BOULDER_SPAWNS = createEntityTypeTag("frost_talus_boulder_spawns");
+    public static final TagKey<EntityType<?>> IGNEO_TALUS_BOULDER_SPAWNS = createEntityTypeTag("igneo_talus_boulder_spawns");
+
+    public static final TagKey<EntityType<?>> STONE_PEBBLIT_BOULDER_SPAWNS = createEntityTypeTag("stone_pebblit_boulder_spawns");
+    public static final TagKey<EntityType<?>> FROST_PEBBLIT_BOULDER_SPAWNS = createEntityTypeTag("frost_pebblit_boulder_spawns");
+    public static final TagKey<EntityType<?>> IGNEO_PEBBLIT_BOULDER_SPAWNS = createEntityTypeTag("igneo_pebblit_boulder_spawns");
+
 
     private static TagKey<Block> createBlockTag(String path) {
         return TagKey.create(Registries.BLOCK, COTWCommon.getResourceLocation(path));

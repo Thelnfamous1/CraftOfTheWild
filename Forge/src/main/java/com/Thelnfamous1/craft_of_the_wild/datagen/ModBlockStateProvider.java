@@ -29,13 +29,16 @@ public class ModBlockStateProvider extends BlockStateProvider {
         //
         // ).map(Supplier::get)
         //         .forEach(this::simpleBlock);
-        stoneTalusBoulder(BlockInit.STONE_TALUS_BOULDER, mcLoc("block/stone"));
-        stoneTalusBoulder(BlockInit.FROST_TALUS_BOULDER, mcLoc("block/blue_ice"));
-        stoneTalusBoulder(BlockInit.IGNEO_TALUS_BOULDER, mcLoc("block/magma_block"));
+        copyParent(BlockInit.STONE_TALUS_BOULDER, mcLoc("block/stone"));
+        copyParent(BlockInit.FROST_TALUS_BOULDER, mcLoc("block/blue_ice"));
+        copyParent(BlockInit.IGNEO_TALUS_BOULDER, mcLoc("block/magma_block"));
+        copyParent(BlockInit.STONE_PEBBLIT_BOULDER, mcLoc("block/stone"));
+        copyParent(BlockInit.FROST_PEBBLIT_BOULDER, mcLoc("block/blue_ice"));
+        copyParent(BlockInit.IGNEO_PEBBLIT_BOULDER, mcLoc("block/magma_block"));
 
     }
 
-    private void stoneTalusBoulder(RegistryObject<Block> blockRegistryObject, ResourceLocation parent) {
+    private void copyParent(RegistryObject<Block> blockRegistryObject, ResourceLocation parent) {
         BlockModelBuilder stoneTalusBoulder = this.models().withExistingParent(blockRegistryObject.getId().getPath(), parent);
         this.simpleBlockWithItem(blockRegistryObject.get(), stoneTalusBoulder);
     }

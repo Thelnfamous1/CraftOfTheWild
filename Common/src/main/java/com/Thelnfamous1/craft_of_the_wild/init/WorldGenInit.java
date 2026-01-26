@@ -279,21 +279,29 @@ public class WorldGenInit {
                                 Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder1").toString()), 1),
                                 Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder2").toString()), 1),
                                 Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder3").toString()), 1),
-                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder4").toString()), 1)),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder4").toString()), 1),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder1_trap").toString()), 1),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder2_trap").toString()), 1),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder3_trap").toString()), 1),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder4_trap").toString()), 1)),
                         StructureTemplatePool.Projection.RIGID));
         context.register(FROST_TALUS_BOULDER_STP,
                 new StructureTemplatePool(
                         emptyPool,
                         ImmutableList.of(
-                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder_snow1").toString()), 1),
-                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder_snow2").toString()), 1)),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder_snow1").toString()), 2),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder_snow2").toString()), 2),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder_snow1_trap").toString()), 3),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder_snow2_trap").toString()), 3)),
                         StructureTemplatePool.Projection.RIGID));
         context.register(IGNEO_TALUS_BOUDLER_STP,
                 new StructureTemplatePool(
                         emptyPool,
                         ImmutableList.of(
-                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder_nether1").toString()), 1),
-                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder_nether2").toString()), 1)),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder_nether1").toString()), 2),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder_nether2").toString()), 2),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder_nether1_trap").toString()), 3),
+                                Pair.of(StructurePoolElement.single(COTWCommon.getResourceLocation("boulder_nether2_trap").toString()), 3)),
                         StructureTemplatePool.Projection.RIGID));
 
     }
