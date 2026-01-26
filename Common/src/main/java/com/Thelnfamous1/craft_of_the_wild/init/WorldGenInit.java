@@ -180,7 +180,7 @@ public class WorldGenInit {
 
         // boulders
         context.register(STONE_TALUS_BOULDER_STRUCTURE, new JigsawStructure(
-                structure(biomeLookup.getOrThrow(COTWTags.HAS_STONE_TALUS_BOULDERS),
+                structure(biomeLookup.getOrThrow(COTWTags.HAS_STONE_TALUS_BOULDERS), GenerationStep.Decoration.UNDERGROUND_DECORATION,
                         TerrainAdjustment.BEARD_THIN),
                 templatePoolLookup.getOrThrow(STONE_TALUS_BOULDER_STP),
                 1,
@@ -188,7 +188,7 @@ public class WorldGenInit {
                 false,
                 Heightmap.Types.WORLD_SURFACE_WG));
         context.register(FROST_TALUS_BOULDER_STRUCTURE, new JigsawStructure(
-                structure(biomeLookup.getOrThrow(COTWTags.HAS_FROST_TALUS_BOULDERS),
+                structure(biomeLookup.getOrThrow(COTWTags.HAS_FROST_TALUS_BOULDERS), GenerationStep.Decoration.UNDERGROUND_DECORATION,
                         TerrainAdjustment.BEARD_THIN),
                 templatePoolLookup.getOrThrow(FROST_TALUS_BOULDER_STP),
                 1,
@@ -196,7 +196,7 @@ public class WorldGenInit {
                 false,
                 Heightmap.Types.WORLD_SURFACE_WG));
         context.register(IGNEO_TALUS_BOULDER_STRUCTURE, new JigsawStructure(
-                structure(biomeLookup.getOrThrow(COTWTags.HAS_IGNEO_TALUS_BOULDERS),
+                structure(biomeLookup.getOrThrow(COTWTags.HAS_IGNEO_TALUS_BOULDERS), GenerationStep.Decoration.UNDERGROUND_DECORATION,
                         TerrainAdjustment.BEARD_THIN),
                 templatePoolLookup.getOrThrow(IGNEO_TALUS_BOUDLER_STP),
                 1,

@@ -9,7 +9,7 @@
     "absolute": 0
   },
   "start_pool": "craft_of_the_wild:stone_talus_boulder",
-  "step": "surface_structures",
+  "step": "underground_decoration",
   "terrain_adaptation": "beard_thin",
   "use_expansion_hack": false
 }
