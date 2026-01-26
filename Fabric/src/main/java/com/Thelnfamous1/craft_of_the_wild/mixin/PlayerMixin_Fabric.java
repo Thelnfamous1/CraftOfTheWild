@@ -1,6 +1,6 @@
 package com.Thelnfamous1.craft_of_the_wild.mixin;
 
-import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
+import com.Thelnfamous1.craft_of_the_wild.item.MedalOfHonorTalusItem;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -18,7 +18,7 @@ public abstract class PlayerMixin_Fabric extends LivingEntity {
 
     @ModifyVariable(method = "getDestroySpeed", at = @At(value = "STORE", ordinal = 0), ordinal = 0)
     private int modify_efficiencyLevel_getDestroySpeed(int original){
-        if(COTWCommon.isMedalOfHonorTalusEquipped(this)){
+        if(MedalOfHonorTalusItem.hasStatusEffect(this)){
             original += 2;
         }
         return original;

@@ -150,6 +150,7 @@ public class ModTagProvider {
             this.tag(COTWTags.STONE_PEBBLIT_BOULDER_SPAWNS).add(EntityInit.STONE_PEBBLIT.get());
             this.tag(COTWTags.FROST_PEBBLIT_BOULDER_SPAWNS).add(EntityInit.FROST_PEBBLIT.get());
             this.tag(COTWTags.IGNEO_PEBBLIT_BOULDER_SPAWNS).add(EntityInit.IGNEO_PEBBLIT.get());
+            this.tag(EntityTypeTags.POWDER_SNOW_WALKABLE_MOBS).add(EntityInit.STONE_PEBBLIT.get(), EntityInit.FROST_PEBBLIT.get());
         }
     }
 

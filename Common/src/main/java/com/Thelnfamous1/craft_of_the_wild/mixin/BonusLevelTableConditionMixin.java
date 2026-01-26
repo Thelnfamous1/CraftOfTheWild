@@ -1,6 +1,6 @@
 package com.Thelnfamous1.craft_of_the_wild.mixin;
 
-import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
+import com.Thelnfamous1.craft_of_the_wild.item.MedalOfHonorTalusItem;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -23,7 +23,7 @@ public class BonusLevelTableConditionMixin {
     private int modify_efficiencyLevel_getDestroySpeed(int original, LootContext context){
         LivingEntity entity = context.hasParam(LootContextParams.THIS_ENTITY) ?
                 context.getParam(LootContextParams.THIS_ENTITY) instanceof LivingEntity living ? living : null : null;
-        if(this.enchantment == Enchantments.BLOCK_FORTUNE && entity != null && COTWCommon.isMedalOfHonorTalusEquipped(entity)){
+        if(this.enchantment == Enchantments.BLOCK_FORTUNE && entity != null && MedalOfHonorTalusItem.hasStatusEffect(entity)){
             original += 2;
         }
         return original;

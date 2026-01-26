@@ -81,7 +81,4 @@ public class COTWCommon {
         return false;
     }
 
-    public static boolean isMedalOfHonorTalusEquipped(LivingEntity entity) {
-        return entity.getOffhandItem().is(ItemInit.MEDAL_OF_HONOR_TALUS.get()) || Services.PLATFORM.hasCharmEquipped(entity, ItemInit.MEDAL_OF_HONOR_TALUS.get(), "charm");
-    }
 }

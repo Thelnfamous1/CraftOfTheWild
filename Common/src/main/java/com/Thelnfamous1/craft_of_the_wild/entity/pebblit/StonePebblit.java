@@ -515,7 +515,8 @@ public class StonePebblit extends COTWMonster<StonePebblitAttackType> implements
     public BrainActivityGroup<? extends StonePebblit> getCoreTasks() {
         return BrainActivityGroup.coreTasks(
                 COTWSharedAi.createVanillaStyleLookAtTarget(),
-                new MoveToWalkTarget<>()
+                new MoveToWalkTarget<>(),
+                new COTWClimbOnTopOfPowderSnow()
         );
     }
 

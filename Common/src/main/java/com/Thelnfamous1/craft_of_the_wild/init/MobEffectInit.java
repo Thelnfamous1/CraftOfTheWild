@@ -16,6 +16,9 @@ public class MobEffectInit {
     public static final RegistryObject<MobEffect> BOKOBLIN_DISGUISE = MOB_EFFECTS.register("bokoblin_disguise",
             () -> new COTWMobEffect(MobEffectCategory.BENEFICIAL, 0x9A2516));
 
+    public static final RegistryObject<MobEffect> MEDAL_OF_HONOR_TALUS = MOB_EFFECTS.register("medal_of_honor_talus",
+            () -> new COTWMobEffect(MobEffectCategory.BENEFICIAL, 0xFADB57));
+
 
     public static void loadClass() {
 

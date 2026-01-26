@@ -98,7 +98,7 @@ public class ItemInit {
             new RadiantArmorItem(COTWArmorMaterials.RADIANT, ArmorItem.Type.BOOTS, getItemProperties()));
 
     public static final RegistryObject<Item> MEDAL_OF_HONOR_TALUS = ITEMS.register("medal_of_honor_talus", () ->
-            new Item(getItemProperties()));
+            new MedalOfHonorTalusItem(getItemProperties()));
 
     public static final RegistryObject<Item> MON = ITEMS.register("mon", () ->
             new Item(getItemProperties()));
