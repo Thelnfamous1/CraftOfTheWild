@@ -2,7 +2,7 @@ package com.Thelnfamous1.craft_of_the_wild;
 
 import com.Thelnfamous1.craft_of_the_wild.client.COTWForgeClient;
 import com.Thelnfamous1.craft_of_the_wild.datagen.*;
-import com.Thelnfamous1.craft_of_the_wild.entity.Beedle;
+import com.Thelnfamous1.craft_of_the_wild.entity.trader.Beedle;
 import com.Thelnfamous1.craft_of_the_wild.init.DamageTypeInit;
 import com.Thelnfamous1.craft_of_the_wild.init.WorldGenInit;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;

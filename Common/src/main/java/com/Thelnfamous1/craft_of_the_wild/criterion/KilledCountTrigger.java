@@ -17,6 +17,7 @@ public class KilledCountTrigger extends SimpleCriterionTrigger<KilledCountTrigge
       this.id = pId;
    }
 
+   @Override
    public ResourceLocation getId() {
       return this.id;
    }

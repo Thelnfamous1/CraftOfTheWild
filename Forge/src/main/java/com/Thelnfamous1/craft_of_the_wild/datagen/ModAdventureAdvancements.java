@@ -1,6 +1,7 @@
 package com.Thelnfamous1.craft_of_the_wild.datagen;
 
 import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
+import com.Thelnfamous1.craft_of_the_wild.criterion.COTWTradeTrigger;
 import com.Thelnfamous1.craft_of_the_wild.criterion.KilledCountTrigger;
 import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
 import com.Thelnfamous1.craft_of_the_wild.init.ItemInit;
@@ -37,6 +38,8 @@ public class ModAdventureAdvancements implements ForgeAdvancementProvider.Advanc
     public static final String DEFEAT_STONE_TALUS_DESCRIPTION = COTWCommon.makeDescriptionId("advancements", "adventure/defeat_stone_talus/description");
     public static final String DEFEAT_TWENTY_STONE_TALUS_TITLE = COTWCommon.makeDescriptionId("advancements", "adventure/defeat_twenty_stone_talus/title");
     public static final String DEFEAT_TWENTY_STONE_TALUS_DESCRIPTION = COTWCommon.makeDescriptionId("advancements", "adventure/defeat_twenty_stone_talus/description");
+    public static final String TRADE_WITH_KILTON_TITLE = COTWCommon.makeDescriptionId("advancements", "adventure/trade_with_kilton/title");
+    public static final String TRADE_WITH_KILTON_DESCRIPTION = COTWCommon.makeDescriptionId("advancements", "adventure/trade_with_kilton//description");
 
     @Override
     public void generate(HolderLookup.Provider registries, Consumer<Advancement> saver, ExistingFileHelper existingFileHelper) {
@@ -98,6 +101,15 @@ public class ModAdventureAdvancements implements ForgeAdvancementProvider.Advanc
                 .addCriterion("kass_play_a_rocky_ballad", kassMusicTriggerInBiome(ItemInit.MUSIC_DISC_A_ROCKY_BALLAD.get()))
                 .rewards(AdvancementRewards.Builder.loot(COTWLootTables.KASS_QUEST_FINISH))
                 .save(saver, COTWCommon.getResourceLocation("adventure/kass_quest_finish"), existingFileHelper);
+        Advancement.Builder.advancement()
+                .parent(root)
+                .display(
+                        ItemInit.MON.get(),
+                        Component.translatable(TRADE_WITH_KILTON_TITLE),
+                        Component.translatable(TRADE_WITH_KILTON_DESCRIPTION),
+                        (ResourceLocation) null, FrameType.TASK, true, true, false)
+                .addCriterion("trade_with_kilton", COTWTradeTrigger.TriggerInstance.tradedWithVillager(EntityPredicate.Builder.entity().of(EntityInit.KILTON.get())))
+                .save(saver, COTWCommon.getResourceLocation("adventure/trade_with_kilton"), existingFileHelper);
 
     }
 

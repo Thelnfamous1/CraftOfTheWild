@@ -1,6 +1,6 @@
 package com.Thelnfamous1.craft_of_the_wild;
 
-import com.Thelnfamous1.craft_of_the_wild.entity.Beedle;
+import com.Thelnfamous1.craft_of_the_wild.entity.trader.Beedle;
 import com.Thelnfamous1.craft_of_the_wild.entity.talus.*;
 import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
 import net.fabricmc.api.ModInitializer;

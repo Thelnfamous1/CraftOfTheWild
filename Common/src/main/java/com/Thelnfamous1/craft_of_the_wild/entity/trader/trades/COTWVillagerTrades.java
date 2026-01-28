@@ -1,5 +1,6 @@
-package com.Thelnfamous1.craft_of_the_wild.entity.trades;
+package com.Thelnfamous1.craft_of_the_wild.entity.trader.trades;
 
+import com.Thelnfamous1.craft_of_the_wild.init.ItemInit;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -19,7 +20,6 @@ import net.minecraft.world.level.block.Block;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class COTWVillagerTrades {
     public static final Int2ObjectMap<VillagerTrades.ItemListing[]> BEEDLE_TRADES = toIntMap(
@@ -51,6 +51,52 @@ public class COTWVillagerTrades {
                             new ItemsForEmeralds(Items.MUTTON, 1, 7, 12, 1),
                             new ItemsForEmeralds(Items.BREAD, 1, 6, 16, 1)
                     }));
+    public static final Int2ObjectMap<VillagerTrades.ItemListing[]> KILTON_TRADES = toIntMap(
+            ImmutableMap.of(
+                    1, new VillagerTrades.ItemListing[]{
+                            new EmeraldForItems(Items.DRAGON_EGG, 1, 64, 1, 1, ItemInit.MON.get()),
+                            new EmeraldForItems(Items.PHANTOM_MEMBRANE, 35, 3, 12, 1, ItemInit.MON.get()) // infinite
+                    },
+                    2, new VillagerTrades.ItemListing[]{
+                            new EmeraldForItems(Items.BONE, 64, 1, 12, 1, ItemInit.MON.get()), // infinite
+                            new EmeraldForItems(Items.GUNPOWDER, 64, 1, 12, 1, ItemInit.MON.get()), // infinite
+                            new EmeraldForItems(Items.ROTTEN_FLESH, 64, 1, 12, 1, ItemInit.MON.get()) // infinite
+                    },
+                    3, new VillagerTrades.ItemListing[]{
+                            new EmeraldForItems(Items.STRING, 64, 1, 10, 1, ItemInit.MON.get()),
+                            new EmeraldForItems(Items.SPIDER_EYE, 64, 1, 10, 1, ItemInit.MON.get()),
+                            new EmeraldForItems(Items.FERMENTED_SPIDER_EYE, 30, 2, 10, 1, ItemInit.MON.get()) // infinite
+                    },
+                    4, new VillagerTrades.ItemListing[]{
+                            new EmeraldForItems(Items.SLIME_BALL, 35, 2, 12, 1, ItemInit.MON.get()),
+                            new EmeraldForItems(Items.PRISMARINE_SHARD, 30, 3, 12, 1, ItemInit.MON.get()) // infinite
+                    },
+                    5, new VillagerTrades.ItemListing[]{
+                            new EmeraldForItems(Items.MAGMA_CREAM, 40, 3, 12, 1, ItemInit.MON.get()),
+                            new EmeraldForItems(Items.BLAZE_ROD, 64, 3, 12, 1, ItemInit.MON.get()),
+                            new EmeraldForItems(Items.GHAST_TEAR, 15, 5, 16, 1, ItemInit.MON.get()) // infinite
+                    },
+                    6, new VillagerTrades.ItemListing[]{
+                            new EmeraldForItems(Items.SHULKER_SHELL, 30, 7, 12, 1, ItemInit.MON.get()),
+                            new EmeraldForItems(Items.ENDER_PEARL, 45, 5, 12, 1, ItemInit.MON.get()),
+                            new EmeraldForItems(Items.TOTEM_OF_UNDYING, 1, 20, 3, 1, ItemInit.MON.get())
+                    },
+                    7, new VillagerTrades.ItemListing[]{
+                            new EmeraldForItems(Items.SKELETON_SKULL, 1, 10, 4, 1, ItemInit.MON.get()),
+                            new EmeraldForItems(Items.ZOMBIE_HEAD, 1, 10, 4, 1, ItemInit.MON.get()),
+                            new EmeraldForItems(Items.CREEPER_HEAD, 1, 10, 4, 1, ItemInit.MON.get()),
+                            new EmeraldForItems(Items.PIGLIN_HEAD, 1, 15, 4, 1, ItemInit.MON.get()),
+                            new EmeraldForItems(Items.WITHER_SKELETON_SKULL, 1, 15, 4, 1, ItemInit.MON.get())
+                    },
+                    8, new VillagerTrades.ItemListing[]{
+                            new ItemsForEmeralds(Items.DRAGON_BREATH, 9, 1, 5, 1, ItemInit.MON.get()),
+                            new ItemsForEmeralds(Items.WOODEN_SHOVEL, 19, 1, 2, 1, ItemInit.MON.get()),
+                            new ItemsForEmeralds(ItemInit.BOKOBLIN_HELMET.get(), 30, 1, 2, 1, ItemInit.MON.get()),
+                            new ItemsForEmeralds(Items.IRON_AXE, 35, 1, 2, 1, ItemInit.MON.get())
+                    },
+                    9, new VillagerTrades.ItemListing[]{
+                            new ItemsForEmeralds(Items.LEATHER_HORSE_ARMOR, 50, 1, 2, 1, ItemInit.MON.get())
+                    }));
 
     private static Int2ObjectMap<VillagerTrades.ItemListing[]> toIntMap(ImmutableMap<Integer, VillagerTrades.ItemListing[]> pMap) {
         return new Int2ObjectOpenHashMap<>(pMap);
@@ -63,6 +109,16 @@ public class COTWVillagerTrades {
         private final int maxUses;
         private final int villagerXp;
         private final float priceMultiplier;
+        private Item emerald = Items.EMERALD;
+
+        public EmeraldForItems(ItemLike pItem, int pCost, int pMaxUses, int pVillagerXp, Item emerald) {
+            this(pItem, pCost, 1, pMaxUses, pVillagerXp, emerald);
+        }
+
+        public EmeraldForItems(ItemLike pItem, int pCost, int pEmeraldCount, int pMaxUses, int pVillagerXp, Item emerald) {
+            this(pItem, pCost, pEmeraldCount, pMaxUses, pVillagerXp);
+            this.emerald = emerald;
+        }
 
         public EmeraldForItems(ItemLike pItem, int pCost, int pMaxUses, int pVillagerXp) {
             this(pItem, pCost, 1, pMaxUses, pVillagerXp);
@@ -77,6 +133,8 @@ public class COTWVillagerTrades {
             this.priceMultiplier = 0.05F;
         }
 
+        @Nullable
+        @Override
         public MerchantOffer getOffer(Entity pTrader, RandomSource pRandom) {
             ItemStack itemstack = new ItemStack(this.item, this.cost);
             return new MerchantOffer(itemstack, new ItemStack(Items.EMERALD, this.emeraldCount), this.maxUses, this.villagerXp, this.priceMultiplier);
@@ -92,6 +150,16 @@ public class COTWVillagerTrades {
         private final int maxUses;
         private final int villagerXp;
         private final float priceMultiplier;
+        private Item emerald = Items.EMERALD;
+
+        public ItemsAndEmeraldsToItems(ItemLike pFromItem, int pFromCount, Item pToItem, int pToCount, int pMaxUses, int pVillagerXp, Item emerald) {
+            this(pFromItem, pFromCount, 1, pToItem, pToCount, pMaxUses, pVillagerXp, emerald);
+        }
+
+        public ItemsAndEmeraldsToItems(ItemLike pFromItem, int pFromCount, int pEmeraldCost, Item pToItem, int pToCount, int pMaxUses, int pVillagerXp, Item emerald) {
+            this(pFromItem, pFromCount, pEmeraldCost, pToItem, pToCount, pMaxUses, pVillagerXp);
+            this.emerald = emerald;
+        }
 
         public ItemsAndEmeraldsToItems(ItemLike pFromItem, int pFromCount, Item pToItem, int pToCount, int pMaxUses, int pVillagerXp) {
             this(pFromItem, pFromCount, 1, pToItem, pToCount, pMaxUses, pVillagerXp);
@@ -109,8 +177,9 @@ public class COTWVillagerTrades {
         }
 
         @Nullable
+        @Override
         public MerchantOffer getOffer(Entity pTrader, RandomSource pRandom) {
-            return new MerchantOffer(new ItemStack(Items.EMERALD, this.emeraldCost), new ItemStack(this.fromItem.getItem(), this.fromCount), new ItemStack(this.toItem.getItem(), this.toCount), this.maxUses, this.villagerXp, this.priceMultiplier);
+            return new MerchantOffer(new ItemStack(this.emerald, this.emeraldCost), new ItemStack(this.fromItem.getItem(), this.fromCount), new ItemStack(this.toItem.getItem(), this.toCount), this.maxUses, this.villagerXp, this.priceMultiplier);
         }
     }
 
@@ -121,6 +190,28 @@ public class COTWVillagerTrades {
         private final int maxUses;
         private final int villagerXp;
         private final float priceMultiplier;
+        private Item emerald = Items.EMERALD;
+
+        public ItemsForEmeralds(Block pBlock, int pEmeraldCost, int pNumberOfItems, int pMaxUses, int pVillagerXp, Item emerald) {
+            this(new ItemStack(pBlock), pEmeraldCost, pNumberOfItems, pMaxUses, pVillagerXp, emerald);
+        }
+
+        public ItemsForEmeralds(Item pItem, int pEmeraldCost, int pNumberOfItems, int pVillagerXp, Item emerald) {
+            this(new ItemStack(pItem), pEmeraldCost, pNumberOfItems, 12, pVillagerXp, emerald);
+        }
+
+        public ItemsForEmeralds(Item pItem, int pEmeraldCost, int pNumberOfItems, int pMaxUses, int pVillagerXp, Item emerald) {
+            this(new ItemStack(pItem), pEmeraldCost, pNumberOfItems, pMaxUses, pVillagerXp, emerald);
+        }
+
+        public ItemsForEmeralds(ItemStack pItemStack, int pEmeraldCost, int pNumberOfItems, int pMaxUses, int pVillagerXp, Item emerald) {
+            this(pItemStack, pEmeraldCost, pNumberOfItems, pMaxUses, pVillagerXp, 0.05F, emerald);
+        }
+
+        public ItemsForEmeralds(ItemStack pItemStack, int pEmeraldCost, int pNumberOfItems, int pMaxUses, int pVillagerXp, float pPriceMultiplier, Item emerald) {
+            this(pItemStack, pEmeraldCost, pNumberOfItems, pMaxUses, pVillagerXp, pPriceMultiplier);
+            this.emerald = emerald;
+        }
 
         public ItemsForEmeralds(Block pBlock, int pEmeraldCost, int pNumberOfItems, int pMaxUses, int pVillagerXp) {
             this(new ItemStack(pBlock), pEmeraldCost, pNumberOfItems, pMaxUses, pVillagerXp);
@@ -147,8 +238,10 @@ public class COTWVillagerTrades {
             this.priceMultiplier = pPriceMultiplier;
         }
 
+        @Nullable
+        @Override
         public MerchantOffer getOffer(Entity pTrader, RandomSource pRandom) {
-            return new MerchantOffer(new ItemStack(Items.EMERALD, this.emeraldCost), new ItemStack(this.itemStack.getItem(), this.numberOfItems), this.maxUses, this.villagerXp, this.priceMultiplier);
+            return new MerchantOffer(new ItemStack(this.emerald, this.emeraldCost), new ItemStack(this.itemStack.getItem(), this.numberOfItems), this.maxUses, this.villagerXp, this.priceMultiplier);
         }
     }
 
@@ -162,6 +255,13 @@ public class COTWVillagerTrades {
         private final Item fromItem;
         private final int fromCount;
         private final float priceMultiplier;
+        private Item emerald = Items.EMERALD;
+
+
+        public TippedArrowForItemsAndEmeralds(Item pFromItem, int pFromCount, Item pToItem, int pToCount, int pEmeraldCost, int pMaxUses, int pVillagerXp, Item emerald) {
+            this(pFromItem, pFromCount, pToItem, pToCount, pEmeraldCost, pMaxUses, pVillagerXp);
+            this.emerald = emerald;
+        }
 
         public TippedArrowForItemsAndEmeralds(Item pFromItem, int pFromCount, Item pToItem, int pToCount, int pEmeraldCost, int pMaxUses, int pVillagerXp) {
             this.toItem = new ItemStack(pToItem);
@@ -174,11 +274,11 @@ public class COTWVillagerTrades {
             this.priceMultiplier = 0.05F;
         }
 
+        @Nullable
+        @Override
         public MerchantOffer getOffer(Entity pTrader, RandomSource pRandom) {
-            ItemStack itemstack = new ItemStack(Items.EMERALD, this.emeraldCost);
-            List<Potion> list = BuiltInRegistries.POTION.stream().filter((p_35804_) -> {
-                return !p_35804_.getEffects().isEmpty() && PotionBrewing.isBrewablePotion(p_35804_);
-            }).collect(Collectors.toList());
+            ItemStack itemstack = new ItemStack(this.emerald, this.emeraldCost);
+            List<Potion> list = BuiltInRegistries.POTION.stream().filter((potion) -> !potion.getEffects().isEmpty() && PotionBrewing.isBrewablePotion(potion)).toList();
             Potion potion = list.get(pRandom.nextInt(list.size()));
             ItemStack itemstack1 = PotionUtils.setPotion(new ItemStack(this.toItem.getItem(), this.toCount), potion);
             return new MerchantOffer(itemstack, new ItemStack(this.fromItem, this.fromCount), itemstack1, this.maxUses, this.villagerXp, this.priceMultiplier);

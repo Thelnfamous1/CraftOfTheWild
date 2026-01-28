@@ -1,0 +1,40 @@
+{
+  "parent": "craft_of_the_wild:adventure/root",
+  "criteria": {
+    "trade_with_kilton": {
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "craft_of_the_wild:kilton"
+            }
+          }
+        ]
+      },
+      "trigger": "craft_of_the_wild:villager_trade"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.craft_of_the_wild.adventure.trade_with_kilton..description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "craft_of_the_wild:mon"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.craft_of_the_wild.adventure.trade_with_kilton.title"
+    }
+  },
+  "requirements": [
+    [
+      "trade_with_kilton"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

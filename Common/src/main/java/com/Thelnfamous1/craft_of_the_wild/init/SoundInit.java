@@ -75,6 +75,16 @@ public class SoundInit {
 
     public static final RegistryObject<SoundEvent> STONE_PEBBLIT_POUND = registerSoundEvent("stone_pebblit_pound");
 
+    public static final RegistryObject<SoundEvent> KILTON_AGREE = registerSoundEvent("kilton_agree");
+
+    public static final RegistryObject<SoundEvent> KILTON_DISAPPOINTED = registerSoundEvent("kilton_disappointed");
+
+    public static final RegistryObject<SoundEvent> KILTON_FASCINATED = registerSoundEvent("kilton_fascinated");
+
+    public static final RegistryObject<SoundEvent> KILTON_LAUGH = registerSoundEvent("kilton_laugh");
+
+    public static final RegistryObject<SoundEvent> KILTON_SCREAM = registerSoundEvent("kilton_scream");
+
     private static RegistryObject<SoundEvent> registerSoundEvent(String path) {
         return SOUND_EVENTS.register(path, () -> SoundEvent.createVariableRangeEvent(COTWCommon.getResourceLocation(path)));
     }

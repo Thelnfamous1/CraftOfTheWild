@@ -52,6 +52,12 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
 
         this.addSound(SoundInit.STONE_PEBBLIT_WALK, 1);
         this.addSound(SoundInit.STONE_PEBBLIT_POUND, 1);
+
+        this.addSound(SoundInit.KILTON_AGREE, 2);
+        this.addSound(SoundInit.KILTON_DISAPPOINTED, 2);
+        this.addSound(SoundInit.KILTON_FASCINATED, 2);
+        this.addSound(SoundInit.KILTON_LAUGH, 2);
+        this.addSound(SoundInit.KILTON_SCREAM, 2);
     }
 
     public void addSound(RegistryObject<SoundEvent> entry, float volume) {

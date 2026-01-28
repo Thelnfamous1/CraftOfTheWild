@@ -13,5 +13,7 @@ public class VillagerProfessionInit {
 
     public static final RegistryObject<VillagerProfession> BEEDLE = VILLAGER_PROFESSION.register("beedle", () -> new VillagerProfession("beedle", PoiType.NONE, PoiType.NONE, ImmutableSet.of(), ImmutableSet.of(), null));
 
+    public static final RegistryObject<VillagerProfession> KILTON = VILLAGER_PROFESSION.register("kilton", () -> new VillagerProfession("kilton", PoiType.NONE, PoiType.NONE, ImmutableSet.of(), ImmutableSet.of(), null));
+
     public static void loadClass(){}
 }

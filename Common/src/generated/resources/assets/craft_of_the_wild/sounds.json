@@ -116,6 +116,46 @@
       "craft_of_the_wild:kass_theme"
     ]
   },
+  "kilton_agree": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:kilton_agree",
+        "volume": 2.0
+      }
+    ]
+  },
+  "kilton_disappointed": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:kilton_disappointed",
+        "volume": 2.0
+      }
+    ]
+  },
+  "kilton_fascinated": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:kilton_fascinated",
+        "volume": 2.0
+      }
+    ]
+  },
+  "kilton_laugh": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:kilton_laugh",
+        "volume": 2.0
+      }
+    ]
+  },
+  "kilton_scream": {
+    "sounds": [
+      {
+        "name": "craft_of_the_wild:kilton_scream",
+        "volume": 2.0
+      }
+    ]
+  },
   "music_a_rocky_ballad": {
     "sounds": [
       {

@@ -1,18 +1,15 @@
-package com.Thelnfamous1.craft_of_the_wild.entity;
+package com.Thelnfamous1.craft_of_the_wild.entity.trader;
 
-import com.Thelnfamous1.craft_of_the_wild.Constants;
-import com.Thelnfamous1.craft_of_the_wild.compat.customvillagertrades.CustomVillagerTradesCompat;
+import com.Thelnfamous1.craft_of_the_wild.entity.COTWMob;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.COTWSharedAi;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.behavior.*;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor.COTWNearbyPlayersSensor;
 import com.Thelnfamous1.craft_of_the_wild.entity.ai.sensor.SleepSensor;
 import com.Thelnfamous1.craft_of_the_wild.entity.animation.COTWAnimations;
-import com.Thelnfamous1.craft_of_the_wild.entity.trades.COTWVillagerTrades;
+import com.Thelnfamous1.craft_of_the_wild.entity.trader.trades.COTWVillagerTrades;
 import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
-import com.Thelnfamous1.craft_of_the_wild.init.ItemInit;
 import com.Thelnfamous1.craft_of_the_wild.init.SoundInit;
 import com.Thelnfamous1.craft_of_the_wild.init.VillagerProfessionInit;
-import com.Thelnfamous1.craft_of_the_wild.platform.Services;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -20,21 +17,15 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.DebugPackets;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.stats.Stats;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -43,15 +34,11 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.entity.npc.Npc;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.trading.MerchantOffer;
-import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -76,23 +63,11 @@ import software.bernie.geckolib.core.animation.AnimatableManager;
 import java.util.List;
 import java.util.Map;
 
-public class Beedle extends COTWMob implements Npc, SmartBrainOwner<Beedle>, COTWVillager {
-    private static final int DEATH_TIME = COTWUtil.secondsToTicks(2.0F);
+public class Beedle extends COTWTrader implements SmartBrainOwner<Beedle> {
     public static final int NUMBER_OF_TRADE_SLOTS = 7;
-    private static final EntityDataAccessor<Boolean> DATA_TRADING = SynchedEntityData.defineId(Beedle.class, EntityDataSerializers.BOOLEAN);
+    private static final int DEATH_TIME = COTWUtil.secondsToTicks(2.0F);
     private static final EntityDataAccessor<Boolean> DATA_LIGHT_ON = SynchedEntityData.defineId(Beedle.class, EntityDataSerializers.BOOLEAN);
-    public static final long RESTOCK_INTERVAL = 12000L;
-    public static final long DAY_LENGTH = 24000L;
-    public static final int MAX_RESTOCKS = 2;
-    public static final int MAX_OFFERS_PER_SLOT = 1;
-    @Nullable
-    private Player tradingPlayer;
-    @Nullable
-    protected MerchantOffers offers;
 
-    private long lastRestockGameTime;
-    private int numberOfRestocksToday;
-    private long lastRestockCheckDayTime;
     private SmartBrainSchedule schedule;
 
     public Beedle(EntityType<? extends Beedle> $$0, Level $$1) {
@@ -107,8 +82,27 @@ public class Beedle extends COTWMob implements Npc, SmartBrainOwner<Beedle>, COT
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(DATA_TRADING, false);
         this.entityData.define(DATA_LIGHT_ON, false);
+    }
+
+    @Override
+    protected SoundEvent getTradeUpdatedSound(boolean hasTrade) {
+        return hasTrade ? SoundInit.BEEDLE_URGE.get() : SoundInit.BEEDLE_ANGRY.get();
+    }
+
+    @Override
+    protected VillagerTrades.ItemListing[] getPotentialTradesForSlot(int tradeSlot) {
+        return COTWVillagerTrades.BEEDLE_TRADES.get(tradeSlot);
+    }
+
+    @Override
+    public VillagerProfession getProfession() {
+        return VillagerProfessionInit.BEEDLE.get();
+    }
+
+    @Override
+    public int getTradeSlots() {
+        return NUMBER_OF_TRADE_SLOTS;
     }
 
     @Override
@@ -142,87 +136,6 @@ public class Beedle extends COTWMob implements Npc, SmartBrainOwner<Beedle>, COT
         return DEATH_TIME;
     }
 
-    @Override
-    public void setTradingPlayer(@Nullable Player player) {
-        boolean shouldStop = this.tradingPlayer != null && player == null;
-        this.tradingPlayer = player;
-        if (!this.level().isClientSide) {
-            this.entityData.set(DATA_TRADING, this.tradingPlayer != null);
-        }
-        if (shouldStop) {
-            this.stopTrading();
-        }
-    }
-
-    @Nullable
-    @Override
-    public Player getTradingPlayer() {
-        return this.tradingPlayer;
-    }
-
-    @Override
-    public MerchantOffers getOffers() {
-        if (this.offers == null) {
-            this.offers = new MerchantOffers();
-            this.updateTrades();
-        }
-
-        return this.offers;
-    }
-
-    @Override
-    public void overrideOffers(MerchantOffers merchantOffers) {
-
-    }
-
-    @Override
-    public void notifyTrade(MerchantOffer merchantOffer) {
-        merchantOffer.increaseUses();
-        this.ambientSoundTime = -this.getAmbientSoundInterval();
-        this.rewardTradeXp(merchantOffer);
-        Player tradingPlayer = this.getTradingPlayer();
-        if (tradingPlayer instanceof ServerPlayer serverTradingPlayer) {
-            //CriteriaTriggers.TRADE.trigger(serverTradingPlayer, this, merchantOffer.getResult());
-        }
-        if (!this.level().isClientSide && this.ambientSoundTime > -this.getAmbientSoundInterval() + 20) {
-            this.ambientSoundTime = -this.getAmbientSoundInterval();
-            this.playSound(this.getNotifyTradeSound(), this.getSoundVolume(), this.getVoicePitch());
-        }
-    }
-
-    @Override
-    public void notifyTradeUpdated(ItemStack result) {
-        if (!this.level().isClientSide && this.ambientSoundTime > -this.getAmbientSoundInterval() + 20) {
-            this.ambientSoundTime = -this.getAmbientSoundInterval();
-            this.playSound(this.getTradeUpdatedSound(!result.isEmpty()), this.getSoundVolume(), this.getVoicePitch());
-        }
-    }
-
-    @Override
-    public int getVillagerXp() {
-        return 0;
-    }
-
-    @Override
-    public void overrideXp(int i) {
-
-    }
-
-    @Override
-    public boolean showProgressBar() {
-        return false;
-    }
-
-    @Override
-    public SoundEvent getNotifyTradeSound() {
-        return SoundInit.BEEDLE_SURPRISE.get();
-    }
-
-    @Override
-    public boolean isClientSide() {
-        return this.level().isClientSide;
-    }
-
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
@@ -237,57 +150,18 @@ public class Beedle extends COTWMob implements Npc, SmartBrainOwner<Beedle>, COT
 
     // AbstractVillager, Villager and WanderingTrader methods
 
-    @Override
-    public void addOffersFromItemListings(MerchantOffers merchantOffers, VillagerTrades.ItemListing[] potentialTrades, int maxOffers) {
-        COTWVillager.addOffersFromitemListings(this, merchantOffers, potentialTrades, maxOffers);
-
-    }
-
-    public boolean isTrading() {
-        if (this.level().isClientSide) {
-            return this.entityData.get(DATA_TRADING);
-        }
-        return this.tradingPlayer != null;
-    }
-
-    protected void stopTrading() {
-        this.setTradingPlayer(null);
-    }
-
-    protected SoundEvent getTradeUpdatedSound(boolean hasTrade) {
-        return hasTrade ? SoundInit.BEEDLE_URGE.get() : SoundInit.BEEDLE_ANGRY.get();
-    }
-
-    @Override
-    public void addAdditionalSaveData(CompoundTag pCompound) {
-        super.addAdditionalSaveData(pCompound);
-        MerchantOffers merchantoffers = this.getOffers();
-        if (!merchantoffers.isEmpty()) {
-            pCompound.put("Offers", merchantoffers.createTag());
-        }
-        pCompound.putLong("LastRestock", this.lastRestockGameTime);
-        pCompound.putInt("RestocksToday", this.numberOfRestocksToday);
-    }
 
     @Override
     public void readAdditionalSaveData(CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
-        if (pCompound.contains("Offers", Tag.TAG_COMPOUND)) {
-            this.offers = new MerchantOffers(pCompound.getCompound("Offers"));
-        }
-        this.lastRestockGameTime = pCompound.getLong("LastRestock");
-        this.setCanPickUpLoot(true);
 
-        this.numberOfRestocksToday = pCompound.getInt("RestocksToday");
         // Doing this here since SBL does not deserialize Brain NBT
         COTWUtil.readBrainFromTag(pCompound, this);
     }
 
-    @Nullable
     @Override
-    public Entity changeDimension(ServerLevel level) {
-        this.stopTrading();
-        return super.changeDimension(level);
+    protected void playStartTradingSound() {
+        this.playSound(SoundInit.BEEDLE_URGE.get(), this.getSoundVolume(), this.getVoicePitch());
     }
 
     @Override
@@ -326,149 +200,6 @@ public class Beedle extends COTWMob implements Npc, SmartBrainOwner<Beedle>, COT
         this.stopTrading();
     }
 
-    protected void updateTrades() {
-        boolean useCustomVillagerTrades = Services.PLATFORM.isModLoaded(Constants.CUSTOM_VILLAGER_TRADES_MODID);
-        int tradeSlots = this.getTradeSlots();
-        int maxOffersPerSlot = this.getMaxOffersPerSlot();
-        if (useCustomVillagerTrades) {
-            maxOffersPerSlot = CustomVillagerTradesCompat.getMaxOffers(this).orElse(maxOffersPerSlot);
-        }
-
-        MerchantOffers merchantOffers = this.getOffers();
-        for (int tradeSlot = 1; tradeSlot <= tradeSlots; tradeSlot++) {
-            VillagerTrades.ItemListing[] potentialTradesForSlot = COTWVillagerTrades.BEEDLE_TRADES.get(tradeSlot);
-            if(useCustomVillagerTrades){
-                potentialTradesForSlot = CustomVillagerTradesCompat.replaceItemListings(this, potentialTradesForSlot, tradeSlot);
-            }
-            if (potentialTradesForSlot != null) {
-                this.addOffersFromItemListings(merchantOffers, potentialTradesForSlot, maxOffersPerSlot);
-            }
-        }
-    }
-
-    protected void rewardTradeXp(MerchantOffer offer) {
-        if (offer.shouldRewardExp()) {
-            int $$1 = 3 + this.random.nextInt(4);
-            this.level().addFreshEntity(new ExperienceOrb(this.level(), this.getX(), this.getY() + 0.5, this.getZ(), $$1));
-        }
-
-    }
-
-    @Override
-    public InteractionResult mobInteract(Player pPlayer, InteractionHand pHand) {
-        ItemStack itemstack = pPlayer.getItemInHand(pHand);
-        if (!itemstack.is(ItemInit.BEEDLE_SPAWN_EGG.get()) && this.isAlive() && !this.isTrading() && !this.isBaby()) {
-            if (pHand == InteractionHand.MAIN_HAND) {
-                pPlayer.awardStat(Stats.TALKED_TO_VILLAGER);
-            }
-
-            if (!this.getOffers().isEmpty()) {
-                if (!this.level().isClientSide) {
-                    this.setTradingPlayer(pPlayer);
-                    this.openTradingScreen(pPlayer, this.getDisplayName(), 1);
-                    this.ambientSoundTime = -this.getAmbientSoundInterval();
-                    this.playSound(SoundInit.BEEDLE_URGE.get(), this.getSoundVolume(), this.getVoicePitch());
-                }
-
-            }
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
-        } else {
-            return super.mobInteract(pPlayer, pHand);
-        }
-    }
-
-    @Override
-    public boolean removeWhenFarAway(double pDistanceToClosestPlayer) {
-        return false;
-    }
-
-    // Restock
-    public void restock() {
-        if(Constants.DEBUG_BEEDLE_RESTOCK)
-            Constants.LOG.info("{} is restocking their trades!", this);
-        this.updateDemand();
-
-        for(MerchantOffer merchantoffer : this.getOffers()) {
-            merchantoffer.resetUses();
-        }
-
-        this.resendOffersToTradingPlayer();
-        this.lastRestockGameTime = this.level().getGameTime();
-        ++this.numberOfRestocksToday;
-    }
-
-    private void resendOffersToTradingPlayer() {
-        MerchantOffers merchantoffers = this.getOffers();
-        Player player = this.getTradingPlayer();
-        if (player != null && !merchantoffers.isEmpty()) {
-            player.sendMerchantOffers(player.containerMenu.containerId, merchantoffers, 1, this.getVillagerXp(), this.showProgressBar(), this.canRestock());
-        }
-
-    }
-
-    private boolean needsToRestock() {
-        for(MerchantOffer merchantoffer : this.getOffers()) {
-            if (merchantoffer.needsRestock()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private boolean allowedToRestock() {
-        return this.numberOfRestocksToday == 0 ||
-                this.numberOfRestocksToday < 2
-                        && this.level().getGameTime() > this.lastRestockGameTime + DAY_LENGTH;
-    }
-
-    public boolean shouldRestock() {
-        long nextRestockTime = this.lastRestockGameTime + RESTOCK_INTERVAL;
-        long currentTime = this.level().getGameTime();
-        boolean shouldRestock = currentTime > nextRestockTime;
-        long currentDayTime = this.level().getDayTime();
-        if (this.lastRestockCheckDayTime > 0L) {
-            long lastDayProgress = this.lastRestockCheckDayTime / DAY_LENGTH;
-            long currentDayProgress = currentDayTime / DAY_LENGTH;
-            shouldRestock |= currentDayProgress > lastDayProgress;
-        }
-
-        this.lastRestockCheckDayTime = currentDayTime;
-        if (shouldRestock) {
-            this.lastRestockGameTime = currentTime;
-            this.resetNumberOfRestocks();
-        }
-
-        return this.allowedToRestock() && this.needsToRestock();
-    }
-
-    private void catchUpDemand() {
-        int restocksRemaining = MAX_RESTOCKS - this.numberOfRestocksToday;
-        if (restocksRemaining > 0) {
-            for(MerchantOffer merchantoffer : this.getOffers()) {
-                merchantoffer.resetUses();
-            }
-        }
-
-        for(int j = 0; j < restocksRemaining; ++j) {
-            this.updateDemand();
-        }
-
-        this.resendOffersToTradingPlayer();
-    }
-
-    private void updateDemand() {
-        for(MerchantOffer merchantoffer : this.getOffers()) {
-            merchantoffer.updateDemand();
-        }
-
-    }
-
-    private void resetNumberOfRestocks() {
-        this.catchUpDemand();
-        this.numberOfRestocksToday = 0;
-    }
-
 
     // Brain
     @Override
@@ -504,11 +235,6 @@ public class Beedle extends COTWMob implements Npc, SmartBrainOwner<Beedle>, COT
                 new MoveToWalkTarget<>(),
                 new COTWLookAndFollowTradingPlayerSink<Beedle>(),
                 new CustomBehaviour<Beedle>(beedle -> beedle.setLightOn(beedle.level().isNight())));
-    }
-
-    private boolean isCloseEnoughToTradingPlayer(){
-        Player tradingPlayer = this.getTradingPlayer();
-        return tradingPlayer != null && this.closerThan(tradingPlayer, ServerGamePacketListenerImpl.MAX_INTERACTION_DISTANCE);
     }
 
     @Override
@@ -691,11 +417,6 @@ public class Beedle extends COTWMob implements Npc, SmartBrainOwner<Beedle>, COT
     }
 
     @Override
-    public boolean canBeLeashed(Player player) {
-        return false;
-    }
-
-    @Override
     public void startSleeping(BlockPos blockPos) {
         super.startSleeping(blockPos);
         BrainUtils.setMemory(this, MemoryModuleType.LAST_SLEPT, this.level().getGameTime());
@@ -716,22 +437,17 @@ public class Beedle extends COTWMob implements Npc, SmartBrainOwner<Beedle>, COT
     }
 
     @Override
+    public boolean canBeLeashed(Player player) {
+        return false;
+    }
+
+    @Override
     public boolean canBeSeenAsEnemy() {
         return false;
     }
 
     @Override
-    public VillagerProfession getProfession() {
-        return VillagerProfessionInit.BEEDLE.get();
-    }
-
-    @Override
-    public int getTradeSlots() {
-        return NUMBER_OF_TRADE_SLOTS;
-    }
-
-    @Override
-    public int getMaxOffersPerSlot() {
-        return MAX_OFFERS_PER_SLOT;
+    public SoundEvent getNotifyTradeSound() {
+        return SoundInit.BEEDLE_SURPRISE.get();
     }
 }

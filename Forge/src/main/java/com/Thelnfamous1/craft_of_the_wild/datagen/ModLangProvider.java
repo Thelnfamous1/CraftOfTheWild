@@ -82,6 +82,8 @@ public class ModLangProvider extends LanguageProvider {
         add(ModAdventureAdvancements.DEFEAT_STONE_TALUS_DESCRIPTION, "Defeat a Stone Talus");
         add(ModAdventureAdvancements.DEFEAT_TWENTY_STONE_TALUS_TITLE, "WANTED: Stone Talus");
         add(ModAdventureAdvancements.DEFEAT_TWENTY_STONE_TALUS_DESCRIPTION, "Defeat 20 Stone Talus");
+        add(ModAdventureAdvancements.TRADE_WITH_KILTON_TITLE, "What a deal?");
+        add(ModAdventureAdvancements.TRADE_WITH_KILTON_DESCRIPTION, "Successfully trade with Kilton");
         PaintingVariantInit.PAINTING_VARIANTS.getEntries().forEach(paintingVariantRegistryObject -> {
             ResourceLocation id = paintingVariantRegistryObject.getId();
             this.add(id.toLanguageKey("painting", "title"), checkReplace(id));

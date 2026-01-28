@@ -1,6 +1,7 @@
 package com.Thelnfamous1.craft_of_the_wild.init;
 
 import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
+import com.Thelnfamous1.craft_of_the_wild.criterion.COTWTradeTrigger;
 import com.Thelnfamous1.craft_of_the_wild.criterion.KilledCountTrigger;
 import com.Thelnfamous1.craft_of_the_wild.mixin.CriteriaTriggersAccessor;
 import com.google.common.collect.Maps;
@@ -13,6 +14,7 @@ public class CriterionInit {
 
     private static final Map<ResourceLocation, CriterionTrigger<?>> CRITERIA = Maps.newHashMap();
     public static final KilledCountTrigger PLAYER_KILLED_ENTITY_COUNT = register(new KilledCountTrigger(COTWCommon.getResourceLocation("player_killed_entity_count")));
+    public static final COTWTradeTrigger TRADE = register(new COTWTradeTrigger(COTWCommon.getResourceLocation("villager_trade")));
 
 
     private static <T extends CriterionTrigger<?>> T register(T $$0) {

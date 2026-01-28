@@ -62,11 +62,12 @@ public class ModEntityLootTables extends EntityLootSubProvider {
         this.dropSingle(EntityInit.STONE_PEBBLIT.get(), Items.COBBLESTONE);
         this.dropSingle(EntityInit.FROST_PEBBLIT.get(), Items.BLUE_ICE);
         this.dropSingle(EntityInit.IGNEO_PEBBLIT.get(), Items.MAGMA_BLOCK);
+        this.dropSingle(EntityInit.KILTON.get(), ItemInit.MON.get());
     }
 
     @Override
     protected boolean canHaveLootTable(EntityType<?> pEntityType) {
-        if(pEntityType == EntityInit.BEEDLE.get() || pEntityType == EntityInit.KASS.get()){
+        if(pEntityType == EntityInit.BEEDLE.get() || pEntityType == EntityInit.KASS.get() || pEntityType == EntityInit.KILTON.get()){
             return true;
         }
         return super.canHaveLootTable(pEntityType);

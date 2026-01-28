@@ -1,9 +1,10 @@
 package com.Thelnfamous1.craft_of_the_wild.entity.animation;
 
-import com.Thelnfamous1.craft_of_the_wild.entity.Beedle;
+import com.Thelnfamous1.craft_of_the_wild.entity.trader.Beedle;
 import com.Thelnfamous1.craft_of_the_wild.entity.Kass;
 import com.Thelnfamous1.craft_of_the_wild.entity.pebblit.StonePebblit;
 import com.Thelnfamous1.craft_of_the_wild.entity.talus.StoneTalus;
+import com.Thelnfamous1.craft_of_the_wild.entity.trader.Kilton;
 import net.minecraft.world.entity.Pose;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
@@ -186,6 +187,29 @@ public class COTWAnimations {
 
             state.resetCurrentAnimation();
 
+            return PlayState.STOP;
+        });
+    }
+
+
+    public static AnimationController<Kilton> moveController(Kilton talus) {
+        return new AnimationController<>(talus, "Move", 10, state -> {
+            if(!talus.refuseToMove(true)){
+                if (talus.isWalking()) {
+                    return state.setAndContinue(WALK);
+                } else{
+                    return state.setAndContinue(IDLE);
+                }
+            }
+            return PlayState.STOP;
+        });
+    }
+
+    public static AnimationController<Kilton> poseController(Kilton talus) {
+        return new AnimationController<>(talus, "Pose", 0, state -> {
+            if(talus.hasPose(Pose.DYING)){
+                return state.setAndContinue(DEATH);
+            }
             return PlayState.STOP;
         });
     }

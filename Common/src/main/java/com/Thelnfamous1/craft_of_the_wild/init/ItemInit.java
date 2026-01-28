@@ -133,6 +133,9 @@ public class ItemInit {
     public static final RegistryObject<Item> IGNEO_PEBBLIT_BOULDER = ITEMS.register("igneo_pebblit_boulder", () ->
             new BlockItem(BlockInit.IGNEO_PEBBLIT_BOULDER.get(), getItemProperties()));
 
+    public static final RegistryObject<Item> KILTON_SPAWN_EGG = ITEMS.register("kilton_spawn_egg", () ->
+            new COTWSpawnEggItem(EntityInit.KILTON, 14405058, 7643954, getItemProperties()));
+
     private static RegistryObject<Item> registerMusicDisc(String path, int analogSignal, RegistryObject<SoundEvent> soundSupplier, int durationInSeconds, String author) {
         return ITEMS.register(path, () ->
                 new COTWRecordItem(analogSignal, soundSupplier.get(), getItemProperties().stacksTo(1).rarity(Rarity.RARE), durationInSeconds, author));

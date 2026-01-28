@@ -1,7 +1,7 @@
 package com.Thelnfamous1.craft_of_the_wild.init;
 
 import com.Thelnfamous1.craft_of_the_wild.Constants;
-import com.Thelnfamous1.craft_of_the_wild.entity.Beedle;
+import com.Thelnfamous1.craft_of_the_wild.entity.trader.Beedle;
 import com.Thelnfamous1.craft_of_the_wild.entity.Kass;
 import com.Thelnfamous1.craft_of_the_wild.entity.pebblit.FrostPebblit;
 import com.Thelnfamous1.craft_of_the_wild.entity.pebblit.IgneoPebblit;
@@ -10,6 +10,7 @@ import com.Thelnfamous1.craft_of_the_wild.entity.talus.*;
 import com.Thelnfamous1.craft_of_the_wild.entity.talus.arm.FrostTalusArm;
 import com.Thelnfamous1.craft_of_the_wild.entity.talus.arm.IgneoTalusArm;
 import com.Thelnfamous1.craft_of_the_wild.entity.talus.arm.StoneTalusArm;
+import com.Thelnfamous1.craft_of_the_wild.entity.trader.Kilton;
 import com.nyfaria.craft_of_the_wild.registration.RegistrationProvider;
 import com.nyfaria.craft_of_the_wild.registration.RegistryObject;
 import net.minecraft.core.registries.Registries;
@@ -103,6 +104,19 @@ public class EntityInit {
                                 .clientTrackingRange(10),
                 pebblitAttributes);
     }
+
+
+    public static final float KILTON_SCALE = 0.75F;
+    // Kilton height is 34/16
+    // Kilton width is 12/16
+    // He has to be scaled down to one quarter of that to be 1/2 (8/16) block tall
+    public static final RegistryObject<EntityType<Kilton>> KILTON = registerEntity("kilton", () ->
+                    EntityType.Builder.of(Kilton::new, MobCategory.MISC)
+                            .sized(pixelsToBlocks(12.0F) * KILTON_SCALE, pixelsToBlocks(34.0F) * KILTON_SCALE)
+                            .clientTrackingRange(10),
+            Kilton::createAttributes);
+
+    public static final EntityDimensions KILTON_DYING = EntityDimensions.scalable(pixelsToBlocks(34.0F) * KILTON_SCALE, pixelsToBlocks(12.0F) * KILTON_SCALE);
 
     public static float pixelsToBlocks(float pixels){
         return pixels / 16.0F;

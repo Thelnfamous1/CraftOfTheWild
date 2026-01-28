@@ -54,6 +54,7 @@ public class COTWCommonClient {
         registerRendererTyped(EntityInit.STONE_PEBBLIT.get(), renderManager -> new StonePebblitRenderer<>(renderManager, EntityInit.STONE_PEBBLIT.getId()), register);
         registerRendererTyped(EntityInit.FROST_PEBBLIT.get(), renderManager -> new StonePebblitRenderer<>(renderManager, EntityInit.FROST_PEBBLIT.getId()), register);
         registerRendererTyped(EntityInit.IGNEO_PEBBLIT.get(), renderManager -> new GlowingStonePebblitRenderer<>(renderManager, EntityInit.IGNEO_PEBBLIT.getId()), register);
+        registerRendererTyped(EntityInit.KILTON.get(), KiltonRenderer::new, register);
     }
 
     private static <T extends Entity> void registerRendererTyped(EntityType<T> type, EntityRendererProvider<T> provider, BiConsumer<EntityType, EntityRendererProvider> register) {

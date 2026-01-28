@@ -1,6 +1,6 @@
 package com.Thelnfamous1.craft_of_the_wild.compat.dynamiclights;
 
-import com.Thelnfamous1.craft_of_the_wild.entity.Beedle;
+import com.Thelnfamous1.craft_of_the_wild.entity.trader.Beedle;
 import dev.lambdaurora.lambdynlights.api.DynamicLightHandler;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Blocks;
