@@ -25,11 +25,12 @@ public class COTWVillagerTrades {
     public static final Int2ObjectMap<VillagerTrades.ItemListing[]> BEEDLE_TRADES = toIntMap(
             ImmutableMap.of(
                     1, new VillagerTrades.ItemListing[]{
-                            new TippedArrowForItemsAndEmeralds(Items.ARROW, 5, Items.TIPPED_ARROW, 5, 2, 12, 1)
+                            new TippedArrowForItemsAndEmeralds(Items.ARROW, 5, Items.TIPPED_ARROW, 5, 2, 12, 1),
+                            new EmeraldForItems(ItemInit.LUMINOUS_STONE.get(), 2, 12, 12, 1)
                     },
                     2, new VillagerTrades.ItemListing[]{
-                            new ItemsForEmeralds(Items.ARROW, 1, 16, 12, 1),
-                            new ItemsForEmeralds(Items.ARROW, 1, 5, 12, 1)
+                            new ItemsForEmeralds(Items.ARROW, 1, 16, Integer.MAX_VALUE, 1),
+                            new ItemsForEmeralds(Items.ARROW, 1, 5, Integer.MAX_VALUE, 1)
                     },
                     3, new VillagerTrades.ItemListing[]{
                             new ItemsForEmeralds(Items.PAINTING, 2, 3, 12, 1),
@@ -55,26 +56,26 @@ public class COTWVillagerTrades {
             ImmutableMap.of(
                     1, new VillagerTrades.ItemListing[]{
                             new EmeraldForItems(Items.DRAGON_EGG, 1, 64, 1, 1, ItemInit.MON.get()),
-                            new EmeraldForItems(Items.PHANTOM_MEMBRANE, 35, 3, 12, 1, ItemInit.MON.get()) // infinite
+                            new EmeraldForItems(Items.PHANTOM_MEMBRANE, 35, 3, Integer.MAX_VALUE, 1, ItemInit.MON.get()) // infinite
                     },
                     2, new VillagerTrades.ItemListing[]{
-                            new EmeraldForItems(Items.BONE, 64, 1, 12, 1, ItemInit.MON.get()), // infinite
-                            new EmeraldForItems(Items.GUNPOWDER, 64, 1, 12, 1, ItemInit.MON.get()), // infinite
-                            new EmeraldForItems(Items.ROTTEN_FLESH, 64, 1, 12, 1, ItemInit.MON.get()) // infinite
+                            new EmeraldForItems(Items.BONE, 64, 1, Integer.MAX_VALUE, 1, ItemInit.MON.get()), // infinite
+                            new EmeraldForItems(Items.GUNPOWDER, 64, 1, Integer.MAX_VALUE, 1, ItemInit.MON.get()), // infinite
+                            new EmeraldForItems(Items.ROTTEN_FLESH, 64, 1, Integer.MAX_VALUE, 1, ItemInit.MON.get()) // infinite
                     },
                     3, new VillagerTrades.ItemListing[]{
                             new EmeraldForItems(Items.STRING, 64, 1, 10, 1, ItemInit.MON.get()),
                             new EmeraldForItems(Items.SPIDER_EYE, 64, 1, 10, 1, ItemInit.MON.get()),
-                            new EmeraldForItems(Items.FERMENTED_SPIDER_EYE, 30, 2, 10, 1, ItemInit.MON.get()) // infinite
+                            new EmeraldForItems(Items.FERMENTED_SPIDER_EYE, 30, 2, Integer.MAX_VALUE, 1, ItemInit.MON.get()) // infinite
                     },
                     4, new VillagerTrades.ItemListing[]{
                             new EmeraldForItems(Items.SLIME_BALL, 35, 2, 12, 1, ItemInit.MON.get()),
-                            new EmeraldForItems(Items.PRISMARINE_SHARD, 30, 3, 12, 1, ItemInit.MON.get()) // infinite
+                            new EmeraldForItems(Items.PRISMARINE_SHARD, 30, 3, Integer.MAX_VALUE, 1, ItemInit.MON.get()) // infinite
                     },
                     5, new VillagerTrades.ItemListing[]{
                             new EmeraldForItems(Items.MAGMA_CREAM, 40, 3, 12, 1, ItemInit.MON.get()),
                             new EmeraldForItems(Items.BLAZE_ROD, 64, 3, 12, 1, ItemInit.MON.get()),
-                            new EmeraldForItems(Items.GHAST_TEAR, 15, 5, 16, 1, ItemInit.MON.get()) // infinite
+                            new EmeraldForItems(Items.GHAST_TEAR, 15, 5, Integer.MAX_VALUE, 1, ItemInit.MON.get()) // infinite
                     },
                     6, new VillagerTrades.ItemListing[]{
                             new EmeraldForItems(Items.SHULKER_SHELL, 30, 7, 12, 1, ItemInit.MON.get()),
@@ -89,13 +90,13 @@ public class COTWVillagerTrades {
                             new EmeraldForItems(Items.WITHER_SKELETON_SKULL, 1, 15, 4, 1, ItemInit.MON.get())
                     },
                     8, new VillagerTrades.ItemListing[]{
-                            new ItemsForEmeralds(Items.DRAGON_BREATH, 9, 1, 5, 1, ItemInit.MON.get()),
-                            new ItemsForEmeralds(Items.WOODEN_SHOVEL, 19, 1, 2, 1, ItemInit.MON.get()),
+                            new ItemsForEmeralds(Items.DRAGON_BREATH, 9, 1, 5, 1, ItemInit.MON.get()), // TODO: Monster Extract
+                            new ItemsForEmeralds(Items.WOODEN_SHOVEL, 19, 1, 2, 1, ItemInit.MON.get()), // TODO: Wooden Mop
                             new ItemsForEmeralds(ItemInit.BOKOBLIN_HELMET.get(), 30, 1, 2, 1, ItemInit.MON.get()),
-                            new ItemsForEmeralds(Items.IRON_AXE, 35, 1, 2, 1, ItemInit.MON.get())
+                            new ItemsForEmeralds(Items.IRON_AXE, 35, 1, 2, 1, ItemInit.MON.get()) // TODO: Spring-Loaded Hammer
                     },
                     9, new VillagerTrades.ItemListing[]{
-                            new ItemsForEmeralds(Items.LEATHER_HORSE_ARMOR, 50, 1, 2, 1, ItemInit.MON.get())
+                            new ItemsForEmeralds(Items.LEATHER_HORSE_ARMOR, 50, 1, 2, 1, ItemInit.MON.get()) // TODO: Monster Horse Armor
                     }));
 
     private static Int2ObjectMap<VillagerTrades.ItemListing[]> toIntMap(ImmutableMap<Integer, VillagerTrades.ItemListing[]> pMap) {
@@ -137,7 +138,7 @@ public class COTWVillagerTrades {
         @Override
         public MerchantOffer getOffer(Entity pTrader, RandomSource pRandom) {
             ItemStack itemstack = new ItemStack(this.item, this.cost);
-            return new MerchantOffer(itemstack, new ItemStack(Items.EMERALD, this.emeraldCount), this.maxUses, this.villagerXp, this.priceMultiplier);
+            return new MerchantOffer(itemstack, new ItemStack(this.emerald, this.emeraldCount), this.maxUses, this.villagerXp, this.priceMultiplier);
         }
     }
 

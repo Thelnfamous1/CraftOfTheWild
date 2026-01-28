@@ -192,10 +192,10 @@ public class COTWAnimations {
     }
 
 
-    public static AnimationController<Kilton> moveController(Kilton talus) {
-        return new AnimationController<>(talus, "Move", 10, state -> {
-            if(!talus.refuseToMove(true)){
-                if (talus.isWalking()) {
+    public static AnimationController<Kilton> moveController(Kilton kilton) {
+        return new AnimationController<>(kilton, "Move", 10, state -> {
+            if(!kilton.refuseToMove(true)){
+                if (kilton.isWalking()) {
                     return state.setAndContinue(WALK);
                 } else{
                     return state.setAndContinue(IDLE);
@@ -205,9 +205,9 @@ public class COTWAnimations {
         });
     }
 
-    public static AnimationController<Kilton> poseController(Kilton talus) {
-        return new AnimationController<>(talus, "Pose", 0, state -> {
-            if(talus.hasPose(Pose.DYING)){
+    public static AnimationController<Kilton> poseController(Kilton kilton) {
+        return new AnimationController<>(kilton, "Pose", 0, state -> {
+            if(kilton.hasPose(Pose.DYING)){
                 return state.setAndContinue(DEATH);
             }
             return PlayState.STOP;
