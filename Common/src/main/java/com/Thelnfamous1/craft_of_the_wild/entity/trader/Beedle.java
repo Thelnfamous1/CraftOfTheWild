@@ -450,4 +450,13 @@ public class Beedle extends COTWTrader implements SmartBrainOwner<Beedle> {
     public SoundEvent getNotifyTradeSound() {
         return SoundInit.BEEDLE_SURPRISE.get();
     }
+
+    @Override
+    public int getMaxOffersForSlot(int tradeSlot) {
+        if(tradeSlot == 1){
+            return 2;
+        } else {
+            return 1;
+        }
+    }
 }

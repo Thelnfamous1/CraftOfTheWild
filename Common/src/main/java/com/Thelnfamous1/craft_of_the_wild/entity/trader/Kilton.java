@@ -31,6 +31,7 @@ import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
+import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
@@ -55,6 +56,7 @@ public class Kilton extends COTWTrader implements SmartBrainOwner<Kilton> {
     private static final int DEATH_TIME = COTWUtil.secondsToTicks(1.7857F);
 
     private SmartBrainSchedule schedule;
+    private boolean notifyingTrade;
 
     public Kilton(EntityType<? extends Kilton> $$0, Level $$1) {
         super($$0, $$1);
@@ -96,7 +98,8 @@ public class Kilton extends COTWTrader implements SmartBrainOwner<Kilton> {
     @Nullable
     @Override
     protected SoundEvent getHurtSound(DamageSource $$0) {
-        return SoundInit.KILTON_DISAPPOINTED.get();
+        return null;
+        //return SoundInit.KILTON_DISAPPOINTED.get();
     }
 
     // AbstractVillager, Villager and WanderingTrader methods
@@ -327,7 +330,28 @@ public class Kilton extends COTWTrader implements SmartBrainOwner<Kilton> {
     }
 
     @Override
+    public void notifyTrade(MerchantOffer merchantOffer) {
+        this.notifyingTrade = true;
+        super.notifyTrade(merchantOffer);
+        this.notifyingTrade = false;
+    }
+
+    @Override
     public SoundEvent getNotifyTradeSound() {
+        if(this.notifyingTrade){
+            return this.getRandom().nextBoolean() ? SoundInit.KILTON_LAUGH.get() : SoundInit.KILTON_FASCINATED.get();
+        }
         return SoundInit.KILTON_FASCINATED.get();
+    }
+
+    @Override
+    public int getMaxOffersForSlot(int tradeSlot) {
+        if(tradeSlot == 1){
+            return 2;
+        } else if(tradeSlot == 8){
+            return 4;
+        } else{
+            return 1;
+        }
     }
 }

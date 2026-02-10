@@ -33,11 +33,6 @@ public interface COTWVillager extends Merchant {
         }
     }
 
-    void addOffersFromItemListings(MerchantOffers merchantOffers, VillagerTrades.ItemListing[] potentialTrades, int maxOffers);
-
     VillagerProfession getProfession();
 
-    int getTradeSlots();
-
-    int getMaxOffersPerSlot();
 }

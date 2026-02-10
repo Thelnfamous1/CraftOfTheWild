@@ -35,7 +35,7 @@ public abstract class COTWTrader extends COTWMob implements Npc, COTWVillager {
     public static final long RESTOCK_INTERVAL = 12000L;
     public static final long DAY_LENGTH = 24000L;
     public static final int MAX_RESTOCKS = 2;
-    public static final int MAX_OFFERS_PER_SLOT = 1;
+    public static final int DEFAULT_MAX_OFFERS_PER_SLOT = 1;
     protected static final EntityDataAccessor<Boolean> DATA_TRADING = SynchedEntityData.defineId(COTWTrader.class, EntityDataSerializers.BOOLEAN);
     @Nullable
     protected MerchantOffers offers;
@@ -98,8 +98,7 @@ public abstract class COTWTrader extends COTWMob implements Npc, COTWVillager {
         if (tradingPlayer instanceof ServerPlayer serverTradingPlayer) {
             CriterionInit.TRADE.trigger(serverTradingPlayer, this, merchantOffer.getResult());
         }
-        if (!this.level().isClientSide && this.ambientSoundTime > -this.getAmbientSoundInterval() + 20) {
-            this.ambientSoundTime = -this.getAmbientSoundInterval();
+        if (!this.level().isClientSide) {
             this.playSound(this.getNotifyTradeSound(), this.getSoundVolume(), this.getVoicePitch());
         }
     }
@@ -132,7 +131,6 @@ public abstract class COTWTrader extends COTWMob implements Npc, COTWVillager {
         return this.level().isClientSide;
     }
 
-    @Override
     public void addOffersFromItemListings(MerchantOffers merchantOffers, VillagerTrades.ItemListing[] potentialTrades, int maxOffers) {
         COTWVillager.addOffersFromitemListings(this, merchantOffers, potentialTrades, maxOffers);
 
@@ -154,19 +152,21 @@ public abstract class COTWTrader extends COTWMob implements Npc, COTWVillager {
     protected void updateTrades() {
         boolean useCustomVillagerTrades = Services.PLATFORM.isModLoaded(Constants.CUSTOM_VILLAGER_TRADES_MODID);
         int tradeSlots = this.getTradeSlots();
-        int maxOffersPerSlot = this.getMaxOffersPerSlot();
-        if (useCustomVillagerTrades) {
-            maxOffersPerSlot = CustomVillagerTradesCompat.getMaxOffers(this).orElse(maxOffersPerSlot);
-        }
 
         MerchantOffers merchantOffers = this.getOffers();
         for (int tradeSlot = 1; tradeSlot <= tradeSlots; tradeSlot++) {
+            int maxOffersForSlot = this.getMaxOffersForSlot(tradeSlot);
+            /*
+            if (useCustomVillagerTrades) {
+                maxOffersForSlot = CustomVillagerTradesCompat.getMaxOffers(this).orElse(maxOffersForSlot);
+            }
+             */
             VillagerTrades.ItemListing[] potentialTradesForSlot = getPotentialTradesForSlot(tradeSlot);
             if (useCustomVillagerTrades) {
                 potentialTradesForSlot = CustomVillagerTradesCompat.replaceItemListings(this, potentialTradesForSlot, tradeSlot);
             }
             if (potentialTradesForSlot != null) {
-                this.addOffersFromItemListings(merchantOffers, potentialTradesForSlot, maxOffersPerSlot);
+                this.addOffersFromItemListings(merchantOffers, potentialTradesForSlot, maxOffersForSlot);
             }
         }
     }
@@ -276,12 +276,10 @@ public abstract class COTWTrader extends COTWMob implements Npc, COTWVillager {
     @Override
     public abstract VillagerProfession getProfession();
 
-    @Override
     public abstract int getTradeSlots();
 
-    @Override
-    public int getMaxOffersPerSlot() {
-        return MAX_OFFERS_PER_SLOT;
+    public int getMaxOffersForSlot(int tradeSlot) {
+        return DEFAULT_MAX_OFFERS_PER_SLOT;
     }
 
     @Override
