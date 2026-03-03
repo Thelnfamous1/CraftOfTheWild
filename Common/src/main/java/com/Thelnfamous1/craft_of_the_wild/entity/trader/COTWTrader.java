@@ -44,6 +44,7 @@ public abstract class COTWTrader extends COTWMob implements Npc, COTWVillager {
     @Nullable
     private Player tradingPlayer;
     private long lastRestockCheckDayTime;
+    private int notifyTradeSoundCooldown;
 
     public COTWTrader(EntityType<? extends COTWMob> $$0, Level $$1) {
         super($$0, $$1);
@@ -98,11 +99,25 @@ public abstract class COTWTrader extends COTWMob implements Npc, COTWVillager {
         if (tradingPlayer instanceof ServerPlayer serverTradingPlayer) {
             CriterionInit.TRADE.trigger(serverTradingPlayer, this, merchantOffer.getResult());
         }
-        if (!this.level().isClientSide) {
-            this.playSound(this.getNotifyTradeSound(), this.getSoundVolume(), this.getVoicePitch());
+        if (!this.level().isClientSide && this.notifyTradeSoundCooldown == 0) {
+            this.playNotifyTradeSound();
+            this.notifyTradeSoundCooldown = 20;
         }
     }
 
+    protected void playNotifyTradeSound() {
+        this.playSound(this.getNotifyTradeSound(), this.getSoundVolume(), this.getVoicePitch());
+    }
+
+    @Override
+    public void baseTick() {
+        super.baseTick();
+        if(this.notifyTradeSoundCooldown > 0){
+            this.notifyTradeSoundCooldown--;
+        }
+    }
+
+    // This technically gets called before notifyTrade when taking an item out of the trade result slot
     @Override
     public void notifyTradeUpdated(ItemStack result) {
         if (!this.level().isClientSide && this.ambientSoundTime > -this.getAmbientSoundInterval() + 20) {

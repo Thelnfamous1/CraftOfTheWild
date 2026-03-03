@@ -105,6 +105,17 @@ public class Kilton extends COTWTrader implements SmartBrainOwner<Kilton> {
     // AbstractVillager, Villager and WanderingTrader methods
 
     @Override
+    public SoundEvent getNotifyTradeSound() {
+        return SoundInit.KILTON_FASCINATED.get();
+    }
+
+    @Override
+    protected void playNotifyTradeSound() {
+        SoundEvent soundEvent = this.getRandom().nextBoolean() ? SoundInit.KILTON_LAUGH.get() : this.getNotifyTradeSound();
+        this.playSound(soundEvent, this.getSoundVolume(), this.getVoicePitch());
+    }
+
+    @Override
     protected SoundEvent getTradeUpdatedSound(boolean hasTrade) {
         return hasTrade ? SoundInit.KILTON_AGREE.get() : SoundInit.KILTON_DISAPPOINTED.get();
     }
@@ -334,14 +345,6 @@ public class Kilton extends COTWTrader implements SmartBrainOwner<Kilton> {
         this.notifyingTrade = true;
         super.notifyTrade(merchantOffer);
         this.notifyingTrade = false;
-    }
-
-    @Override
-    public SoundEvent getNotifyTradeSound() {
-        if(this.notifyingTrade){
-            return this.getRandom().nextBoolean() ? SoundInit.KILTON_LAUGH.get() : SoundInit.KILTON_FASCINATED.get();
-        }
-        return SoundInit.KILTON_FASCINATED.get();
     }
 
     @Override
