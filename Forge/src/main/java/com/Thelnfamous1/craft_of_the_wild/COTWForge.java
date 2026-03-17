@@ -2,9 +2,12 @@ package com.Thelnfamous1.craft_of_the_wild;
 
 import com.Thelnfamous1.craft_of_the_wild.client.COTWForgeClient;
 import com.Thelnfamous1.craft_of_the_wild.datagen.*;
+import com.Thelnfamous1.craft_of_the_wild.duck.SaddleEquipper;
 import com.Thelnfamous1.craft_of_the_wild.entity.trader.Beedle;
 import com.Thelnfamous1.craft_of_the_wild.init.DamageTypeInit;
+import com.Thelnfamous1.craft_of_the_wild.init.DispenseItemBehaviorInit;
 import com.Thelnfamous1.craft_of_the_wild.init.WorldGenInit;
+import com.Thelnfamous1.craft_of_the_wild.platform.Services;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import net.minecraft.Util;
 import net.minecraft.core.*;
@@ -12,6 +15,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraftforge.api.distmarker.Dist;
@@ -19,10 +24,12 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -47,6 +54,17 @@ public class COTWForge {
                 event.setResult(Event.Result.ALLOW);
             }
         });
+        MinecraftForge.EVENT_BUS.addListener((PlayerEvent.StartTracking event) -> {
+            Entity target = event.getTarget();
+            if(target instanceof SaddleEquipper saddleEquipper){
+                Services.PLATFORM.sendSyncSaddlePacket((ServerPlayer) event.getEntity(), target, saddleEquipper.craft_of_the_wild$getSaddle());
+            }
+        });
+    }
+
+    @SubscribeEvent
+    static void onLoadComplete(FMLLoadCompleteEvent event){
+        event.enqueueWork(DispenseItemBehaviorInit::bootstrap);
     }
 
     @SubscribeEvent

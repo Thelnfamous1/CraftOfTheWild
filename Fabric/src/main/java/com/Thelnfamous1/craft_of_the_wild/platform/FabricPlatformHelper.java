@@ -7,6 +7,7 @@ import com.Thelnfamous1.craft_of_the_wild.entity.COTWMultipartEntity;
 import com.Thelnfamous1.craft_of_the_wild.entity.PartEntityController;
 import com.Thelnfamous1.craft_of_the_wild.network.S2CCircleParticlesPacket;
 import com.Thelnfamous1.craft_of_the_wild.network.S2CSyncDisguiseEffectCooldownsPacket;
+import com.Thelnfamous1.craft_of_the_wild.network.S2CSyncSaddlePacket;
 import com.Thelnfamous1.craft_of_the_wild.platform.services.IPlatformHelper;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -18,10 +19,12 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -87,5 +90,16 @@ public class FabricPlatformHelper implements IPlatformHelper {
             return TrinketsCompat.hasCharmEquipped(entity, item, charmSlotId);
         }
         return false;
+    }
+
+    @Override
+    public void sendSyncSaddlePacket(@Nullable ServerPlayer player, Entity entity, ItemStack saddle) {
+        if(player != null){
+            ServerPlayNetworking.send(player, new S2CSyncSaddlePacket(entity.getId(), saddle));
+        } else{
+            for(ServerPlayer serverPlayer : PlayerLookup.tracking(entity)){
+                ServerPlayNetworking.send(serverPlayer, new S2CSyncSaddlePacket(entity.getId(), saddle));
+            }
+        }
     }
 }

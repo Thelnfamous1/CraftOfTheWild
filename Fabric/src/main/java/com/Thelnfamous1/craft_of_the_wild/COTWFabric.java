@@ -1,11 +1,14 @@
 package com.Thelnfamous1.craft_of_the_wild;
 
+import com.Thelnfamous1.craft_of_the_wild.duck.SaddleEquipper;
 import com.Thelnfamous1.craft_of_the_wild.entity.trader.Beedle;
 import com.Thelnfamous1.craft_of_the_wild.entity.talus.*;
 import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
+import com.Thelnfamous1.craft_of_the_wild.platform.Services;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionResult;
@@ -51,6 +54,11 @@ public class COTWFabric implements ModInitializer {
         }));
         ServerLifecycleEvents.SERVER_STARTING.register(s -> currentServer = s);
         ServerLifecycleEvents.SERVER_STOPPED.register(s -> currentServer = null);
+        EntityTrackingEvents.START_TRACKING.register((trackedEntity, player) -> {
+            if(trackedEntity instanceof SaddleEquipper saddleEquipper){
+                Services.PLATFORM.sendSyncSaddlePacket(player, trackedEntity, saddleEquipper.craft_of_the_wild$getSaddle());
+            }
+        });
     }
 
     @Nullable

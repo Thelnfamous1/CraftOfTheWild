@@ -42,7 +42,8 @@ public class ModLangProvider extends LanguageProvider {
             "stone_talus_rare", "Stone Talus (Rare)",
             "stone_talus_luminous", "Stone Talus (Luminous)",
             "stone_talus_rare_spawn_egg", "Stone Talus (Rare) Spawn Egg",
-            "stone_talus_luminous_spawn_egg", "Stone Talus (Luminous)"
+            "stone_talus_luminous_spawn_egg", "Stone Talus (Luminous)",
+            "travelers_saddle", "Traveler's Saddle"
     );
 
     public ModLangProvider(PackOutput gen) {

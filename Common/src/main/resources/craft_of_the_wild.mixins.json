@@ -5,12 +5,17 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "${mod_id}.refmap.json",
   "mixins": [
+    "AbstractHorseAccessor",
+    "AbstractHorseMixin",
     "ApplyBonusCountMixin",
     "BonusLevelTableConditionMixin",
     "CriteriaTriggersAccessor",
     "EntityAccessor",
     "EntityMixin",
     "FeaturePoolElementAccessor",
+    "HorseInventoryMenuMixin",
+    "HorseInventoryMenuSaddleSlotMixin",
+    "HorseMixin",
     "LivingEntityMixin",
     "PathAccessor",
     "PlayerMixin",
@@ -21,11 +26,13 @@
     "StructureTemplateAccessor",
     "TargetGoalMixin",
     "TargetingConditionsMixin",
-    "WalkNodeEvaluatorAccess"
+    "WalkNodeEvaluatorAccess",
+    "client.HorseInventoryScreenMixin"
   ],
   "client": [
     "LocalPlayerMixin",
     "client.GuiGraphicsRendererMixin",
+    "client.HorseModelMixin",
     "client.ItemRendererAccess",
     "client.ItemRendererMixin",
     "compat.AutoGlowingTextureAccessor"

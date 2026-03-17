@@ -2,6 +2,7 @@ package com.Thelnfamous1.craft_of_the_wild.client;
 
 import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
+import com.Thelnfamous1.craft_of_the_wild.client.model.TravelersSaddleModel;
 import com.Thelnfamous1.craft_of_the_wild.client.network.COTWClientPacketHandler;
 import com.Thelnfamous1.craft_of_the_wild.client.particle.CustomTerrainParticle;
 import com.Thelnfamous1.craft_of_the_wild.client.renderer.*;
@@ -17,8 +18,15 @@ import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import dev.lambdaurora.lambdynlights.api.DynamicLightHandlers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.item.ItemColor;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.HorseRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceLocation;
@@ -30,10 +38,14 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 public class COTWCommonClient {
 
     public static final ResourceLocation GLOW_ITEM_PROPERTY = COTWCommon.getResourceLocation("glow");
+    // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
+    public static final ModelLayerLocation TRAVELERS_SADDLE_LAYER = new ModelLayerLocation(COTWCommon.getResourceLocation("travelers_saddle"), "main");
+    public static final ResourceLocation TRAVELERS_SADDLE_TEXTURE = COTWCommon.getResourceLocation("textures/entity/horse/travelers_saddle.png");
     private static COTWClientPacketHandler packetHandler;
 
     public static void init(){
@@ -111,6 +123,20 @@ public class COTWCommonClient {
                 ItemInit.RADIANT_HELMET.get(), ItemInit.RADIANT_CHESTPLATE.get(), ItemInit.RADIANT_LEGGINGS.get(), ItemInit.RADIANT_BOOTS.get());
     }
 
+    public static void registerModelLayers(ModelLayerRegistration callback){
+        callback.register(TRAVELERS_SADDLE_LAYER, TravelersSaddleModel::createBodyLayer);
+    }
+
+    public static void addEntityRenderLayers(EntityRendererGetter entityRendererGetter, EntityRendererLayerAdder adder, EntityRendererProvider.Context context) {
+        if(entityRendererGetter.get(EntityType.HORSE) instanceof HorseRenderer horseRenderer){
+            adder.add(horseRenderer, new TravelersSaddleLayer<>(horseRenderer,
+                    new TravelersSaddleModel<>(
+                            context.bakeLayer(ModelLayers.HORSE),
+                            context.bakeLayer(TRAVELERS_SADDLE_LAYER)),
+                    TRAVELERS_SADDLE_TEXTURE));
+        }
+    }
+
     @FunctionalInterface
     public interface ItemPropertyRegistration{
         void apply(Item pItem, ResourceLocation pName, ClampedItemPropertyFunction pProperty);
@@ -119,6 +145,21 @@ public class COTWCommonClient {
     @FunctionalInterface
     public interface ItemColorRegistration{
         void apply(ItemColor itemColor, ItemLike... itemLikes);
+    }
+
+    @FunctionalInterface
+    public interface EntityRendererGetter {
+        LivingEntityRenderer<?, ? extends EntityModel<?>> get(EntityType<?> type);
+    }
+
+    @FunctionalInterface
+    public interface EntityRendererLayerAdder {
+       void add(LivingEntityRenderer renderer, RenderLayer layer);
+    }
+
+    @FunctionalInterface
+    public interface ModelLayerRegistration {
+        void register(ModelLayerLocation location, Supplier<LayerDefinition> layerDefinition);
     }
 
 

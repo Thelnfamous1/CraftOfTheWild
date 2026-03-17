@@ -5,7 +5,11 @@ import com.Thelnfamous1.craft_of_the_wild.network.COTWFabricNetwork;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.item.ItemProperties;
 
 public class COTWFabricClient implements ClientModInitializer {
@@ -14,6 +18,10 @@ public class COTWFabricClient implements ClientModInitializer {
     public void onInitializeClient() {
         COTWCommonClient.init();
         COTWCommonClient.registerRenderers(EntityRendererRegistry::register);
+        COTWCommonClient.registerModelLayers((location, layerDefinition) -> EntityModelLayerRegistry.registerModelLayer(location, layerDefinition::get));
+        LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, entityRenderer, registrationHelper, context) -> {
+            COTWCommonClient.addEntityRenderLayers(et -> et == entityType ? entityRenderer : null, ((LivingEntityRenderer renderer, RenderLayer layer) -> registrationHelper.register(layer)), context);
+        });
         COTWFabricNetwork.registerClientPackets();
         COTWCommonClient.setup();
         COTWCommonClient.registerParticles((particleType, particleProvider) ->

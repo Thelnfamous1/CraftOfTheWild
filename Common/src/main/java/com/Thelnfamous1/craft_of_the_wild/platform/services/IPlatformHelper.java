@@ -4,13 +4,16 @@ import com.Thelnfamous1.craft_of_the_wild.entity.COTWMultipartEntity;
 import com.Thelnfamous1.craft_of_the_wild.entity.PartEntityController;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -61,4 +64,10 @@ public interface IPlatformHelper {
     void sendSyncDisguiseEffectPacket(Entity entityId, Map<MobEffect, Integer> disguiseEffectCooldowns);
 
     boolean hasCharmEquipped(LivingEntity entity, Item item, String charmSlotId);
+
+    void sendSyncSaddlePacket(@Nullable ServerPlayer player, Entity entity, ItemStack saddle);
+
+    default void sendSyncSaddlePacket(Entity entity, ItemStack saddle){
+        this.sendSyncSaddlePacket(null, entity, saddle);
+    }
 }

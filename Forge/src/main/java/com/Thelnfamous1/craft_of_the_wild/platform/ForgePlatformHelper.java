@@ -8,13 +8,16 @@ import com.Thelnfamous1.craft_of_the_wild.entity.PartEntityController;
 import com.Thelnfamous1.craft_of_the_wild.network.COTWForgeNetwork;
 import com.Thelnfamous1.craft_of_the_wild.network.ClientboundCircleParticlesPacket;
 import com.Thelnfamous1.craft_of_the_wild.network.ClientboundSyncDisguiseEffectCooldownsPacket;
+import com.Thelnfamous1.craft_of_the_wild.network.ClientboundSyncSaddlePacket;
 import com.Thelnfamous1.craft_of_the_wild.platform.services.IPlatformHelper;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
@@ -22,6 +25,7 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.network.PacketDistributor;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -87,5 +91,14 @@ public class ForgePlatformHelper implements IPlatformHelper {
             return CuriosCompat.hasCharmEquipped(entity, item, charmSlotId);
         }
         return false;
+    }
+
+    @Override
+    public void sendSyncSaddlePacket(@Nullable ServerPlayer player, Entity entity, ItemStack saddle) {
+        if(player != null){
+            COTWForgeNetwork.SYNC_CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new ClientboundSyncSaddlePacket(entity.getId(), saddle));
+        } else{
+            COTWForgeNetwork.SYNC_CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), new ClientboundSyncSaddlePacket(entity.getId(), saddle));
+        }
     }
 }

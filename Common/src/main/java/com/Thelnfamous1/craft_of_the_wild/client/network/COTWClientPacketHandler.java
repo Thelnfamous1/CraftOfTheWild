@@ -1,11 +1,13 @@
 package com.Thelnfamous1.craft_of_the_wild.client.network;
 
 import com.Thelnfamous1.craft_of_the_wild.duck.DisguiseEffectUser;
+import com.Thelnfamous1.craft_of_the_wild.duck.SaddleEquipper;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Map;
@@ -19,6 +21,13 @@ public class COTWClientPacketHandler {
         Entity entity = Minecraft.getInstance().level.getEntity(entityId);
         if(entity instanceof DisguiseEffectUser disguiseEffectUser){
             disguiseEffectUser.craft_of_the_wild$syncDisguiseEffectCooldowns(disguiseEffectCooldowns);
+        }
+    }
+
+    public void handleSyncSaddlePacket(int entityId, ItemStack saddle) {
+        Entity entity = Minecraft.getInstance().level.getEntity(entityId);
+        if(entity instanceof SaddleEquipper saddleEquipper){
+            saddleEquipper.craft_of_the_wild$setClientSaddle(saddle);
         }
     }
 }

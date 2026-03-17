@@ -136,6 +136,13 @@ public class ItemInit {
     public static final RegistryObject<Item> KILTON_SPAWN_EGG = ITEMS.register("kilton_spawn_egg", () ->
             new COTWSpawnEggItem(EntityInit.KILTON, 14405058, 7643954, getItemProperties()));
 
+    public static final RegistryObject<Item> TRAVELERS_SADDLE = ITEMS.register("travelers_saddle", () -> new TravelersSaddleItem(getItemProperties().stacksTo(1)));
+
+    public static final RegistryObject<Item> MONSTER_HORSE_ARMOR = ITEMS.register("monster_horse_armor", () -> new COTWHorseArmorItem(
+            7,
+            COTWCommon.getResourceLocation("textures/entity/horse/armor/monster_horse_armor.png"),
+            getItemProperties().stacksTo(1)));
+
     private static RegistryObject<Item> registerMusicDisc(String path, int analogSignal, RegistryObject<SoundEvent> soundSupplier, int durationInSeconds, String author) {
         return ITEMS.register(path, () ->
                 new COTWRecordItem(analogSignal, soundSupplier.get(), getItemProperties().stacksTo(1).rarity(Rarity.RARE), durationInSeconds, author));

@@ -8,10 +8,12 @@ public class COTWFabricNetwork {
 
     public static final ResourceLocation CIRCLE_PARTICLES = COTWCommon.getResourceLocation("circle_particles");
     public static final ResourceLocation SYNC_DISGUISE_EFFECT_COOLDOWNS = COTWCommon.getResourceLocation("sync_disguise_effect_cooldowns");
+    public static final ResourceLocation SYNC_SADDLE = COTWCommon.getResourceLocation("sync_saddle");
 
     public static void registerClientPackets(){
         ClientPlayNetworking.registerGlobalReceiver(S2CCircleParticlesPacket.PACKET_TYPE, S2CCircleParticlesPacket::receive);
         ClientPlayNetworking.registerGlobalReceiver(S2CSyncDisguiseEffectCooldownsPacket.PACKET_TYPE, S2CSyncDisguiseEffectCooldownsPacket::receive);
+        ClientPlayNetworking.registerGlobalReceiver(S2CSyncSaddlePacket.PACKET_TYPE, S2CSyncSaddlePacket::receive);
     }
 
 }
