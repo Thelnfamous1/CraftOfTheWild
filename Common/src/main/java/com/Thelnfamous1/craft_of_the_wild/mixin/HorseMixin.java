@@ -1,10 +1,14 @@
 package com.Thelnfamous1.craft_of_the_wild.mixin;
 
 import com.Thelnfamous1.craft_of_the_wild.duck.ChestableHorse;
+import com.Thelnfamous1.craft_of_the_wild.item.SaddleArmor;
 import com.Thelnfamous1.craft_of_the_wild.item.TravelersSaddleItem;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.TickTask;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.item.ItemStack;
@@ -75,6 +79,25 @@ public abstract class HorseMixin extends AbstractHorseMixin implements Chestable
         return isSaddle || craft_of_the_wild$isChestSaddle(instance);
     }
 
+    @Inject(method = "updateContainerEquipment", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/horse/Horse;setArmorEquipment(Lnet/minecraft/world/item/ItemStack;)V", shift = At.Shift.AFTER))
+    private void inject_setArmorEquipment_updateArmorEquipment(CallbackInfo ci){
+        this.craft_of_the_wild$setSaddleArmor(this.inventory.getItem(0));
+    }
+
+    @Unique
+    private void craft_of_the_wild$setSaddleArmor(ItemStack saddleStack) {
+        if (!this.level().isClientSide) {
+            this.getAttribute(Attributes.ARMOR).removeModifier(SaddleArmor.SADDLE_ARMOR_MODIFIER_UUID);
+            if (saddleStack.getItem() instanceof SaddleArmor saddleArmor) {
+                int protection = saddleArmor.getProtection();
+                if (protection != 0) {
+                    this.getAttribute(Attributes.ARMOR).addTransientModifier(new AttributeModifier(SaddleArmor.SADDLE_ARMOR_MODIFIER_UUID, "Saddle armor bonus", protection, AttributeModifier.Operation.ADDITION));
+                }
+            }
+        }
+
+    }
+
     @Inject(method = "updateContainerEquipment", at = @At(value = "TAIL"))
     private void post_containerChanged(CallbackInfo ci){
         if(!this.level().isClientSide){
@@ -94,7 +117,7 @@ public abstract class HorseMixin extends AbstractHorseMixin implements Chestable
                 }
                 // Fixes CME when the HorseInventoryMenu is open and picking up/placing the chest saddle
                 // This will also cause the horse inventory GUI to close as the horse's inventory is now no longer the same object
-                this.level().getServer().execute(this::createInventory);
+                this.level().getServer().tell(new TickTask(this.level().getServer().getTickCount(), this::createInventory));
             }
         }
     }

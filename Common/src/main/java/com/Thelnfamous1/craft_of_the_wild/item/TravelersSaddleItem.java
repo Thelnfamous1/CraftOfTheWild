@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SaddleItem;
 import net.minecraft.world.level.gameevent.GameEvent;
 
-public class TravelersSaddleItem extends SaddleItem {
+public class TravelersSaddleItem extends SaddleItem implements SaddleArmor{
     public TravelersSaddleItem(Properties $$0) {
         super($$0);
     }
@@ -34,5 +34,10 @@ public class TravelersSaddleItem extends SaddleItem {
         }
 
         return InteractionResult.PASS;
+    }
+
+    @Override
+    public int getProtection() {
+        return 3;
     }
 }

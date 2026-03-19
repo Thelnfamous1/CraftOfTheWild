@@ -96,7 +96,7 @@ public class COTWVillagerTrades {
                             new ItemsForEmeralds(Items.IRON_AXE, 35, 1, 2, 1, ItemInit.MON.get()) // TODO: Spring-Loaded Hammer
                     },
                     9, new VillagerTrades.ItemListing[]{
-                            new ItemsForEmeralds(Items.LEATHER_HORSE_ARMOR, 50, 1, 2, 1, ItemInit.MON.get()) // TODO: Monster Horse Armor
+                            new ItemsForEmeralds(ItemInit.MONSTER_HORSE_ARMOR.get(), 50, 1, 2, 1, ItemInit.MON.get())
                     }));
 
     private static Int2ObjectMap<VillagerTrades.ItemListing[]> toIntMap(ImmutableMap<Integer, VillagerTrades.ItemListing[]> pMap) {
