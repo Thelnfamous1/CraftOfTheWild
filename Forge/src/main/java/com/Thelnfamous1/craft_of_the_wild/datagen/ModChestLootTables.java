@@ -60,6 +60,7 @@ public class ModChestLootTables implements LootTableSubProvider {
     private LootTable.Builder stablesMainLoot() {
         return this.chanceToDrop(
                 new LootEntry(Items.SADDLE, UniformGenerator.between(1.0F, 2.0F), 1.0F),
+                new LootEntry(ItemInit.TRAVELERS_SADDLE.get(), UniformGenerator.between(1.0F, 2.0F), 0.1F),
                 new LootEntry(Items.IRON_HORSE_ARMOR, UniformGenerator.between(1.0F, 2.0F), 0.19F),
                 new LootEntry(Items.GOLDEN_HORSE_ARMOR, UniformGenerator.between(1.0F, 2.0F), 0.057F),
                 new LootEntry(Items.DIAMOND_HORSE_ARMOR, ConstantValue.exactly(1.0F), 0.08F));
