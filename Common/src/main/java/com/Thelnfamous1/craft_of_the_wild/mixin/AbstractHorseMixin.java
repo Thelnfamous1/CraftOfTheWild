@@ -35,13 +35,7 @@ public abstract class AbstractHorseMixin extends Animal implements SaddleEquippe
 
     @WrapOperation(method = "readAdditionalSaveData", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z", ordinal = 0))
     private boolean wrap_isSaddle_readAdditionalSaveData(ItemStack instance, Item pItem, Operation<Boolean> original){
-        boolean isSaddle = original.call(instance, pItem);
-        return this.craft_of_the_wild$isValidSaddle(instance, isSaddle);
-    }
-
-    @Unique
-    protected boolean craft_of_the_wild$isValidSaddle(ItemStack instance, boolean isSaddle) {
-        return isSaddle;
+        return this.craft_of_the_wild$isValidSaddle(instance, original.call(instance, pItem));
     }
 
     @Override

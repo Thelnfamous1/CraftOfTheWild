@@ -3,6 +3,7 @@ package com.Thelnfamous1.craft_of_the_wild.duck;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Saddleable;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public interface SaddleEquipper extends Saddleable {
 
@@ -11,4 +12,12 @@ public interface SaddleEquipper extends Saddleable {
     ItemStack craft_of_the_wild$getSaddle();
 
     void craft_of_the_wild$setClientSaddle(ItemStack saddle);
+
+    default boolean craft_of_the_wild$isValidSaddle(ItemStack saddle){
+        return craft_of_the_wild$isValidSaddle(saddle, saddle.is(Items.SADDLE));
+    }
+
+    default boolean craft_of_the_wild$isValidSaddle(ItemStack saddle, boolean isVanillaSaddle){
+        return isVanillaSaddle;
+    }
 }

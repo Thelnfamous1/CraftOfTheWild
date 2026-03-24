@@ -75,8 +75,8 @@ public abstract class HorseMixin extends AbstractHorseMixin implements Chestable
     }
 
     @Override
-    protected boolean craft_of_the_wild$isValidSaddle(ItemStack instance, boolean isSaddle) {
-        return isSaddle || craft_of_the_wild$isChestSaddle(instance);
+    public boolean craft_of_the_wild$isValidSaddle(ItemStack saddle, boolean isVanillaSaddle) {
+        return isVanillaSaddle || TravelersSaddleItem.is(saddle);
     }
 
     @Inject(method = "updateContainerEquipment", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/horse/Horse;setArmorEquipment(Lnet/minecraft/world/item/ItemStack;)V", shift = At.Shift.AFTER))
