@@ -6,7 +6,7 @@
         "items": [
           {
             "items": [
-              "craft_of_the_wild:luminous_stone"
+              "minecraft:leather"
             ]
           }
         ]
@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "craft_of_the_wild:radiant_boots"
+        "recipe": "craft_of_the_wild:hylian_chestplate"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,7 @@
   ],
   "rewards": {
     "recipes": [
-      "craft_of_the_wild:radiant_boots"
+      "craft_of_the_wild:hylian_chestplate"
     ]
   },
   "sends_telemetry_event": false

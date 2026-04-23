@@ -59,6 +59,15 @@ public class ModItemModelProvider extends ItemModelProvider {
         this.simpleGeneratedModel(ItemInit.BOKOBLIN_HELMET.get());
         this.simpleGeneratedModel(ItemInit.TRAVELERS_SADDLE.get());
         this.simpleGeneratedModel(ItemInit.MONSTER_HORSE_ARMOR.get());
+        ItemModelBuilder hylianHelmetHoodDown = this.simpleGeneratedModel(ItemInit.HYLIAN_HELMET.getId().withSuffix("_alternate"));
+        this.simpleGeneratedModel(ItemInit.HYLIAN_HELMET.get())
+                .override()
+                .predicate(COTWCommonClient.USE_ALTERNATE_PROPERTY, 1.0F)
+                .model(hylianHelmetHoodDown)
+                .end();
+        this.simpleGeneratedModel(ItemInit.HYLIAN_CHESTPLATE.get());
+        this.simpleGeneratedModel(ItemInit.HYLIAN_LEGGINGS.get());
+        this.simpleGeneratedModel(ItemInit.HYLIAN_BOOTS.get());
     }
 
     protected ItemModelBuilder spawnEgg(Item item) {

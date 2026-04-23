@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "minecraft:rabbit_hide"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "L": {
+      "item": "minecraft:leather"
+    }
+  },
+  "pattern": [
+    "I I",
+    "HIH",
+    "LLL"
+  ],
+  "result": {
+    "item": "craft_of_the_wild:hylian_chestplate"
+  },
+  "show_notification": true
+}

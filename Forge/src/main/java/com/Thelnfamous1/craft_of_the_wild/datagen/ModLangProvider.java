@@ -33,18 +33,25 @@ import java.util.stream.Stream;
 public class ModLangProvider extends LanguageProvider {
     protected static final Map<String, String> REPLACE_LIST = ImmutableMap.of(
     );
-    protected static final Map<String, String> FULL_REPLACE_LIST = ImmutableMap.of(
-            "radiant_helmet", "Radiant Mask",
-            "radiant_chestplate", "Radiant Shirt",
-            "radiant_leggings", "Radiant Tights",
-            "bokoblin_helmet", "Bokoblin Mask",
-            "medal_of_honor_talus", "Medal of Honor: Talus",
-            "stone_talus_rare", "Stone Talus (Rare)",
-            "stone_talus_luminous", "Stone Talus (Luminous)",
-            "stone_talus_rare_spawn_egg", "Stone Talus (Rare) Spawn Egg",
-            "stone_talus_luminous_spawn_egg", "Stone Talus (Luminous)",
-            "travelers_saddle", "Traveler's Saddle"
-    );
+    protected static final Map<String, String> FULL_REPLACE_LIST;
+
+    static {
+        FULL_REPLACE_LIST = ImmutableMap.<String, String>builder()
+                .put("radiant_helmet", "Radiant Mask")
+                .put("radiant_chestplate", "Radiant Shirt")
+                .put("radiant_leggings", "Radiant Tights")
+                .put("bokoblin_helmet", "Bokoblin Mask")
+                .put("medal_of_honor_talus", "Medal of Honor: Talus")
+                .put("stone_talus_rare", "Stone Talus (Rare)")
+                .put("stone_talus_luminous", "Stone Talus (Luminous)")
+                .put("stone_talus_rare_spawn_egg", "Stone Talus (Rare) Spawn Egg")
+                .put("stone_talus_luminous_spawn_egg", "Stone Talus (Luminous)")
+                .put("travelers_saddle", "Traveler's Saddle")
+                .put("hylian_helmet", "Hylian Hood")
+                .put("hylian_chestplate", "Hylian Tunic")
+                .put("hylian_leggings", "Hylian Tights")
+                .build();
+    }
 
     public ModLangProvider(PackOutput gen) {
         super(gen, Constants.MODID, "en_us");
@@ -92,6 +99,7 @@ public class ModLangProvider extends LanguageProvider {
                     paintingVariantRegistryObject.get() instanceof COTWPaintingVariant paintingVariant ? paintingVariant.getAuthor() : "Unknown");
         });
         add("trinkets.slot.offhand.charm", "Charm");
+        add(ItemInit.HYLIAN_HELMET.get().getDescriptionId() + ".alternate", "Pulled Down");
     }
 
     private void projectileDamageTypeLang(ResourceKey<DamageType> resourceKey, @Nullable String projectileDescription) {

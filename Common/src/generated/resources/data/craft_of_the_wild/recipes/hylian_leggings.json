@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "L": {
+      "item": "minecraft:leather"
+    }
+  },
+  "pattern": [
+    "ILI",
+    "L L",
+    "L L"
+  ],
+  "result": {
+    "item": "craft_of_the_wild:hylian_leggings"
+  },
+  "show_notification": true
+}

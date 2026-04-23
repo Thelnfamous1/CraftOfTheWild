@@ -9,6 +9,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.PaintingVariantTags;
 import net.minecraft.world.entity.decoration.Painting;
@@ -35,6 +36,7 @@ public class ItemInit {
                         }, PaintingVariantInit.PAINTING_VARIANTS.getEntries().stream().map(paintingVariantRegistryObject -> itemDisplayParameters.holders().lookupOrThrow(Registries.PAINTING_VARIANT).getOrThrow(paintingVariantRegistryObject.getResourceKey())));
                     }).title(Component.translatable("itemGroup." + Constants.MODID + ".tab"))
             .build());
+    public static final ResourceLocation HYLIAN_CAPE_TEXTURE_LOCATION = COTWCommon.getResourceLocation("textures/models/armor/hylian_cape.png");
 
     private static final Comparator<Holder<PaintingVariant>> PAINTING_COMPARATOR = Comparator.comparing(Holder::value, Comparator.<PaintingVariant>comparingInt((p_270004_) -> {
         return p_270004_.getHeight() * p_270004_.getWidth();
@@ -142,6 +144,18 @@ public class ItemInit {
             7,
             COTWCommon.getResourceLocation("textures/entity/horse/armor/monster_horse_armor.png"),
             getItemProperties().stacksTo(1)));
+
+    public static final RegistryObject<Item> HYLIAN_HELMET = ITEMS.register("hylian_helmet", () ->
+            new AlternateArmorItem(COTWArmorMaterials.HYLIAN, ArmorItem.Type.HELMET, getItemProperties()));
+
+    public static final RegistryObject<Item> HYLIAN_CHESTPLATE = ITEMS.register("hylian_chestplate", () ->
+            new ArmorItem(COTWArmorMaterials.HYLIAN, ArmorItem.Type.CHESTPLATE, getItemProperties()));
+
+    public static final RegistryObject<Item> HYLIAN_LEGGINGS = ITEMS.register("hylian_leggings", () ->
+            new ArmorItem(COTWArmorMaterials.HYLIAN, ArmorItem.Type.LEGGINGS, getItemProperties()));
+
+    public static final RegistryObject<Item> HYLIAN_BOOTS = ITEMS.register("hylian_boots", () ->
+            new ArmorItem(COTWArmorMaterials.HYLIAN, ArmorItem.Type.BOOTS, getItemProperties()));
 
     private static RegistryObject<Item> registerMusicDisc(String path, int analogSignal, RegistryObject<SoundEvent> soundSupplier, int durationInSeconds, String author) {
         return ITEMS.register(path, () ->

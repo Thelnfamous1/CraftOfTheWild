@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "minecraft:rabbit_hide"
+    },
+    "L": {
+      "item": "minecraft:leather"
+    }
+  },
+  "pattern": [
+    "H H",
+    "L L"
+  ],
+  "result": {
+    "item": "craft_of_the_wild:hylian_boots"
+  },
+  "show_notification": true
+}

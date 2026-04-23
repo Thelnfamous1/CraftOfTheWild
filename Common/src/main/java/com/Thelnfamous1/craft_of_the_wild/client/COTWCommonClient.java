@@ -13,6 +13,7 @@ import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
 import com.Thelnfamous1.craft_of_the_wild.init.ItemInit;
 import com.Thelnfamous1.craft_of_the_wild.init.ParticleInit;
 import com.Thelnfamous1.craft_of_the_wild.item.COTWSpawnEggItem;
+import com.Thelnfamous1.craft_of_the_wild.item.AlternateArmorItem;
 import com.Thelnfamous1.craft_of_the_wild.platform.Services;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import dev.lambdaurora.lambdynlights.api.DynamicLightHandlers;
@@ -46,6 +47,7 @@ public class COTWCommonClient {
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
     public static final ModelLayerLocation TRAVELERS_SADDLE_LAYER = new ModelLayerLocation(COTWCommon.getResourceLocation("travelers_saddle"), "main");
     public static final ResourceLocation TRAVELERS_SADDLE_TEXTURE = COTWCommon.getResourceLocation("textures/entity/horse/travelers_saddle.png");
+    public static final ResourceLocation USE_ALTERNATE_PROPERTY = COTWCommon.getResourceLocation("use_alternate");
     private static COTWClientPacketHandler packetHandler;
 
     public static void init(){
@@ -110,6 +112,9 @@ public class COTWCommonClient {
             if (context == null) return 0;
 
             return COTWUtil.getLocalDarknessFactor(0.0F, clientLevel, context.blockPosition());
+        });
+        callback.apply(ItemInit.HYLIAN_HELMET.get(), USE_ALTERNATE_PROPERTY, (itemStack, clientLevel, livingEntity, seed) -> {
+            return AlternateArmorItem.usingAlternate(itemStack) ? 1.0F : 0.0F;
         });
     }
 

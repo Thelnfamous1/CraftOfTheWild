@@ -13,6 +13,7 @@
     "EntityAccessor",
     "EntityMixin",
     "FeaturePoolElementAccessor",
+    "HorseInventoryMenuAccessor",
     "HorseInventoryMenuMixin",
     "HorseInventoryMenuSaddleSlotMixin",
     "HorseMixin",
@@ -32,6 +33,7 @@
   ],
   "client": [
     "LocalPlayerMixin",
+    "client.CapeLayerMixin",
     "client.GuiGraphicsRendererMixin",
     "client.HorseModelMixin",
     "client.ItemRendererAccess",
