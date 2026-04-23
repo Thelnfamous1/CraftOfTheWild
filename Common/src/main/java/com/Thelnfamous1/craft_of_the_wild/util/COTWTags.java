@@ -42,6 +42,11 @@ public class COTWTags {
     public static final TagKey<EntityType<?>> FROST_PEBBLIT_BOULDER_SPAWNS = createEntityTypeTag("frost_pebblit_boulder_spawns");
     public static final TagKey<EntityType<?>> IGNEO_PEBBLIT_BOULDER_SPAWNS = createEntityTypeTag("igneo_pebblit_boulder_spawns");
 
+    public static final TagKey<Item> POTION_INFUSABLE = createItemTag("potion_infusable");
+    public static final TagKey<Item> RAW_MEAT = createItemTag("raw_meat");
+    public static final TagKey<Item> RAW_FISH = createItemTag("raw_fish");
+    public static final TagKey<Item> MUSHROOMS = createItemTag("mushrooms");
+
 
     private static TagKey<Block> createBlockTag(String path) {
         return TagKey.create(Registries.BLOCK, COTWCommon.getResourceLocation(path));

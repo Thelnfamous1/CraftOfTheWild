@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "craft_of_the_wild:monster_extract"
+    },
+    {
+      "tag": "craft_of_the_wild:raw_meat"
+    },
+    {
+      "tag": "craft_of_the_wild:raw_fish"
+    },
+    {
+      "tag": "craft_of_the_wild:mushrooms"
+    },
+    {
+      "item": "minecraft:bowl"
+    }
+  ],
+  "result": {
+    "item": "craft_of_the_wild:monster_stew"
+  }
+}

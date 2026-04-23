@@ -7,9 +7,12 @@ import com.Thelnfamous1.craft_of_the_wild.entity.pebblit.StonePebblitAttackType;
 import com.Thelnfamous1.craft_of_the_wild.entity.talus.StoneTalusAttackType;
 import com.Thelnfamous1.craft_of_the_wild.init.*;
 import com.Thelnfamous1.craft_of_the_wild.item.COTWRecordItem;
+import com.Thelnfamous1.craft_of_the_wild.recipe.PotionInfusionRecipe;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWPaintingVariant;
 import com.google.common.collect.ImmutableMap;
 import com.nyfaria.craft_of_the_wild.registration.RegistryObject;
+import net.minecraft.Util;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -20,6 +23,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
+import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.LanguageProvider;
 import org.apache.commons.lang3.StringUtils;
@@ -100,6 +104,20 @@ public class ModLangProvider extends LanguageProvider {
         });
         add("trinkets.slot.offhand.charm", "Charm");
         add(ItemInit.HYLIAN_HELMET.get().getDescriptionId() + ".alternate", "Pulled Down");
+
+        this.add(ItemInit.MONSTER_CAKE.get().getDescriptionId() + ".infused", "Monster Cake of %s");
+        this.add(ItemInit.MONSTER_STEW.get().getDescriptionId() + ".infused", "Monster Stew of %s");
+        for(Map.Entry<ResourceKey<Potion>, Potion> potionEntry : BuiltInRegistries.POTION.entrySet()){
+            ResourceLocation location = potionEntry.getKey().location();
+            if(location.getNamespace().equals("minecraft")){
+                String potionName = potionEntry.getValue().getName("");
+                try{
+                    ResourceLocation potionNameId = location.withPath(potionName);
+                    this.add(Util.makeDescriptionId(PotionInfusionRecipe.POTION_EFFECT_TRANSLATION_KEY, potionNameId), checkReplace(potionNameId));
+                } catch (Exception ignored){
+                }
+            }
+        }
     }
 
     private void projectileDamageTypeLang(ResourceKey<DamageType> resourceKey, @Nullable String projectileDescription) {

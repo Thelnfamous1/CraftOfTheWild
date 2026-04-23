@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "bites=0": {
+      "model": "craft_of_the_wild:block/monster_cake"
+    },
+    "bites=1": {
+      "model": "craft_of_the_wild:block/monster_cake_slice1"
+    },
+    "bites=2": {
+      "model": "craft_of_the_wild:block/monster_cake_slice2"
+    },
+    "bites=3": {
+      "model": "craft_of_the_wild:block/monster_cake_slice3"
+    }
+  }
+}

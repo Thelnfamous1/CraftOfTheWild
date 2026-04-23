@@ -157,6 +157,15 @@ public class ItemInit {
     public static final RegistryObject<Item> HYLIAN_BOOTS = ITEMS.register("hylian_boots", () ->
             new ArmorItem(COTWArmorMaterials.HYLIAN, ArmorItem.Type.BOOTS, getItemProperties()));
 
+    public static final RegistryObject<Item> MONSTER_EXTRACT = ITEMS.register("monster_extract", () ->
+            new MonsterExtractItem(getItemProperties()));
+
+    public static final FoodProperties MONSTER_STEW_FOOD_PROPERTIES = (new FoodProperties.Builder()).nutrition(6).saturationMod(0.6F).build();
+    public static final RegistryObject<Item> MONSTER_STEW = ITEMS.register("monster_stew", () -> new MonsterStewItem(getItemProperties().stacksTo(1).food(MONSTER_STEW_FOOD_PROPERTIES)));
+
+    public static final RegistryObject<Item> MONSTER_CAKE = ITEMS.register("monster_cake", () ->
+            new InfusedPotionBlockItem(BlockInit.MONSTER_CAKE.get(), getItemProperties().stacksTo(1)));
+
     private static RegistryObject<Item> registerMusicDisc(String path, int analogSignal, RegistryObject<SoundEvent> soundSupplier, int durationInSeconds, String author) {
         return ITEMS.register(path, () ->
                 new COTWRecordItem(analogSignal, soundSupplier.get(), getItemProperties().stacksTo(1).rarity(Rarity.RARE), durationInSeconds, author));

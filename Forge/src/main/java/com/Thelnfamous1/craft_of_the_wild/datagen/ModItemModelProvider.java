@@ -68,6 +68,9 @@ public class ModItemModelProvider extends ItemModelProvider {
         this.simpleGeneratedModel(ItemInit.HYLIAN_CHESTPLATE.get());
         this.simpleGeneratedModel(ItemInit.HYLIAN_LEGGINGS.get());
         this.simpleGeneratedModel(ItemInit.HYLIAN_BOOTS.get());
+        this.simpleGeneratedModel(ItemInit.MONSTER_EXTRACT.get());
+        this.simpleGeneratedModel(ItemInit.MONSTER_STEW.get());
+        this.simpleGeneratedModel(ItemInit.MONSTER_CAKE.get());
     }
 
     protected ItemModelBuilder spawnEgg(Item item) {

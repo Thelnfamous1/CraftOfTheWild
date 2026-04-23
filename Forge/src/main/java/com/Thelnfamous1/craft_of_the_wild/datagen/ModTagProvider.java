@@ -58,6 +58,10 @@ public class ModTagProvider {
                     () -> Items.MUSIC_DISC_11,
                     () -> Items.MUSIC_DISC_WAIT);
             this.populateTag(COTWTags.BURN_IMMUNE_WEARABLES, () -> Items.NETHERITE_HELMET, () -> Items.NETHERITE_CHESTPLATE, () -> Items.NETHERITE_LEGGINGS, () -> Items.NETHERITE_BOOTS);
+            this.tag(COTWTags.POTION_INFUSABLE).add(ItemInit.MONSTER_CAKE.getResourceKey(), ItemInit.MONSTER_STEW.getResourceKey());
+            this.populateTag(COTWTags.RAW_MEAT, () -> Items.BEEF, () -> Items.PORKCHOP, () -> Items.CHICKEN, () -> Items.MUTTON, () -> Items.RABBIT);
+            this.populateTag(COTWTags.RAW_FISH, () -> Items.COD, () -> Items.SALMON);
+            this.populateTag(COTWTags.MUSHROOMS, () -> Items.BROWN_MUSHROOM, () -> Items.RED_MUSHROOM);
         }
 
         public void populateTag(TagKey<Item> tag, Supplier<Item>... items){

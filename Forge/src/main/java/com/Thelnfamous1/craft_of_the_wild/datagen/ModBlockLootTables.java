@@ -18,6 +18,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
     @Override
     protected void generate() {
         this.getBlockStream().filter(this::shouldDropSelf).forEach(this::dropSelf);
+        this.add(BlockInit.MONSTER_CAKE.get(), noDrop());
     }
 
     @Override

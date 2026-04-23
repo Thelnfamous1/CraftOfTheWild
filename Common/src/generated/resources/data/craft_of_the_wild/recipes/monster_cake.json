@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "E": {
+      "item": "minecraft:egg"
+    },
+    "M": {
+      "item": "minecraft:milk_bucket"
+    },
+    "S": {
+      "item": "minecraft:sugar"
+    },
+    "W": {
+      "item": "minecraft:wheat"
+    },
+    "X": {
+      "item": "craft_of_the_wild:monster_extract"
+    }
+  },
+  "pattern": [
+    "XMX",
+    "SES",
+    "WWW"
+  ],
+  "result": {
+    "item": "craft_of_the_wild:monster_cake"
+  },
+  "show_notification": true
+}

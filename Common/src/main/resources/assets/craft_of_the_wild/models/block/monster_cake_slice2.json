@@ -1,0 +1,25 @@
+{
+	"format_version": "1.21.6",
+	"credit": "Made with Blockbench",
+	"textures": {
+		"bottom": "craft_of_the_wild:block/monster_cake_bottom",
+		"top": "craft_of_the_wild:block/monster_cake_top",
+		"particle": "craft_of_the_wild:block/monster_cake_side",
+		"side": "craft_of_the_wild:block/monster_cake_side",
+		"inside": "craft_of_the_wild:block/monster_cake_inner"
+	},
+	"elements": [
+		{
+			"from": [1, 0, 6],
+			"to": [15, 15, 15],
+			"faces": {
+				"north": {"uv": [1, 1, 15, 16], "texture": "#inside"},
+				"east": {"uv": [1, 1, 10, 16], "texture": "#side"},
+				"south": {"uv": [1, 1, 15, 16], "texture": "#side"},
+				"west": {"uv": [6, 1, 15, 16], "texture": "#side"},
+				"up": {"uv": [1, 6, 15, 15], "texture": "#top"},
+				"down": {"uv": [1, 1, 15, 10], "texture": "#bottom", "cullface": "down"}
+			}
+		}
+	]
+}
