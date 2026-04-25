@@ -108,6 +108,10 @@ dependencies {
     // To add CVT compat
     implementation fg.deobf("curse.maven:custom-villager-trades-forge-463402:5383797")
     runtimeOnly fg.deobf("curse.maven:architectury-api-419699:5137938")
+
+    runtimeOnly fg.deobf("curse.maven:better-combat-by-daedelus-639842:7287334")
+    runtimeOnly fg.deobf("curse.maven:cloth-config-348521:5729105")
+    runtimeOnly fg.deobf("curse.maven:playeranimator-658587:4587214")
 }
 
 tasks.withType(JavaCompile) {

@@ -1,0 +1,30 @@
+{
+  "parent": "minecraft:item/generated",
+  "base": {
+    "parent": "craft_of_the_wild:item/wooden_mop_gui"
+  },
+  "loader": "forge:separate_transforms",
+  "perspectives": {
+    "firstperson_lefthand": {
+      "parent": "craft_of_the_wild:item/wooden_mop_handheld"
+    },
+    "firstperson_righthand": {
+      "parent": "craft_of_the_wild:item/wooden_mop_handheld"
+    },
+    "fixed": {
+      "parent": "craft_of_the_wild:item/wooden_mop_gui"
+    },
+    "ground": {
+      "parent": "craft_of_the_wild:item/wooden_mop_gui"
+    },
+    "gui": {
+      "parent": "craft_of_the_wild:item/wooden_mop_gui"
+    },
+    "thirdperson_lefthand": {
+      "parent": "craft_of_the_wild:item/wooden_mop_handheld"
+    },
+    "thirdperson_righthand": {
+      "parent": "craft_of_the_wild:item/wooden_mop_handheld"
+    }
+  }
+}

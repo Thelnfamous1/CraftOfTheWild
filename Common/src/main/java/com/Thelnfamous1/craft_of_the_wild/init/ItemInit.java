@@ -3,6 +3,7 @@ package com.Thelnfamous1.craft_of_the_wild.init;
 import com.Thelnfamous1.craft_of_the_wild.COTWCommon;
 import com.Thelnfamous1.craft_of_the_wild.Constants;
 import com.Thelnfamous1.craft_of_the_wild.item.*;
+import com.Thelnfamous1.craft_of_the_wild.util.COTWTags;
 import com.nyfaria.craft_of_the_wild.registration.RegistrationProvider;
 import com.nyfaria.craft_of_the_wild.registration.RegistryObject;
 import net.minecraft.core.Holder;
@@ -165,6 +166,12 @@ public class ItemInit {
 
     public static final RegistryObject<Item> MONSTER_CAKE = ITEMS.register("monster_cake", () ->
             new InfusedPotionBlockItem(BlockInit.MONSTER_CAKE.get(), getItemProperties().stacksTo(1)));
+
+    public static final RegistryObject<Item> SPRING_LOADED_HAMMER = ITEMS.register("spring_loaded_hammer", () ->
+            new COTWCustomWeaponItem(getItemProperties().durability(131), COTWTags.REPAIRS_SPRING_LOADED_HAMMER, 1.0F, 1.6F));
+
+    public static final RegistryObject<Item> WOODEN_MOP = ITEMS.register("wooden_mop", () ->
+            new COTWCustomWeaponItem(getItemProperties().durability(131), COTWTags.REPAIRS_WOODEN_MOP, 1.0F, 1.54F));
 
     private static RegistryObject<Item> registerMusicDisc(String path, int analogSignal, RegistryObject<SoundEvent> soundSupplier, int durationInSeconds, String author) {
         return ITEMS.register(path, () ->

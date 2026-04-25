@@ -85,6 +85,8 @@ public class SoundInit {
 
     public static final RegistryObject<SoundEvent> KILTON_SCREAM = registerSoundEvent("kilton_scream");
 
+    public static final RegistryObject<SoundEvent> SPRING_HAMMER_SLAM = registerSoundEvent("spring_hammer_slam");
+
     private static RegistryObject<SoundEvent> registerSoundEvent(String path) {
         return SOUND_EVENTS.register(path, () -> SoundEvent.createVariableRangeEvent(COTWCommon.getResourceLocation(path)));
     }

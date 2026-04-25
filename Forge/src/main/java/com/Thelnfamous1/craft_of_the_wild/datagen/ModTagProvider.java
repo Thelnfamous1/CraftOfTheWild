@@ -62,6 +62,8 @@ public class ModTagProvider {
             this.populateTag(COTWTags.RAW_MEAT, () -> Items.BEEF, () -> Items.PORKCHOP, () -> Items.CHICKEN, () -> Items.MUTTON, () -> Items.RABBIT);
             this.populateTag(COTWTags.RAW_FISH, () -> Items.COD, () -> Items.SALMON);
             this.populateTag(COTWTags.MUSHROOMS, () -> Items.BROWN_MUSHROOM, () -> Items.RED_MUSHROOM);
+            this.populateTag(COTWTags.REPAIRS_SPRING_LOADED_HAMMER, () -> Items.BROWN_MUSHROOM, () -> Items.RED_MUSHROOM);
+            this.tag(COTWTags.REPAIRS_WOODEN_MOP).addTag(net.minecraft.tags.ItemTags.PLANKS);
         }
 
         public void populateTag(TagKey<Item> tag, Supplier<Item>... items){

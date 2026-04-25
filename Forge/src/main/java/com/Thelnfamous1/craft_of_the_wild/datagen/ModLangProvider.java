@@ -54,6 +54,7 @@ public class ModLangProvider extends LanguageProvider {
                 .put("hylian_helmet", "Hylian Hood")
                 .put("hylian_chestplate", "Hylian Tunic")
                 .put("hylian_leggings", "Hylian Tights")
+                .put("spring_loaded_hammer", "Spring-Loaded Hammer")
                 .build();
     }
 

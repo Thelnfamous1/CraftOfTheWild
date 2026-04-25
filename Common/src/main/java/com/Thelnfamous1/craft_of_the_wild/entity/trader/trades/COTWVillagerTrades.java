@@ -91,9 +91,9 @@ public class COTWVillagerTrades {
                     },
                     8, new VillagerTrades.ItemListing[]{
                             new ItemsForEmeralds(ItemInit.MONSTER_EXTRACT.get(), 9, 1, 5, 1, ItemInit.MON.get()),
-                            new ItemsForEmeralds(Items.WOODEN_SHOVEL, 19, 1, 2, 1, ItemInit.MON.get()), // TODO: Wooden Mop
+                            new ItemsForEmeralds(ItemInit.WOODEN_MOP.get(), 19, 1, 2, 1, ItemInit.MON.get()),
                             new ItemsForEmeralds(ItemInit.BOKOBLIN_HELMET.get(), 30, 1, 2, 1, ItemInit.MON.get()),
-                            new ItemsForEmeralds(Items.IRON_AXE, 35, 1, 2, 1, ItemInit.MON.get()) // TODO: Spring-Loaded Hammer
+                            new ItemsForEmeralds(ItemInit.SPRING_LOADED_HAMMER.get(), 35, 1, 2, 1, ItemInit.MON.get())
                     },
                     9, new VillagerTrades.ItemListing[]{
                             new ItemsForEmeralds(ItemInit.MONSTER_HORSE_ARMOR.get(), 50, 1, 2, 1, ItemInit.MON.get())

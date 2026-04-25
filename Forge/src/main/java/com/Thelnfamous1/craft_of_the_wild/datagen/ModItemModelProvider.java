@@ -7,9 +7,12 @@ import com.Thelnfamous1.craft_of_the_wild.item.COTWSpawnEggItem;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
+import net.minecraftforge.client.model.generators.ModelFile;
+import net.minecraftforge.client.model.generators.loaders.SeparateTransformsModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -71,6 +74,35 @@ public class ModItemModelProvider extends ItemModelProvider {
         this.simpleGeneratedModel(ItemInit.MONSTER_EXTRACT.get());
         this.simpleGeneratedModel(ItemInit.MONSTER_STEW.get());
         this.simpleGeneratedModel(ItemInit.MONSTER_CAKE.get());
+
+        this.simpleHandHeldModel(ItemInit.SPRING_LOADED_HAMMER.get());
+        ItemModelBuilder woodenMopGui = simpleModel(ItemInit.WOODEN_MOP.getId().withSuffix("_gui").getPath(), mcLoc("item/generated"));
+        ItemModelBuilder woodenMopHandheld = simpleModel(ItemInit.WOODEN_MOP.getId().withSuffix("_handheld").getPath(), mcLoc("item/handheld")).transforms()
+                .transform(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND).rotation(0, -90, 55).translation(0, 4.0F, 0.5F).scale(1.7F, 1.7F, 0.85F).end()
+                .transform(ItemDisplayContext.THIRD_PERSON_LEFT_HAND).rotation(0, 90, -55).translation(0, 4.0F, 0.5F).scale(1.7F, 1.7F, 0.85F).end()
+                .transform(ItemDisplayContext.FIRST_PERSON_RIGHT_HAND).rotation(0, -90, 25).translation(1.13F, 3.2F, 1.13F).scale(1.36F, 1.36F, 0.68F).end()
+                .transform(ItemDisplayContext.FIRST_PERSON_LEFT_HAND).rotation(0, 90, -25).translation(1.13F, 3.2F, 1.13F).scale(1.36F, 1.36F, 0.68F).end()
+                .end();
+        ItemModelBuilder dummyWMG = new ItemModelBuilder(woodenMopGui.getLocation(), this.existingFileHelper).parent(new ModelFile.UncheckedModelFile(woodenMopGui.getLocation()));
+        ItemModelBuilder dummyWMH = new ItemModelBuilder(woodenMopGui.getLocation(), this.existingFileHelper).parent(new ModelFile.UncheckedModelFile(woodenMopHandheld.getLocation()));
+        this.withExistingParent(ItemInit.WOODEN_MOP.getId().getPath(), mcLoc("item/generated"))
+                .customLoader(SeparateTransformsModelBuilder::begin)
+                .base(dummyWMG)
+                .perspective(ItemDisplayContext.GUI,
+                        dummyWMG)
+                .perspective(ItemDisplayContext.GROUND,
+                        dummyWMG)
+                .perspective(ItemDisplayContext.FIXED,
+                        dummyWMG)
+                .perspective(ItemDisplayContext.FIRST_PERSON_RIGHT_HAND,
+                        dummyWMH)
+                .perspective(ItemDisplayContext.FIRST_PERSON_LEFT_HAND,
+                        dummyWMH)
+                .perspective(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND,
+                        dummyWMH)
+                .perspective(ItemDisplayContext.THIRD_PERSON_LEFT_HAND,
+                        dummyWMH)
+                .end();
     }
 
     protected ItemModelBuilder spawnEgg(Item item) {

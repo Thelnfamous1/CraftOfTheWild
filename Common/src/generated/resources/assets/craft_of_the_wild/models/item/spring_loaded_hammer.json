@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "craft_of_the_wild:item/spring_loaded_hammer"
+  }
+}

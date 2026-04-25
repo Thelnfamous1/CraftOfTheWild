@@ -179,6 +179,11 @@
       "craft_of_the_wild:music_stables"
     ]
   },
+  "spring_hammer_slam": {
+    "sounds": [
+      "craft_of_the_wild:spring_hammer_slam"
+    ]
+  },
   "stone_pebblit_pound": {
     "sounds": [
       "craft_of_the_wild:stone_pebblit_pound"

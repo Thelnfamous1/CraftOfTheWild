@@ -58,6 +58,8 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
         this.addSound(SoundInit.KILTON_FASCINATED, 2);
         this.addSound(SoundInit.KILTON_LAUGH, 2);
         this.addSound(SoundInit.KILTON_SCREAM, 2);
+
+        this.addSound(SoundInit.SPRING_HAMMER_SLAM, 1);
     }
 
     public void addSound(RegistryObject<SoundEvent> entry, float volume) {

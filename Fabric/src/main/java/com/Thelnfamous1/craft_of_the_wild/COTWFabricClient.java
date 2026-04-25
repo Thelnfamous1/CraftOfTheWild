@@ -4,7 +4,9 @@ import com.Thelnfamous1.craft_of_the_wild.client.COTWCommonClient;
 import com.Thelnfamous1.craft_of_the_wild.init.ItemInit;
 import com.Thelnfamous1.craft_of_the_wild.item.AlternateArmorItem;
 import com.Thelnfamous1.craft_of_the_wild.network.COTWFabricNetwork;
+import com.Thelnfamous1.craft_of_the_wild.plugin.COTWFabricModelPlugin;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.model.loading.v1.PreparableModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.*;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -32,6 +34,7 @@ public class COTWFabricClient implements ClientModInitializer {
             ResourceLocation texture = AlternateArmorItem.getArmorTextureResource(stack, null);
             ArmorRenderer.renderPart(matrices, vertexConsumers, light, stack, contextModel, texture);
         }, ItemInit.HYLIAN_HELMET.get());
+        PreparableModelLoadingPlugin.register(COTWFabricModelPlugin.LOADER, new COTWFabricModelPlugin());
         /*
         BuiltinItemRendererRegistry.INSTANCE.register(ItemInit.LUMINOUS_STONE.get(), new BuiltinItemRendererRegistry.DynamicItemRenderer() {
             private RadiantItemBEWLR renderer = null;

@@ -47,6 +47,9 @@ public class COTWTags {
     public static final TagKey<Item> RAW_FISH = createItemTag("raw_fish");
     public static final TagKey<Item> MUSHROOMS = createItemTag("mushrooms");
 
+    public static final TagKey<Item> REPAIRS_SPRING_LOADED_HAMMER = createItemTag("repairs_spring_loaded_hammer");
+    public static final TagKey<Item> REPAIRS_WOODEN_MOP = createItemTag("repairs_wooden_mop");
+
 
     private static TagKey<Block> createBlockTag(String path) {
         return TagKey.create(Registries.BLOCK, COTWCommon.getResourceLocation(path));
