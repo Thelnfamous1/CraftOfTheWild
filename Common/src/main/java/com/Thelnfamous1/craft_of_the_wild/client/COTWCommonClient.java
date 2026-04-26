@@ -12,8 +12,8 @@ import com.Thelnfamous1.craft_of_the_wild.entity.CustomMusicPlayer;
 import com.Thelnfamous1.craft_of_the_wild.init.EntityInit;
 import com.Thelnfamous1.craft_of_the_wild.init.ItemInit;
 import com.Thelnfamous1.craft_of_the_wild.init.ParticleInit;
+import com.Thelnfamous1.craft_of_the_wild.item.AlternateArmor;
 import com.Thelnfamous1.craft_of_the_wild.item.COTWSpawnEggItem;
-import com.Thelnfamous1.craft_of_the_wild.item.AlternateArmorItem;
 import com.Thelnfamous1.craft_of_the_wild.platform.Services;
 import com.Thelnfamous1.craft_of_the_wild.util.COTWUtil;
 import dev.lambdaurora.lambdynlights.api.DynamicLightHandlers;
@@ -114,18 +114,20 @@ public class COTWCommonClient {
             return COTWUtil.getLocalDarknessFactor(0.0F, clientLevel, context.blockPosition());
         });
         callback.apply(ItemInit.HYLIAN_HELMET.get(), USE_ALTERNATE_PROPERTY, (itemStack, clientLevel, livingEntity, seed) -> {
-            return AlternateArmorItem.usingAlternate(itemStack) ? 1.0F : 0.0F;
+            return AlternateArmor.usingAlternate(itemStack) ? 1.0F : 0.0F;
         });
     }
 
     public static void registerItemColors(ItemColorRegistration colorRegistration) {
-        colorRegistration.apply((itemStack, i) -> {
-                    if (i > 0) return -1; // overlay layer, no tint
-                    DyeableLeatherItem item = (DyeableLeatherItem) itemStack.getItem();
-                    // Only apply color if the stack has a custom color
-                    return item.hasCustomColor(itemStack) ? item.getColor(itemStack) : -1;
-                },
-                ItemInit.RADIANT_HELMET.get(), ItemInit.RADIANT_CHESTPLATE.get(), ItemInit.RADIANT_LEGGINGS.get(), ItemInit.RADIANT_BOOTS.get());
+        if(ItemInit.RADIANT_CHESTPLATE.get() instanceof DyeableLeatherItem){
+            colorRegistration.apply((itemStack, i) -> {
+                        if (i > 0) return -1; // overlay layer, no tint
+                        DyeableLeatherItem item = (DyeableLeatherItem) itemStack.getItem();
+                        // Only apply color if the stack has a custom color
+                        return item.hasCustomColor(itemStack) ? item.getColor(itemStack) : -1;
+                    },
+                    ItemInit.RADIANT_HELMET.get(), ItemInit.RADIANT_CHESTPLATE.get(), ItemInit.RADIANT_LEGGINGS.get(), ItemInit.RADIANT_BOOTS.get());
+        }
     }
 
     public static void registerModelLayers(ModelLayerRegistration callback){

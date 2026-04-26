@@ -1,6 +1,10 @@
 {
-  "parent": "bettercombat:trident",
+  "parent": "bettercombat:spear",
   "attributes": {
+    "attack_range": 3.5,
+    "pose": "",
+    "two_handed": false,
+    "category": "mop",
     "attacks": [
       {
         "hitbox": "FORWARD_BOX",

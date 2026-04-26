@@ -8,12 +8,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityEvent;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.DyeableArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-public class RadiantArmorItem extends DyeableArmorItem {
+public class RadiantArmorItem extends ArmorItem {
     public static final int MIN_DURATION = COTWUtil.secondsToTicks(10);
 
     public RadiantArmorItem(ArmorMaterial $$0, Type $$1, Properties $$2) {

@@ -8,24 +8,26 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.animatable.client.RenderProvider;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @Mixin(RadiantArmorItem.class)
-public abstract class RadiantArmorItemMixin extends ArmorItem implements GeoItem {
+public abstract class RadiantArmorItemMixin_Fabric extends ArmorItem implements GeoItem {
     @Unique
-    private final AnimatableInstanceCache craft_of_the_wild$cache = GeckoLibUtil.createInstanceCache(this);
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    @Unique
+    private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
 
-    public RadiantArmorItemMixin(ArmorMaterial p_266710_, Type p_267178_, Properties p_267093_) {
+    public RadiantArmorItemMixin_Fabric(ArmorMaterial p_266710_, Type p_267178_, Properties p_267093_) {
         super(p_266710_, p_267178_, p_267093_);
     }
 
@@ -35,18 +37,18 @@ public abstract class RadiantArmorItemMixin extends ArmorItem implements GeoItem
 
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.craft_of_the_wild$cache;
+        return this.cache;
     }
 
-    // Create our armor model/renderer for forge and return it
+    // Create our armor model/renderer for Fabric and return it
     @Override
-    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-        consumer.accept(new IClientItemExtensions() {
+    public void createRenderer(Consumer<Object> consumer) {
+        consumer.accept(new RenderProvider() {
             private GeoArmorRenderer<?> renderer;
 
             @Override
-            public @NotNull HumanoidModel<?> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
-                if (this.renderer == null)
+            public HumanoidModel<LivingEntity> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<LivingEntity> original) {
+                if(this.renderer == null)
                     this.renderer = new RadiantArmorRenderer<>();
 
                 // This prepares our GeoArmorRenderer for the current render frame.
@@ -56,5 +58,10 @@ public abstract class RadiantArmorItemMixin extends ArmorItem implements GeoItem
                 return this.renderer;
             }
         });
+    }
+
+    @Override
+    public Supplier<Object> getRenderProvider() {
+        return this.renderProvider;
     }
 }

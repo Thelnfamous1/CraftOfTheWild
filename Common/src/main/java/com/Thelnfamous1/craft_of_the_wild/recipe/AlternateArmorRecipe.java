@@ -1,7 +1,7 @@
 package com.Thelnfamous1.craft_of_the_wild.recipe;
 
 import com.Thelnfamous1.craft_of_the_wild.init.RecipeSerializerInit;
-import com.Thelnfamous1.craft_of_the_wild.item.AlternateArmorItem;
+import com.Thelnfamous1.craft_of_the_wild.item.AlternateArmor;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
@@ -24,7 +24,7 @@ public class AlternateArmorRecipe extends CustomRecipe {
       for(int i = 0; i < pInv.getContainerSize(); ++i) {
          ItemStack stackInSlot = pInv.getItem(i);
          if (!stackInSlot.isEmpty()) {
-            if (stackInSlot.getItem() instanceof AlternateArmorItem) {
+            if (stackInSlot.getItem() instanceof AlternateArmor) {
                if (!itemstack.isEmpty()) {
                   return false;
                }
@@ -47,13 +47,13 @@ public class AlternateArmorRecipe extends CustomRecipe {
          ItemStack stackInSlot = pContainer.getItem(i);
          if (!stackInSlot.isEmpty()) {
             Item item = stackInSlot.getItem();
-            if (item instanceof AlternateArmorItem) {
+            if (item instanceof AlternateArmor) {
                if (!itemstack.isEmpty()) {
                   return ItemStack.EMPTY;
                }
 
                itemstack = stackInSlot.copy();
-               AlternateArmorItem.setUseAlternate(itemstack, !AlternateArmorItem.usingAlternate(stackInSlot));
+               AlternateArmor.setUseAlternate(itemstack, !AlternateArmor.usingAlternate(stackInSlot));
             } else {
                return ItemStack.EMPTY;
             }

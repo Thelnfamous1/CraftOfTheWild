@@ -6,9 +6,12 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "BokolbinArmorItemMixin_Fabric",
+    "COTWCustomWeaponItem_Fabric",
     "EntityTrackerMixin",
+    "HylianAlternateArmorItemMixin_Fabric",
+    "HylianArmorItemMixin_Fabric",
     "PlayerMixin_Fabric",
-    "RadiantArmorItemMixin",
+    "RadiantArmorItemMixin_Fabric",
     "RadiantItemMixin",
     "ServerPlayerGameModeMixin",
     "StructureTemplateMixin"

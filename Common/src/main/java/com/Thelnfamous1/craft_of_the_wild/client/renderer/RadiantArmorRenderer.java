@@ -12,7 +12,8 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.DyeableArmorItem;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -26,7 +27,7 @@ import software.bernie.geckolib.util.RenderUtils;
 
 import javax.annotation.Nullable;
 
-public class RadiantArmorRenderer<T extends DyeableArmorItem & GeoItem> extends GeoArmorRenderer<T> {
+public class RadiantArmorRenderer<T extends ArmorItem & GeoItem> extends GeoArmorRenderer<T> {
 	private static final ResourceLocation OVERLAY = COTWCommon.getResourceLocation("textures/item/armor/radiant_overlay.png");
 	private static final ResourceLocation GLOW = COTWCommon.getResourceLocation("textures/item/armor/radiant_glow.png");
 	protected GeoBone waist = null;
@@ -40,11 +41,13 @@ public class RadiantArmorRenderer<T extends DyeableArmorItem & GeoItem> extends 
 
             @Override
             public void render(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-                RenderType armorRenderType = RenderType.armorCutoutNoCull(this.getTextureResource(animatable));
+                if(animatable instanceof DyeableLeatherItem){
+					RenderType armorRenderType = RenderType.armorCutoutNoCull(this.getTextureResource(animatable));
 
-                getRenderer().reRender(getDefaultBakedModel(animatable), poseStack, bufferSource, animatable, armorRenderType,
-                        bufferSource.getBuffer(armorRenderType), partialTick, packedLight, OverlayTexture.NO_OVERLAY,
-                        1, 1, 1, 1);
+					getRenderer().reRender(getDefaultBakedModel(animatable), poseStack, bufferSource, animatable, armorRenderType,
+							bufferSource.getBuffer(armorRenderType), partialTick, packedLight, OverlayTexture.NO_OVERLAY,
+							1, 1, 1, 1);
+				}
             }
         });
 		this.addRenderLayer(new AutoGlowingGeoLayer<>(this){
@@ -124,8 +127,8 @@ public class RadiantArmorRenderer<T extends DyeableArmorItem & GeoItem> extends 
 	@Override
 	public Color getRenderColor(T animatable, float partialTick, int packedLight) {
 		ItemStack stack = this.getCurrentStack();
-		if(animatable.hasCustomColor(stack)){
-			int color = animatable.getColor(stack);
+		if(animatable instanceof DyeableLeatherItem dyeableLeatherItem && dyeableLeatherItem.hasCustomColor(stack)){
+			int color = dyeableLeatherItem.getColor(stack);
 			float r = (float)((color >> 16) & 0xFF) / 255f;
 			float g = (float)((color >> 8) & 0xFF) / 255f;
 			float b = (float)(color & 0xFF) / 255f;

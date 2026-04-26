@@ -2,7 +2,7 @@ package com.Thelnfamous1.craft_of_the_wild;
 
 import com.Thelnfamous1.craft_of_the_wild.client.COTWCommonClient;
 import com.Thelnfamous1.craft_of_the_wild.init.ItemInit;
-import com.Thelnfamous1.craft_of_the_wild.item.AlternateArmorItem;
+import com.Thelnfamous1.craft_of_the_wild.item.AlternateArmor;
 import com.Thelnfamous1.craft_of_the_wild.network.COTWFabricNetwork;
 import com.Thelnfamous1.craft_of_the_wild.plugin.COTWFabricModelPlugin;
 import net.fabricmc.api.ClientModInitializer;
@@ -31,7 +31,7 @@ public class COTWFabricClient implements ClientModInitializer {
         COTWCommonClient.registerItemModelProperties(ItemProperties::register);
         COTWCommonClient.registerItemColors(ColorProviderRegistry.ITEM::register);
         ArmorRenderer.register((matrices, vertexConsumers, stack, entity, slot, light, contextModel) -> {
-            ResourceLocation texture = AlternateArmorItem.getArmorTextureResource(stack, null);
+            ResourceLocation texture = AlternateArmor.getArmorTextureResource(stack, null);
             ArmorRenderer.renderPart(matrices, vertexConsumers, light, stack, contextModel, texture);
         }, ItemInit.HYLIAN_HELMET.get());
         PreparableModelLoadingPlugin.register(COTWFabricModelPlugin.LOADER, new COTWFabricModelPlugin());

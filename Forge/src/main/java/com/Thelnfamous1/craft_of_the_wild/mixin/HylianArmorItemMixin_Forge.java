@@ -1,7 +1,7 @@
 package com.Thelnfamous1.craft_of_the_wild.mixin;
 
-import com.Thelnfamous1.craft_of_the_wild.client.renderer.RadiantArmorRenderer;
-import com.Thelnfamous1.craft_of_the_wild.item.RadiantArmorItem;
+import com.Thelnfamous1.craft_of_the_wild.client.renderer.HylianArmorRenderer;
+import com.Thelnfamous1.craft_of_the_wild.item.HylianArmorItem;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,12 +20,12 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
 
-@Mixin(RadiantArmorItem.class)
-public abstract class RadiantArmorItemMixin extends ArmorItem implements GeoItem {
+@Mixin(HylianArmorItem.class)
+public abstract class HylianArmorItemMixin_Forge extends ArmorItem implements GeoItem {
     @Unique
     private final AnimatableInstanceCache craft_of_the_wild$cache = GeckoLibUtil.createInstanceCache(this);
 
-    public RadiantArmorItemMixin(ArmorMaterial p_266710_, Type p_267178_, Properties p_267093_) {
+    public HylianArmorItemMixin_Forge(ArmorMaterial p_266710_, Type p_267178_, Properties p_267093_) {
         super(p_266710_, p_267178_, p_267093_);
     }
 
@@ -47,7 +47,7 @@ public abstract class RadiantArmorItemMixin extends ArmorItem implements GeoItem
             @Override
             public @NotNull HumanoidModel<?> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
                 if (this.renderer == null)
-                    this.renderer = new RadiantArmorRenderer<>();
+                    this.renderer = new HylianArmorRenderer<>();
 
                 // This prepares our GeoArmorRenderer for the current render frame.
                 // These parameters may be null however, so we don't do anything further with them

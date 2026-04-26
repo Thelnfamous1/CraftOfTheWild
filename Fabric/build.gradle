@@ -40,6 +40,7 @@ dependencies {
     modImplementation "curse.maven:better-combat-by-daedelus-639842:7287333"
     modImplementation "curse.maven:cloth-config-348521:5729104"
     modImplementation "curse.maven:playeranimator-658587:4587215"
+    include modImplementation("com.jamieswhiteshirt:reach-entity-attributes:2.4.0")
 }
 
 loom {

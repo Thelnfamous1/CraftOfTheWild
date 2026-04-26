@@ -6,7 +6,9 @@
   "refmap": "${mod_id}.refmap.json",
   "mixins": [
     "BokoblinArmorItemMixin_Forge",
-    "HoodArmorItemMixin_Forge",
+    "COTWCustomWeaponItem_Forge",
+    "HylianAlternateArmorItemMixin_Forge",
+    "HylianArmorItemMixin_Forge",
     "PlayerMixin_Forge",
     "RadiantArmorItemMixin",
     "RadiantItemMixin",

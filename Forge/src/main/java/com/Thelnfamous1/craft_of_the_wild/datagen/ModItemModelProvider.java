@@ -77,11 +77,11 @@ public class ModItemModelProvider extends ItemModelProvider {
 
         this.simpleHandHeldModel(ItemInit.SPRING_LOADED_HAMMER.get());
         ItemModelBuilder woodenMopGui = simpleModel(ItemInit.WOODEN_MOP.getId().withSuffix("_gui").getPath(), mcLoc("item/generated"));
-        ItemModelBuilder woodenMopHandheld = simpleModel(ItemInit.WOODEN_MOP.getId().withSuffix("_handheld").getPath(), mcLoc("item/handheld")).transforms()
-                .transform(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND).rotation(0, -90, 55).translation(0, 4.0F, 0.5F).scale(1.7F, 1.7F, 0.85F).end()
-                .transform(ItemDisplayContext.THIRD_PERSON_LEFT_HAND).rotation(0, 90, -55).translation(0, 4.0F, 0.5F).scale(1.7F, 1.7F, 0.85F).end()
-                .transform(ItemDisplayContext.FIRST_PERSON_RIGHT_HAND).rotation(0, -90, 25).translation(1.13F, 3.2F, 1.13F).scale(1.36F, 1.36F, 0.68F).end()
-                .transform(ItemDisplayContext.FIRST_PERSON_LEFT_HAND).rotation(0, 90, -25).translation(1.13F, 3.2F, 1.13F).scale(1.36F, 1.36F, 0.68F).end()
+        ItemModelBuilder woodenMopHandheld = simpleModel(ItemInit.WOODEN_MOP.getId().withSuffix("_handheld").getPath(), mcLoc("item/generated")).transforms()
+                .transform(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND).rotation( 5, 270, -40).translation( 0, 2, 2).scale(1.7F, 1.7F, 0.85F).end()
+                .transform(ItemDisplayContext.THIRD_PERSON_LEFT_HAND).rotation(5, -270, 40).translation( 0, 2, 2).scale(1.7F, 1.7F, 0.85F).end()
+                .transform(ItemDisplayContext.FIRST_PERSON_RIGHT_HAND).rotation(-20, 90, -35).translation(3.13F, 2.0F, 0.13F).scale(1.36F, 1.36F, 0.68F).end()
+                .transform(ItemDisplayContext.FIRST_PERSON_LEFT_HAND).rotation(-20, -90, 35).translation(3.13F, 2.0F, 0.13F).scale(1.36F, 1.36F, 0.68F).end()
                 .end();
         ItemModelBuilder dummyWMG = new ItemModelBuilder(woodenMopGui.getLocation(), this.existingFileHelper).parent(new ModelFile.UncheckedModelFile(woodenMopGui.getLocation()));
         ItemModelBuilder dummyWMH = new ItemModelBuilder(woodenMopGui.getLocation(), this.existingFileHelper).parent(new ModelFile.UncheckedModelFile(woodenMopHandheld.getLocation()));

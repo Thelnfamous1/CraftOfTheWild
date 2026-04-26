@@ -26,6 +26,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.Brain;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.ExpirableValue;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -46,6 +48,7 @@ import net.tslat.smartbrainlib.util.BrainUtils;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -451,5 +454,27 @@ public class COTWUtil {
             fluidState.getTags().forEach(fluidsInEye::add);
         }
         return fluidsInEye;
+    }
+
+    public static double calculateAttributeModifierValue(double baseValue, Attribute attribute, Collection<AttributeModifier> modifiers){
+        Collection<AttributeModifier> additions = modifiers.stream().filter(mod -> mod.getOperation() == AttributeModifier.Operation.ADDITION).toList();
+        Collection<AttributeModifier> multiplyBases = modifiers.stream().filter(mod -> mod.getOperation() == AttributeModifier.Operation.MULTIPLY_BASE).toList();
+        Collection<AttributeModifier> multiplyTotals = modifiers.stream().filter(mod -> mod.getOperation() == AttributeModifier.Operation.MULTIPLY_TOTAL).toList();
+
+        for(AttributeModifier attributemodifier : additions) {
+            baseValue += attributemodifier.getAmount();
+        }
+
+        double d1 = baseValue;
+
+        for(AttributeModifier attributemodifier1 : multiplyBases) {
+            d1 += baseValue * attributemodifier1.getAmount();
+        }
+
+        for(AttributeModifier attributemodifier2 : multiplyTotals) {
+            d1 *= 1.0D + attributemodifier2.getAmount();
+        }
+
+        return attribute.sanitizeValue(d1);
     }
 }

@@ -1,5 +1,6 @@
 package com.Thelnfamous1.craft_of_the_wild.init;
 
+import com.Thelnfamous1.craft_of_the_wild.item.ExtendedReach;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.core.BlockPos;
@@ -14,15 +15,35 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class COTWCustomWeaponItem extends Item implements Vanishable {
+import java.util.UUID;
+
+public class COTWCustomWeaponItem extends Item implements Vanishable, ExtendedReach {
+    protected static final UUID BASE_ATTACK_REACH_UUID = UUID.fromString("aec6e7a3-0e8d-4db4-b319-8d4d36b67dfe");
+    public static final UUID BASE_ATTACK_KNOCKBACK_UUID = UUID.fromString("c4f090f4-aa4d-4022-88a5-d011e6c33b40");
     private final Multimap<Attribute, AttributeModifier> defaultModifiers;
     private final TagKey<Item> repairItemTag;
 
     public COTWCustomWeaponItem(Properties $$0, TagKey<Item> repairItemTag, float attackDamage, float attackSpeed) {
+        this($$0, repairItemTag, attackDamage, attackSpeed, 3, 0);
+    }
+
+    public COTWCustomWeaponItem(Properties $$0, TagKey<Item> repairItemTag, float attackDamage, float attackSpeed, float attackRange) {
+        this($$0, repairItemTag, attackDamage, attackSpeed, attackRange, 0);
+    }
+
+    public COTWCustomWeaponItem(Properties $$0, TagKey<Item> repairItemTag, float attackDamage, float attackSpeed, float attackReach, float attackKnockback) {
         super($$0);
         ImmutableMultimap.Builder<Attribute, AttributeModifier> $$1 = ImmutableMultimap.builder();
         $$1.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", attackDamage, AttributeModifier.Operation.ADDITION));
         $$1.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", (attackSpeed - 4.0F), AttributeModifier.Operation.ADDITION));
+        this.getAttackReachAttribute().ifPresent(attribute -> {
+            if(attackReach - 3.0F != 0.0F){
+                $$1.put(attribute, new AttributeModifier(BASE_ATTACK_REACH_UUID, "Weapon modifier", (attackReach - 3.0F), AttributeModifier.Operation.ADDITION));
+            }
+        });
+        if(attackKnockback != 0.0F){
+            $$1.put(Attributes.ATTACK_KNOCKBACK, new AttributeModifier(BASE_ATTACK_KNOCKBACK_UUID, "Weapon modifier", attackKnockback, AttributeModifier.Operation.ADDITION));
+        }
         this.defaultModifiers = $$1.build();
         this.repairItemTag = repairItemTag;
     }

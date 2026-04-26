@@ -147,16 +147,16 @@ public class ItemInit {
             getItemProperties().stacksTo(1)));
 
     public static final RegistryObject<Item> HYLIAN_HELMET = ITEMS.register("hylian_helmet", () ->
-            new AlternateArmorItem(COTWArmorMaterials.HYLIAN, ArmorItem.Type.HELMET, getItemProperties()));
+            new HylianAlternateArmorItem(COTWArmorMaterials.HYLIAN, ArmorItem.Type.HELMET, getItemProperties()));
 
     public static final RegistryObject<Item> HYLIAN_CHESTPLATE = ITEMS.register("hylian_chestplate", () ->
-            new ArmorItem(COTWArmorMaterials.HYLIAN, ArmorItem.Type.CHESTPLATE, getItemProperties()));
+            new HylianArmorItem(COTWArmorMaterials.HYLIAN, ArmorItem.Type.CHESTPLATE, getItemProperties()));
 
     public static final RegistryObject<Item> HYLIAN_LEGGINGS = ITEMS.register("hylian_leggings", () ->
-            new ArmorItem(COTWArmorMaterials.HYLIAN, ArmorItem.Type.LEGGINGS, getItemProperties()));
+            new HylianArmorItem(COTWArmorMaterials.HYLIAN, ArmorItem.Type.LEGGINGS, getItemProperties()));
 
     public static final RegistryObject<Item> HYLIAN_BOOTS = ITEMS.register("hylian_boots", () ->
-            new ArmorItem(COTWArmorMaterials.HYLIAN, ArmorItem.Type.BOOTS, getItemProperties()));
+            new HylianArmorItem(COTWArmorMaterials.HYLIAN, ArmorItem.Type.BOOTS, getItemProperties()));
 
     public static final RegistryObject<Item> MONSTER_EXTRACT = ITEMS.register("monster_extract", () ->
             new MonsterExtractItem(getItemProperties()));
@@ -168,10 +168,10 @@ public class ItemInit {
             new InfusedPotionBlockItem(BlockInit.MONSTER_CAKE.get(), getItemProperties().stacksTo(1)));
 
     public static final RegistryObject<Item> SPRING_LOADED_HAMMER = ITEMS.register("spring_loaded_hammer", () ->
-            new COTWCustomWeaponItem(getItemProperties().durability(131), COTWTags.REPAIRS_SPRING_LOADED_HAMMER, 1.0F, 1.6F));
+            new COTWCustomWeaponItem(getItemProperties().durability(131), COTWTags.REPAIRS_SPRING_LOADED_HAMMER, 0.0F, 1.6F, 3.0F, 4.0F));
 
     public static final RegistryObject<Item> WOODEN_MOP = ITEMS.register("wooden_mop", () ->
-            new COTWCustomWeaponItem(getItemProperties().durability(131), COTWTags.REPAIRS_WOODEN_MOP, 1.0F, 1.54F));
+            new COTWCustomWeaponItem(getItemProperties().durability(131), COTWTags.REPAIRS_WOODEN_MOP, 0.0F, 1.54F, 4.5F));
 
     private static RegistryObject<Item> registerMusicDisc(String path, int analogSignal, RegistryObject<SoundEvent> soundSupplier, int durationInSeconds, String author) {
         return ITEMS.register(path, () ->
